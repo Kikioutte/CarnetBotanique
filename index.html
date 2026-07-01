@@ -26,6 +26,10 @@
 <!-- Polices de luxe & Icônes -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Les photos du catalogue proviennent de Wikimedia : la connexion est établie en avance -->
+<link rel="preconnect" href="https://upload.wikimedia.org">
+<link rel="dns-prefetch" href="https://commons.wikimedia.org">
+<link rel="dns-prefetch" href="https://fr.wikipedia.org">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -801,8 +805,7 @@ footer {
     padding: 0 20px;
   }
   .brand-title { font-size: 1.3rem; }
-  .search-wrapper { display: none; } /* On cache la recherche sur tablette/mobile pour simplifier */
-  
+
   .scrolly-section {
     height: auto;
     padding: 100px 20px 60px;
@@ -1283,7 +1286,7 @@ body.mode-garden .mnav-garden i{ color:var(--gold); }
 }
 </style>
 <style id="ui-ux-pro-care">
-/* ════ SOINS & CONSERVATION ����═══ */
+/* ════ SOINS & CONSERVATION ════ */
 .care-overlay{display:none;position:fixed;top:90px;left:0;width:100vw;height:calc(100vh - 90px);background:var(--bg-sand);z-index:950;padding:36px 20px 60px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 body.care-on .care-overlay{display:block}
 body.care-on,body.quiz-on,body.cal-on,body.dash-on,body.flash-on{overflow:hidden}
@@ -1466,7 +1469,10 @@ html:has(body.care-on),html:has(body.quiz-on),html:has(body.cal-on),html:has(bod
             <option value="Fleur coupée">Fleur coupée</option>
             <option value="Feuillage">Feuillage</option>
             <option value="Plante d'intérieur">Plante d'intérieur</option>
+            <option value="Plante d'extérieur">Plante d'extérieur</option>
             <option value="Plante de jardin">Plante de jardin</option>
+            <option value="Plante bulbeuse">Plante bulbeuse</option>
+            <option value="Plante acidophile">Plante acidophile</option>
             <option value="Herbe aromatique">Herbe aromatique</option>
             <option value="Succulente">Succulente</option>
             <option value="Arbre / Arbuste">Arbre / Arbuste</option>
@@ -1775,7 +1781,7 @@ function initHeaderScroll() {
     } else {
       header.classList.remove('scrolled');
     }
-  });
+  }, { passive: true });
 }
 
 // --- CHARGEMENT & PERSISTANCE DES DONNÉES (LOCALSTORAGE) ---
@@ -1893,7 +1899,13 @@ function setImgCache(term,val){
   var wait=(now-_imgCacheFirstPending>=3000)?0:500;
   _imgCacheSaveT=setTimeout(function(){
     _imgCacheFirstPending=0;
-    try{localStorage.setItem('hdv_imgCache',JSON.stringify(imgCache));}catch(e){}
+    // Les échecs (null) restent en mémoire pour la session mais ne sont pas persistés :
+    // une panne réseau ponctuelle ne doit pas bloquer définitivement l'image d'une plante.
+    try{
+      var persist={};
+      for(var k in imgCache){ if(imgCache[k]) persist[k]=imgCache[k]; }
+      localStorage.setItem('hdv_imgCache',JSON.stringify(persist));
+    }catch(e){}
   },wait);
   return val;
 }
@@ -1936,7 +1948,10 @@ async function loadSectionImage(sec){
   if(sec.dataset.loaded==='1') return; sec.dataset.loaded='1';
   var id=sec.id.replace('section-','');
   var imgs=[];
-  var lead=await fetchWiki(sec.dataset.w1); if(lead) imgs.push(lead);
+  // L'image choisie par l'utilisateur (champ "URL Image" / génération IA) est prioritaire
+  var pl=plants.find(function(x){return x.id===id;});
+  if(pl&&pl.imgUrl) imgs.push(pl.imgUrl);
+  var lead=await fetchWiki(sec.dataset.w1); if(lead&&imgs.indexOf(lead)<0) imgs.push(lead);
   var more=await fetchWikiList(sec.dataset.w1,4); more.forEach(function(u){ if(imgs.indexOf(u)<0) imgs.push(u); });
   if(imgs.length<2 && sec.dataset.w2 && sec.dataset.w2!==sec.dataset.w1){
     var l2=await fetchWiki(sec.dataset.w2); if(l2 && imgs.indexOf(l2)<0) imgs.push(l2);
@@ -2266,7 +2281,7 @@ function renderFlashcard() {
     </div>
   `;
   const _fp = p;
-  fetchWiki(_fp.w1||_fp.nomLat).then(function(s){return s||fetchWiki(_fp.w2||_fp.nomLat);}).then(function(s){var el=document.getElementById('flashPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';}});
+  (_fp.imgUrl?Promise.resolve(_fp.imgUrl):fetchWiki(_fp.w1||_fp.nomLat).then(function(s){return s||fetchWiki(_fp.w2||_fp.nomLat);})).then(function(s){var el=document.getElementById('flashPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';}});
 }
 
 function prevFlashcard() {
@@ -2297,7 +2312,7 @@ function updateModeUI() {
   } else {
     if(heroBadge)heroBadge.textContent='Académie Royale de Botanique';
     if(heroTitle)heroTitle.innerHTML='Le carnet botanique <i>vivant</i>';
-    if(heroText)heroText.textContent='Découvrez, apprenez et révisez les 318 espèces avec élégance.';
+    if(heroText)heroText.textContent=plants.length?('Découvrez, apprenez et révisez les '+plants.length+' espèces avec élégance.'):'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.';
   }
 }
 function setMode(m){
@@ -2354,12 +2369,19 @@ function _gv(id) { var el = document.getElementById(id); return el ? el.value : 
 function _gc(id) { var el = document.getElementById(id); return el ? el.checked : false; }
 function _sv(id, v) { var el = document.getElementById(id); if(el) el.value = v||''; }
 function _sc(id, v) { var el = document.getElementById(id); if(el) el.checked = !!v; }
-// Comme _sv mais pour <select> : ne positionne la valeur que si elle correspond à une <option>
-// existante, pour éviter qu'une ancienne valeur incompatible ne fausse silencieusement le champ.
+// Comme _sv mais pour <select> : si la valeur héritée n'existe pas parmi les <option>,
+// on l'ajoute dynamiquement au lieu de la vider — sinon un simple "Modifier + Enregistrer"
+// effaçait silencieusement le champ (ex. type "Plante d'extérieur", exposition legacy).
 function _svSelect(id, v) {
   var el = document.getElementById(id);
   if (!el) return;
   var has = v && Array.prototype.some.call(el.options, function(o) { return o.value === v; });
+  if (v && !has) {
+    var o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    el.appendChild(o);
+    has = true;
+  }
   el.value = has ? v : '';
 }
 
@@ -2755,7 +2777,7 @@ async function autoFillFromWiki(forcedTitle) {
     if (nomFr) { _sv('formNomFr', nomFr); filled.push('Nom'); }
 
     var nomLat = wdNomLat || _wikiField(wikitext, ['taxon','nom scientifique','espèce','binomial']);
-    if (nomLat) { _sv('formNomLat', nomLat); _sv('formW1', nomLat); filled.push('Nom latin'); }
+    if (nomLat) { _sv('formNomLat', nomLat); filled.push('Nom latin'); }
 
     var famille = wdFamille || itFamille;
     if (famille) { _sv('formFamille', famille); filled.push('Famille'); }
@@ -3150,6 +3172,7 @@ function toggleQuizMode(){
     var b=document.getElementById('quizBtn'); if(b)b.classList.add('active');
     var sec=document.getElementById('quizSection'); if(sec)sec.style.display='block';
     try{lenis.stop();}catch(e){}
+    var qs=document.getElementById('quizSubtitle'); if(qs&&plants.length)qs.textContent='Testez votre reconnaissance des '+plants.length+' espèces.';
     loadQuizScore(); populateQuizScope(); newQuestion();
   } else { try{lenis.start();}catch(e){} }
 }
@@ -3184,7 +3207,7 @@ function newQuestion(){
   if(sub){ html+='<div class="quiz-sub">'+sub+'</div>'; }
   html+='<div class="quiz-opts">'+opts.map(function(o){return '<button class="quiz-opt" onclick="answerQuiz(this)">'+esc(o)+'</button>';}).join('')+'</div>';
   card.innerHTML=html;
-  if(photo){ fetchWiki(p.w1).then(function(s){return s||fetchWiki(p.w2);}).then(function(s){var el=document.getElementById('quizPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';el.style.cursor='zoom-in';el.title='Agrandir';el.onclick=function(){openImgZoom(s);};}}); }
+  if(photo){ (p.imgUrl?Promise.resolve(p.imgUrl):fetchWiki(p.w1||p.nomLat).then(function(s){return s||fetchWiki(p.w2||p.nomLat);})).then(function(s){var el=document.getElementById('quizPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';el.style.cursor='zoom-in';el.title='Agrandir';el.onclick=function(){openImgZoom(s);};}}); }
 }
 function answerQuiz(btn){
   if(quizAnswered)return; quizAnswered=true;
@@ -3359,7 +3382,7 @@ function closeImgZoom(){ var z=document.getElementById('imgZoom'); if(z)z.classL
   <div class="quiz-wrap">
     <div class="quiz-head">
       <h2>Salle de Révision</h2>
-      <p>Testez votre reconnaissance des 318 espèces.</p>
+      <p id="quizSubtitle">Testez votre reconnaissance de vos espèces.</p>
     </div>
     <div class="quiz-modes">
       <button id="qm-fr" class="on" onclick="setQuizMode('fr')">Nom français</button>
@@ -3509,7 +3532,15 @@ function toggleMobileNav(){
     }
   };
   var ic=document.querySelector('.search-wrapper i');
-  if(ic){ ic.addEventListener('click', function(e){ if(isPC()){ e.stopPropagation(); toggleSearchPop(); } }); }
+  if(ic){
+    ic.addEventListener('click', function(e){ if(isPC()){ e.stopPropagation(); toggleSearchPop(); } });
+    /* Accessibilité : la loupe agit comme un bouton sur PC — focus clavier + Entrée/Espace */
+    if(isPC()){
+      ic.setAttribute('role','button'); ic.setAttribute('tabindex','0');
+      ic.setAttribute('aria-label','Ouvrir la recherche');
+      ic.addEventListener('keydown', function(e){ if(isPC()&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); toggleSearchPop(); } });
+    }
+  }
   document.addEventListener('click', function(e){
     if(!document.body.classList.contains('search-open')) return;
     var w=document.querySelector('.search-wrapper');
@@ -3641,6 +3672,7 @@ window.toggleTheme=function(){theme=(theme==='dark'?'light':'dark');S('hdv_theme
 
 /* ---------- i18n (libelles d'interface) ---------- */
 var lang=L('hdv_lang','fr');
+window.hdvLang=lang; /* exposé pour les couches v8/v9 (leurs IIFE n'ont pas accès à cette closure) */
 var navEN={flashBtn:'Flashcards',quizBtn:'Quiz',calBtn:'Bloom',careBtn:'Care',printBtn:'Print',dashBtn:'Stats'};
 var navFR={};
 function captureNavFR(){Object.keys(navEN).forEach(function(id){var b=$(id);if(b)navFR[id]=b.textContent.trim();});}
@@ -3652,7 +3684,7 @@ function applyLang(){
   for(var i=0;i<nodes.length;i++){var el=nodes[i];var v=(lang==='en')?el.getAttribute('data-en'):el.getAttribute('data-fr');if(v!=null)el.textContent=v;}
   var lb=$('v7-lang');if(lb)lb.textContent=(lang==='en'?'FR':'EN');
 }
-window.toggleLang=function(){lang=(lang==='en'?'fr':'en');S('hdv_lang',lang);applyLang();if($('v7-f-zone'))rebuildZoneFilter();};
+window.toggleLang=function(){lang=(lang==='en'?'fr':'en');window.hdvLang=lang;S('hdv_lang',lang);applyLang();if($('v7-f-zone'))rebuildZoneFilter();};
 
 /* ---------- Journal / zones / arrosage ---------- */
 var journal=L('hdv_journal',{});
@@ -3728,7 +3760,21 @@ function buildToolbar(){
   ['v7-f-fam','v7-f-type','v7-f-tox','v7-f-inv','v7-f-zone','v7-sort'].forEach(function(id){var e=$(id);if(e)e.addEventListener('change',function(){readFilters();renderCatalog();});});
   $('v7-reset').addEventListener('click',function(){advFilters={fam:'',type:'',tox:'',inv:'',zone:''};advSort='default';['v7-f-fam','v7-f-type','v7-f-tox','v7-f-inv','v7-f-zone'].forEach(function(id){var e=$(id);if(e)e.value='';});var s=$('v7-sort');if(s)s.value='default';renderCatalog();});
   $('v7-file').addEventListener('change',importHandler);
+  bar.dataset.n=String(plants.length);
   rebuildZoneFilter();
+}
+/* Les données (plants.json) arrivent à window.onload, APRÈS la construction de la barre
+   d'outils à DOMContentLoaded : sans ce rafraîchissement, les filtres Familles/Types
+   restaient vides. Appelé à chaque rendu, il ne reconstruit que si le nombre d'espèces a changé. */
+function refreshToolbarOptions(){
+  var bar=$('v7-toolbar');if(!bar)return;
+  if(bar.dataset.n===String(plants.length))return;
+  bar.dataset.n=String(plants.length);
+  var fr=(lang!=='en');
+  var sf=$('v7-f-fam');
+  if(sf){var cur=sf.value;sf.innerHTML='<option value="">'+(fr?'Toutes familles':'All families')+'</option>'+uniq(plants.map(function(p){return p.famille;})).map(opt).join('');sf.value=cur;}
+  var st=$('v7-f-type');
+  if(st){var cur2=st.value;st.innerHTML='<option value="">'+(fr?'Tous types':'All types')+'</option>'+uniq(plants.map(function(p){return p.type||'';})).filter(Boolean).map(opt).join('');st.value=cur2;}
 }
 
 /* ---------- Modale generique ---------- */
@@ -3807,6 +3853,7 @@ function checkReminders(notify){
     if(notify&&('Notification' in window)&&Notification.permission==='granted'){try{new Notification("L'Herbier de Vie",{body:due.length+(lang==='en'?' plant(s) to water: ':' plante(s) a arroser : ')+due.slice(0,3).map(function(p){return p.nomFr;}).join(', ')});}catch(e){}}
   }else if(rb){rb.classList.remove('has-due');}
 }
+window.checkReminders=checkReminders; /* utilisé par v9 pour rafraîchir le badge de la cloche */
 
 /* ---------- Import / Export JSON ---------- */
 window.v7Export=function(){
@@ -3872,7 +3919,7 @@ function injectHeaderButtons(){var na=document.querySelector('.nav-actions');if(
 
 /* ---------- Hooks sur les fonctions existantes ---------- */
 function installHooks(){
-  if(typeof window.renderCatalog==='function'){var _rc=window.renderCatalog;window.renderCatalog=function(){if(!$('v7-toolbar')){try{buildToolbar();}catch(e){}}_rc.apply(this,arguments);try{reflectCmpButtons();}catch(e){}};}
+  if(typeof window.renderCatalog==='function'){var _rc=window.renderCatalog;window.renderCatalog=function(){if(!$('v7-toolbar')){try{buildToolbar();}catch(e){}}else{try{refreshToolbarOptions();}catch(e){}}_rc.apply(this,arguments);try{reflectCmpButtons();}catch(e){}};}
   if(typeof window.renderFlashcard==='function'){var _rf=window.renderFlashcard;window.renderFlashcard=function(){_rf.apply(this,arguments);try{injectGrading();}catch(e){}};}
   if(typeof window.toggleFlashMode==='function'){var _tf=window.toggleFlashMode;window.toggleFlashMode=function(){window._fdeck=null;window._v7idx=0;_tf.apply(this,arguments);};}
   if(typeof window.nextFlashcard==='function'){var _nf=window.nextFlashcard;window.nextFlashcard=function(){window._v7idx++;_nf.apply(this,arguments);};}
@@ -3975,7 +4022,7 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
   function S(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){liveSay('Stockage plein');if(typeof window.showToast==='function')window.showToast(isFR()?'Stockage plein \u2014 espace insuffisant':'Storage full');return false;}}
   function esc2(s){return (s==null?'':String(s)).replace(/[&<>\"]/g,function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'})[m];});}
   function norm(s){try{return (s==null?'':String(s)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){return (s==null?'':String(s)).toLowerCase();}}
-  function isFR(){return (typeof lang==='undefined')||lang!=='en';}
+  function isFR(){return (window.hdvLang||'fr')!=='en';}
   function liveSay(m){var el=$('v8-live');if(el)el.textContent=m;}
   function getPlants(){try{return plants;}catch(e){return [];}}
   function getPlant(id){var a=getPlants();for(var i=0;i<a.length;i++)if(a[i].id===id)return a[i];return null;}
@@ -3999,7 +4046,7 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
       wrap.appendChild(ce('div','v8-count-note',window._catShown+' / '+window._catTotal+(isFR()?' especes affichees':' species shown')));
       cat.parentNode.insertBefore(wrap,cat.nextSibling);
     }
-    highlightSearch();reflectWishlist();augmentToolbar();
+    highlightSearch();reflectWishlist();augmentToolbar();injectJSONLD();
   }
   window.v8ToggleCompact=function(){var on=document.body.classList.toggle('cat-compact');S('hdv_viewmode',on?'compact':'rich');var b=$('v8-viewbtn');if(b){b.classList.toggle('active',on);b.innerHTML=on?'<i class="fa-solid fa-newspaper"></i> '+(isFR()?'Vue riche':'Rich view'):'<i class="fa-solid fa-table-cells"></i> '+(isFR()?'Vue grille':'Grid view');}};
 
@@ -4065,6 +4112,7 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
   // iCal + PDF jardin injectes dans la modale rappels
   (function(){var orig=window.openReminders;if(typeof orig==='function'){window.openReminders=function(){orig.apply(this,arguments);setTimeout(injectReminderExtras,0);};}})();
   function injectReminderExtras(){var body=$('v7-modal-body');if(!body||body.querySelector('.v8-remextra'))return;var fr=isFR();var row=ce('div','v7-actions-row v8-remextra');row.style.marginTop='14px';row.innerHTML='<button class="btn-luxe" onclick="window.v8ExportICS()"><i class="fa-solid fa-calendar-plus"></i> '+(fr?'Exporter (.ics)':'Export (.ics)')+'</button><button class="btn-luxe" onclick="window.v8GardenPDF()"><i class="fa-solid fa-file-pdf"></i> '+(fr?'Jardin en PDF':'Garden as PDF')+'</button><button class="btn-luxe" onclick="window.v8ShareGarden()"><i class="fa-solid fa-qrcode"></i> '+(fr?'Partager le jardin':'Share garden')+'</button>';body.appendChild(row);}
+  window.__v8RemExtras=injectReminderExtras; /* v9 remplace openReminders : il réinjecte ces boutons via ce point d'entrée */
   window.v8ExportICS=function(){var j=L('hdv_journal',{});var adopted=getPlants().filter(function(p){return p.inGarden===true;});var dt=new Date();var ds=dt.getFullYear()+pad2(dt.getMonth()+1)+pad2(dt.getDate());var lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Herbier de Vie//FR','CALSCALE:GREGORIAN'];var n=0;adopted.forEach(function(p){var every=j[p.id]&&j[p.id].waterEvery;if(every&&every>0){n++;lines.push('BEGIN:VEVENT','UID:water-'+p.id+'@herbier','DTSTART;VALUE=DATE:'+ds,'RRULE:FREQ=DAILY;INTERVAL='+every,'SUMMARY:'+(isFR()?'Arroser ':'Water ')+icsEsc(p.nomFr),'DESCRIPTION:'+icsEsc(p.nomLat||''),'END:VEVENT');}});lines.push('END:VCALENDAR');if(!n){toast(isFR()?'Definissez un intervalle d\'arrosage d\'abord':'Set a watering interval first');return;}downloadText(lines.join('\r\n'),'herbier-arrosage.ics','text/calendar');toast(isFR()?n+' rappel(s) exporte(s)':n+' reminder(s) exported');};
   function icsEsc(s){return String(s||'').replace(/([,;\\])/g,'\\$1').replace(/\n/g,'\\n');}
   function pad2(n){return (n<10?'0':'')+n;}
@@ -4118,16 +4166,22 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
   };
   window.v8CopyLink=function(){var el=$('v8-sharelink');if(!el)return;el.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(el.value).then(function(){toast(isFR()?'Lien copie':'Link copied');},function(){});}else if(ok)toast(isFR()?'Lien copie':'Link copied');};
   function drawQR(link){var wrap=$('v8-qrwrap');if(!wrap)return;var m=qrEncode(link);if(!m){wrap.innerHTML='<p style="font-size:.8rem;font-style:italic;opacity:.75;">'+(isFR()?'Trop de plantes pour un QR code \u2014 utilisez le lien ci-dessus.':'Too many plants for a QR code \u2014 use the link above.')+'</p>';return;}var quiet=4,scale=6,n=m.length,dim=(n+quiet*2)*scale;var cv=document.createElement('canvas');cv.width=dim;cv.height=dim;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,dim,dim);ctx.fillStyle='#000';for(var r=0;r<n;r++)for(var c=0;c<n;c++){if(m[r][c])ctx.fillRect((c+quiet)*scale,(r+quiet)*scale,scale,scale);}var holder=ce('div');holder.id='v8-qr';holder.appendChild(cv);wrap.innerHTML='';wrap.appendChild(holder);wrap.appendChild(ce('div','v8-count-note',isFR()?'Scannez pour importer le jardin':'Scan to import the garden'));}
-  function importGardenFromHash(){var h=location.hash||'';var mIdx=h.indexOf('hdvg=');if(mIdx<0)return;var raw=h.slice(mIdx+5);var nums=raw.split('.').map(function(x){return parseInt(x,10);}).filter(function(x){return x>0;});if(!nums.length)return;var ids={};nums.forEach(function(n){ids['p'+String(n).padStart(3,'0')]=1;});var cnt=getPlants().filter(function(p){return ids[p.id];}).length;if(!cnt)return;var msg=isFR()?('Importer '+cnt+' espece(s) partagee(s) dans votre jardin ?'):('Import '+cnt+' shared species into your garden?');if(window.confirm(msg)){getPlants().forEach(function(p){if(ids[p.id])p.inGarden=true;});try{if(typeof saveData==='function')saveData();}catch(e){}if(typeof window.renderCatalog==='function')window.renderCatalog();toast(isFR()?cnt+' espece(s) importee(s)':cnt+' species imported');}try{history.replaceState(null,'',location.pathname+location.search);}catch(e){location.hash='';}}
+  /* Le lien encode la partie numérique de l'id (cf. gardenLink) : on matche donc par
+     extraction numérique et non en reconstruisant 'pNNN' — les vrais ids sont du type
+     'p001-achillea-filipendulina', la reconstruction ne correspondait jamais. */
+  function importGardenFromHash(){var h=location.hash||'';var mIdx=h.indexOf('hdvg=');if(mIdx<0)return;var raw=h.slice(mIdx+5);var nums={};raw.split('.').forEach(function(x){var n=parseInt(x,10);if(n>0)nums[n]=1;});var matched=getPlants().filter(function(p){var n=parseInt(String(p.id).replace(/[^0-9]/g,''),10);return n>0&&nums[n];});var cnt=matched.length;if(!cnt)return;var msg=isFR()?('Importer '+cnt+' espece(s) partagee(s) dans votre jardin ?'):('Import '+cnt+' shared species into your garden?');if(window.confirm(msg)){matched.forEach(function(p){p.inGarden=true;});try{if(typeof saveData==='function')saveData();}catch(e){}if(typeof window.renderCatalog==='function')window.renderCatalog();toast(isFR()?cnt+' espece(s) importee(s)':cnt+' species imported');}try{history.replaceState(null,'',location.pathname+location.search);}catch(e){location.hash='';}}
 
   /* ============ GROUPE 6 : Accessibilite & SEO ============ */
-  function injectJSONLD(){try{if($('v8-jsonld'))return;var items=getPlants().slice(0,318).map(function(p,i){return {'@type':'ListItem',position:i+1,name:p.nomFr,alternateName:p.nomLat};});var data={'@context':'https://schema.org','@type':'WebSite',name:"L'Herbier de Vie",inLanguage:'fr-FR',description:'Carnet de botanique premium \u2014 318 especes',mainEntity:{'@type':'ItemList',numberOfItems:items.length,itemListElement:items}};var s=document.createElement('script');s.type='application/ld+json';s.id='v8-jsonld';s.textContent=JSON.stringify(data);document.head.appendChild(s);}catch(e){}}
+  function injectJSONLD(){try{if($('v8-jsonld'))return;if(!getPlants().length)return;/* les donn\u00e9es arrivent apr\u00e8s DOMContentLoaded : r\u00e9essay\u00e9 depuis afterCatalog() */var items=getPlants().slice(0,400).map(function(p,i){return {'@type':'ListItem',position:i+1,name:p.nomFr,alternateName:p.nomLat};});var data={'@context':'https://schema.org','@type':'WebSite',name:"L'Herbier de Vie",inLanguage:'fr-FR',description:'Carnet de botanique premium \u2014 '+items.length+' especes',mainEntity:{'@type':'ItemList',numberOfItems:items.length,itemListElement:items}};var s=document.createElement('script');s.type='application/ld+json';s.id='v8-jsonld';s.textContent=JSON.stringify(data);document.head.appendChild(s);}catch(e){}}
   function setupKeyboard(){
     document.addEventListener('keydown',function(e){
       if(e.key==='Tab')document.body.classList.add('v8-kbd');
       // Échap : géré par le handler unique d'initV6Enhancements() (couvre aussi v7-modal/flashMode/quizOn/dashOn/calOn)
       var fm=(typeof flashMode!=='undefined')&&flashMode;
       if(fm){
+        // Ne pas détourner Entrée/Espace quand le focus est sur un élément interactif
+        // (sinon le bouton « Fermer » retournait la carte au lieu de fermer).
+        if(e.target&&e.target.closest&&e.target.closest('button,a,input,select,textarea'))return;
         if(e.key==='ArrowLeft'&&typeof window.prevFlashcard==='function'){e.preventDefault();window.prevFlashcard();}
         else if(e.key==='ArrowRight'&&typeof window.nextFlashcard==='function'){e.preventDefault();window.nextFlashcard();}
         else if(e.key===' '||e.key==='Enter'){var card=$('currentCard');if(card){e.preventDefault();card.classList.toggle('flipped');}}
@@ -4184,9 +4238,9 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
 (function(){
   function lg(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v;}catch(e){return d;}}
   function ls(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-  function fr(){try{return (window.lang!=='en');}catch(e){return true;}}
+  function fr(){return (window.hdvLang||'fr')!=='en';}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  function tst(m){try{if(window.toast)window.toast(m);}catch(e){}}
+  function tst(m){try{if(typeof window.showToast==='function')window.showToast(m);}catch(e){}}
   var KEY='hdv_specimens_v1';
   function store(){return lg(KEY,{});}
   function save(s){ls(KEY,s);}
@@ -4208,7 +4262,7 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
     var F=fr();var list=adopted();
     var h='<h2 class="v7-h">'+(F?"Rappels d'arrosage":'Watering reminders')+'</h2>';
     h+='<div class="v7-actions-row"><button class="btn-luxe" onclick="window.enableNotif()"><i class="fa-solid fa-bell"></i> '+(F?'Activer les notifications':'Enable notifications')+'</button></div>';
-    if(!list.length){h+='<div class="v7-empty">'+(F?'Adoptez des plantes (mode Jardin) pour suivre leur arrosage.':'Adopt plants (Garden mode) to track watering.')+'</div>';openModalHTML(h);return;}
+    if(!list.length){h+='<div class="v7-empty">'+(F?'Adoptez des plantes (mode Jardin) pour suivre leur arrosage.':'Adopt plants (Garden mode) to track watering.')+'</div>';openModalHTML(h);if(window.__v8RemExtras)setTimeout(window.__v8RemExtras,0);return;}
     h+='<p class="sp-help">'+(F?'Ajoutez un exemplaire par plante physique : chacun a son emplacement, son rythme et son suivi.':'Add one specimen per physical plant: each has its own location, rhythm and tracking.')+'</p>';
     list.forEach(function(p){
       var arr=specs(p.id);var dc=arr.filter(specDue).length;
@@ -4230,6 +4284,9 @@ body.theme-dark .v8-leit .lv{background:rgba(125,142,116,.2);}
       h+='</div>';
     });
     openModalHTML(h);
+    // Réinjecte les boutons v8 (Export .ics / Jardin PDF / Partage QR) que le remplacement
+    // de openReminders par cette version v9 faisait disparaître.
+    if(window.__v8RemExtras)setTimeout(window.__v8RemExtras,0);
   };
   document.addEventListener('click',function(e){var b=e.target.closest?e.target.closest('[data-sp-act]'):null;if(!b)return;var act=b.getAttribute('data-sp-act'),pid=b.getAttribute('data-pid'),sid=b.getAttribute('data-sid');if(act==='add')doAdd(pid);else if(act==='waterall')doWaterAll(pid);else if(act==='water')doWater(pid,sid);else if(act==='remove')doRemove(pid,sid);});
   document.addEventListener('change',function(e){var t=e.target;if(!t||!t.classList||!t.classList.contains('sp-edit'))return;doSet(t.getAttribute('data-pid'),t.getAttribute('data-sid'),t.getAttribute('data-field'),t.value);});
