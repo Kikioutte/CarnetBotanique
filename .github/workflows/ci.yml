@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Installer les dépendances
+        run: npm install
+      - name: Installer Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+      - name: Tests bout-en-bout
+        run: npm test
+      - name: Vérifier que le SEO statique est à jour
+        run: |
+          node scripts/build-seo.mjs
+          git diff --exit-code especes.html sitemap.xml robots.txt || {
+            echo "::error::SEO statique obsolète — lancez 'npm run build:seo' et committez."; exit 1; }
