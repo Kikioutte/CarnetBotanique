@@ -187,9 +187,9 @@
 </div>
 
 <!-- LE TIROIR DE CONCIERGERIE (Ajout / Édition de Plante) -->
-<div class="side-drawer" id="plantDrawer" data-lenis-prevent>
+<div class="side-drawer" id="plantDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" data-lenis-prevent>
   <div class="drawer-header">
-    <h3 class="drawer-title" id="drawerTitle">Inscrire une plante</h3>
+    <h3 class="drawer-title" id="drawerTitle" tabindex="-1">Inscrire une plante</h3>
     <button class="close-drawer" aria-label="Fermer" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
   </div>
   
@@ -214,13 +214,13 @@
       </div>
       <div id="autoFillStatus" class="autofill-status"></div>
       <div style="margin-top:10px;border-top:1px dashed rgba(194,162,106,0.3);padding-top:10px;">
-        <label style="font-size:0.72rem;color:var(--gold);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">🤖 Enrichissement IA — clé Gemini (optionnelle)</label>
+        <label for="geminiKeyInput" style="font-size:0.72rem;color:var(--gold);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">🤖 Enrichissement IA — clé Gemini (optionnelle)</label>
         <div style="display:flex;gap:8px;align-items:center;">
           <input type="password" id="geminiKeyInput" class="form-control"
             placeholder="Clé gratuite sur aistudio.google.com"
             style="font-size:0.8rem;"
             oninput="localStorage.setItem('herbier_gemini_key', this.value)">
-          <button type="button" class="btn-luxe" style="padding:8px 10px;flex-shrink:0;" title="Effacer la clé"
+          <button type="button" class="btn-luxe" style="padding:8px 10px;flex-shrink:0;" title="Effacer la clé" aria-label="Effacer la clé Gemini"
             onclick="localStorage.removeItem('herbier_gemini_key');document.getElementById('geminiKeyInput').value='';setAutoFillStatus('Clé IA supprimée','');">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -252,19 +252,19 @@
       <fieldset class="form-fieldset">
         <legend>Informations Générales</legend>
         <div class="form-group">
-          <label class="form-label">Nom Usuel</label>
+          <label class="form-label" for="formNomFr">Nom Usuel</label>
           <input type="text" id="formNomFr" class="form-control" required placeholder="ex: Lavande vraie">
         </div>
         <div class="form-group">
-          <label class="form-label">Nom Scientifique</label>
+          <label class="form-label" for="formNomLat">Nom Scientifique</label>
           <input type="text" id="formNomLat" class="form-control" required placeholder="ex: Lavandula angustifolia">
         </div>
         <div class="form-group">
-          <label class="form-label">Famille Botanique</label>
+          <label class="form-label" for="formFamille">Famille Botanique</label>
           <input type="text" id="formFamille" class="form-control" required placeholder="ex: Lamiacées">
         </div>
         <div class="form-group">
-          <label class="form-label">Catégorie</label>
+          <label class="form-label" for="formType">Catégorie</label>
           <select id="formType" class="form-control" required>
             <option value="">— Choisir une catégorie</option>
             <option value="Fleur coupée">Fleur coupée</option>
@@ -281,15 +281,15 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Origine / Région</label>
+          <label class="form-label" for="formRegion">Origine / Région</label>
           <input type="text" id="formRegion" class="form-control" placeholder="ex: Bassin méditerranéen occidental">
         </div>
         <div class="form-group">
-          <label class="form-label">Besoins / Soins</label>
+          <label class="form-label" for="formBesoins">Besoins / Soins</label>
           <textarea id="formBesoins" class="form-control" rows="3" placeholder="Conseils de soin, conservation, entretien..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Maladies, ravageurs, précautions</label>
+          <label class="form-label" for="formEnnemis">Maladies, ravageurs, précautions</label>
           <textarea id="formEnnemis" class="form-control" rows="2" placeholder="Botrytis, éthylène, pucerons..."></textarea>
         </div>
       </fieldset>
@@ -301,7 +301,7 @@
         <legend>Caractéristiques Botaniques</legend>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">Type de feuillage</label>
+            <label class="form-label" for="formFeuillage">Type de feuillage</label>
             <select id="formFeuillage" class="form-control">
               <option value="">—</option>
               <option value="Persistant">Persistant</option>
@@ -311,7 +311,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Port</label>
+            <label class="form-label" for="formPort">Port</label>
             <select id="formPort" class="form-control">
               <option value="">—</option>
               <option value="Érigé">Érigé</option>
@@ -325,26 +325,26 @@
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">Hauteur</label>
+            <label class="form-label" for="formHauteur">Hauteur</label>
             <input type="text" id="formHauteur" class="form-control" placeholder="ex: 30–60 cm">
           </div>
           <div class="form-group">
-            <label class="form-label">Couleur dominante</label>
+            <label class="form-label" for="formCouleur">Couleur dominante</label>
             <input type="text" id="formCouleur" class="form-control" placeholder="ex: Violet, blanc...">
           </div>
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">Rusticité</label>
+            <label class="form-label" for="formRusticite">Rusticité</label>
             <input type="text" id="formRusticite" class="form-control" placeholder="ex: Zone 7, -10°C">
           </div>
           <div class="form-group">
-            <label class="form-label">Période de floraison</label>
+            <label class="form-label" for="formFlTexte">Période de floraison</label>
             <input type="text" id="formFlTexte" class="form-control" placeholder="ex: Juin à août">
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label" style="color:var(--terracotta)">🐾 Toxicité pour animaux</label>
+          <label class="form-label" for="formToxPets" style="color:var(--terracotta)">🐾 Toxicité pour animaux</label>
           <select id="formToxPets" class="form-control" style="margin-bottom:8px;">
             <option value="">— Non renseigné</option>
             <option value="safe">✅ Sans danger pour chiens/chats</option>
@@ -353,7 +353,7 @@
           <input type="text" id="formToxDetail" class="form-control" placeholder="Précisions : espèces concernées, symptômes...">
         </div>
         <div class="form-group">
-          <label class="form-label" style="color:#d32f2f">🌾 Caractère Invasif</label>
+          <label class="form-label" for="formInvasive" style="color:#d32f2f">🌾 Caractère Invasif</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="checkbox" id="formInvasive" style="width:auto;accent-color:#d32f2f;">
             <span style="font-size:0.85rem;font-family:var(--primary-sans);">Espèce invasive / risque d'épillets</span>
@@ -361,16 +361,16 @@
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">Reconnaissance — Fleurs / Inflorescence</label>
+            <label class="form-label" for="formVisu1">Reconnaissance — Fleurs / Inflorescence</label>
             <input type="text" id="formVisu1" class="form-control" placeholder="ex: Corymbe jaune, Ombelle blanche…">
           </div>
           <div class="form-group">
-            <label class="form-label">Reconnaissance — Feuilles / Port</label>
+            <label class="form-label" for="formVisu2">Reconnaissance — Feuilles / Port</label>
             <input type="text" id="formVisu2" class="form-control" placeholder="ex: Feuilles pennatilobées, Lancéolées…">
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Moyen mnémotechnique</label>
+          <label class="form-label" for="formMnemonic">Moyen mnémotechnique</label>
           <textarea id="formMnemonic" class="form-control" rows="2" placeholder="Astuce mémo (visible au dos des flashcards en quiz)"></textarea>
         </div>
       </fieldset>
@@ -382,7 +382,7 @@
         <legend>Besoins de Culture &amp; Substrat</legend>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">☀️ Exposition</label>
+            <label class="form-label" for="formExposition">☀️ Exposition</label>
             <select id="formExposition" class="form-control">
               <option value="">—</option>
               <option value="Plein soleil">Plein soleil</option>
@@ -392,7 +392,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">💧 Arrosage</label>
+            <label class="form-label" for="formArrosage">💧 Arrosage</label>
             <select id="formArrosage" class="form-control">
               <option value="">—</option>
               <option value="Faible (1x par mois)">Faible (1x/mois)</option>
@@ -403,39 +403,39 @@
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">💨 Humidité</label>
+            <label class="form-label" for="formHumidite">💨 Humidité</label>
             <input type="text" id="formHumidite" class="form-control" placeholder="ex: 50–70%">
           </div>
           <div class="form-group">
-            <label class="form-label">🌡️ Température</label>
+            <label class="form-label" for="formTemperature">🌡️ Température</label>
             <input type="text" id="formTemperature" class="form-control" placeholder="ex: 15–25°C">
           </div>
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">🪴 Rempotage</label>
+            <label class="form-label" for="formRempotage">🪴 Rempotage</label>
             <input type="text" id="formRempotage" class="form-control" placeholder="ex: Tous les 2 ans, printemps">
           </div>
           <div class="form-group">
-            <label class="form-label">🌿 Engrais</label>
+            <label class="form-label" for="formEngrais">🌿 Engrais</label>
             <input type="text" id="formEngrais" class="form-control" placeholder="ex: NPK équilibré, mars–sept.">
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">🪨 Substrat conseillé</label>
-          <div class="sub-editor" id="subEditor"></div>
+          <div class="form-label" id="subEditorLabel">🪨 Substrat conseillé</div>
+          <div class="sub-editor" id="subEditor" aria-labelledby="subEditorLabel"></div>
           <button type="button" class="btn-luxe sub-add" onclick="addSubstratRow()"><i class="fa-solid fa-plus"></i> Ajouter un composant</button>
           <div class="sub-preview" id="subPreview"></div>
         </div>
         <div class="form-group">
-          <label class="form-label">URL Image</label>
+          <label class="form-label" for="formImgUrl">URL Image</label>
           <div style="display:flex;gap:10px;">
             <input type="text" id="formImgUrl" class="form-control" placeholder="https://...">
-            <button type="button" class="btn-luxe" onclick="generateAIImage()" style="padding:10px 15px;" title="Générer illustration"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
+            <button type="button" class="btn-luxe" onclick="generateAIImage()" style="padding:10px 15px;" title="Générer illustration" aria-label="Générer une illustration"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Principes Actifs / Notes</label>
+          <label class="form-label" for="formPrincipes">Principes Actifs / Notes</label>
           <input type="text" id="formPrincipes" class="form-control" placeholder="ex: Linalol, acétate de linalyle">
         </div>
       </fieldset>
@@ -446,29 +446,29 @@
       <fieldset class="form-fieldset">
         <legend>✂️ Mode Pro — Fleuriste</legend>
         <div class="form-group">
-          <label class="form-label">Préparation avant vase</label>
+          <label class="form-label" for="formPrepa">Préparation avant vase</label>
           <textarea id="formPrepa" class="form-control" rows="2" placeholder="Recoupe en biseau, reconditionner..."></textarea>
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label">Température idéale</label>
+            <label class="form-label" for="formTempIdeale">Température idéale</label>
             <input type="text" id="formTempIdeale" class="form-control" placeholder="ex: 4–8°C">
           </div>
           <div class="form-group">
-            <label class="form-label">Tenue en vase</label>
+            <label class="form-label" for="formTenueVase">Tenue en vase</label>
             <input type="text" id="formTenueVase" class="form-control" placeholder="ex: 7–10 jours">
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Conservation</label>
+          <label class="form-label" for="formConservation">Conservation</label>
           <input type="text" id="formConservation" class="form-control" placeholder="ex: Chambre froide, papier kraft...">
         </div>
         <div class="form-group">
-          <label class="form-label">Conseils de stockage</label>
+          <label class="form-label" for="formStockage">Conseils de stockage</label>
           <textarea id="formStockage" class="form-control" rows="2" placeholder="Conditions de stockage idéales..."></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Précautions</label>
+          <label class="form-label" for="formPrecautions">Précautions</label>
           <textarea id="formPrecautions" class="form-control" rows="2" placeholder="Éthylène, courants d'air, luminosité..."></textarea>
         </div>
       </fieldset>
@@ -540,7 +540,7 @@
       <button id="qm-photo" onclick="setQuizMode('photo')">Photo</button>
     </div>
     <div class="quiz-scope-row">
-      <label data-fr="Catégorie" data-en="Category">Catégorie</label>
+      <label for="quizScope" data-fr="Catégorie" data-en="Category">Catégorie</label>
       <select id="quizScope" onchange="newQuestion()"></select>
       <button id="quizErrBtn" class="btn-luxe" onclick="toggleQuizErrMode()" style="display:none" title="Rejouer uniquement les espèces ratées récemment"><i class="fa-solid fa-rotate-left"></i> Réviser mes erreurs (<span id="quizErrCount">0</span>)</button>
     </div>
@@ -585,7 +585,7 @@
 </div>
 
 <!-- LIGHTBOX ZOOM PHOTO -->
-<div class="img-zoom" id="imgZoom" onclick="closeImgZoom()"><span class="iz-close" aria-label="Fermer"><i class="fa-solid fa-xmark" aria-hidden="true"></i></span><img id="imgZoomImg" alt=""></div>
+<div class="img-zoom" id="imgZoom" role="dialog" aria-modal="true" aria-label="Image agrandie" onclick="closeImgZoom()"><button type="button" class="iz-close" aria-label="Fermer l'image agrandie" onclick="event.stopPropagation();closeImgZoom()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button><img id="imgZoomImg" alt=""></div>
 
 <!-- ════ Menu burger mobile (<=768px) — additif, n'altere pas le DOM existant ════ -->
 <button class="burger-btn" id="burgerBtn" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="mobileNav" onclick="toggleMobileNav()"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
@@ -614,7 +614,7 @@
 </div>
 <!-- ===================== EXTENSIONS v7 ===================== -->
 <div id="v7-modal" class="v7-modal" role="dialog" aria-modal="true" aria-label="Boîte de dialogue"><div class="v7-modal-card"><button class="v7-modal-x" onclick="window.closeModal()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button><div id="v7-modal-body"></div></div></div>
-<div id="v7-cmpbar" class="v7-cmpbar"><span><i class="fa-solid fa-scale-balanced"></i> <b id="v7-cmpcount">0</b> <span data-fr="selectionnees" data-en="selected">selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span data-fr="Comparer" data-en="Compare">Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()"><i class="fa-solid fa-xmark"></i></button></div>
+<div id="v7-cmpbar" class="v7-cmpbar"><span><i class="fa-solid fa-scale-balanced"></i> <b id="v7-cmpcount">0</b> <span data-fr="selectionnees" data-en="selected">selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span data-fr="Comparer" data-en="Compare">Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark"></i></button></div>
 <script src="js/extensions-v7.js"></script>
 <!-- =================== FIN EXTENSIONS v7 =================== -->
 
