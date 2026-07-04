@@ -6,7 +6,7 @@
    - Images & polices tierces (Wikimedia, Unsplash, Google Fonts) : stale-while-revalidate plafonné. */
 'use strict';
 
-const VERSION = 'hdv-v2';
+const VERSION = 'hdv-v3';
 const SHELL_CACHE = VERSION + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const RUNTIME_MAX_ENTRIES = 260;
