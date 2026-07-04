@@ -17,8 +17,10 @@ try { ({ chromium } = await import('playwright')); }
 catch { ({ chromium } = await import('playwright-core')); }
 // Environnements où le navigateur Playwright n'est pas téléchargé (chromium système pré-installé)
 const localChromium = '/opt/pw-browsers/chromium';
+const windowsEdge = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const launchOpts = { args: ['--no-sandbox'] };
 if (fs.existsSync(localChromium)) launchOpts.executablePath = localChromium;
+else if (fs.existsSync(windowsEdge)) launchOpts.executablePath = windowsEdge;
 
 const MIME = { '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.xml': 'application/xml', '.webmanifest': 'application/manifest+json' };
 let slowJson = false; // simule un réseau lent sur plants.json (course de chargement réelle)
@@ -284,6 +286,8 @@ const browser = await chromium.launch(launchOpts);
     controlled: !!navigator.serviceWorker.controller,
   }));
   check('page servie hors-ligne par le SW', r.controlled && r.sections > 0, r);
+  const swShell = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  check('SW shell precache extensions-v10', /SHELL\s*=\s*\[[\s\S]*js\/extensions-v10\.js/.test(swShell), 'js/extensions-v10.js absent du precache');
   await ctx.setOffline(false);
   await ctx.close();
 }
@@ -320,7 +324,43 @@ const browser = await chromium.launch(launchOpts);
     return document.getElementById('plantDrawer').classList.contains('open');
   });
   check('dock "Ajouter" ouvre le tiroir', add);
-  await page.evaluate(() => window.closeDrawer());
+  const addSubmit = await page.evaluate(() => {
+    const before = plants.length;
+    const stamp = 'QA mobile ' + Date.now();
+    document.getElementById('formNomFr').value = stamp;
+    document.getElementById('formNomLat').value = 'Qualitas mobilis';
+    document.getElementById('formFamille').value = 'Testaceae';
+    document.getElementById('formType').value = 'Autre';
+    document.getElementById('plantForm').requestSubmit();
+    const created = plants.find(p => p.nomFr === stamp);
+    return {
+      before,
+      after: plants.length,
+      created: !!created,
+      catalogRendered: document.querySelectorAll('.scrolly-section').length > 0,
+      drawerClosed: !document.getElementById('plantDrawer').classList.contains('open'),
+    };
+  });
+  check('formulaire Ajouter : soumission minimale cree une fiche', addSubmit.after === addSubmit.before + 1 && addSubmit.created, addSubmit);
+  check('formulaire Ajouter : tiroir ferme et catalogue rendu', addSubmit.drawerClosed && addSubmit.catalogRendered, addSubmit);
+
+  const drawerDock = await page.evaluate(() => {
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="add"]').click();
+    const dock = document.querySelector('.fusion-mobile-dock');
+    const r = dock.getBoundingClientRect();
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const st = getComputedStyle(dock);
+    const inactive = st.display === 'none' || st.visibility === 'hidden' || st.pointerEvents === 'none' || !dock.contains(top);
+    return {
+      drawer: document.getElementById('plantDrawer').classList.contains('open'),
+      dockDisplay: st.display,
+      dockPointerEvents: st.pointerEvents,
+      topTag: top && (top.id || top.className || top.tagName),
+      inactive,
+    };
+  });
+  check('drawer mobile : dock masque ou non interactif', drawerDock.drawer && drawerDock.inactive, drawerDock);
+  await page.keyboard.press('Escape');
 
   // Fiche express : ouverture depuis une carte du catalogue, fermeture à l'Échap
   const sheetOpen = await page.evaluate(() => {
@@ -333,6 +373,118 @@ const browser = await chromium.launch(launchOpts);
   check('fiche express se ferme à l\'Échap', sheetClosed);
 
   // Dock "Accueil" referme la barre de comparaison si elle était ouverte
+  const sheetDock = await page.evaluate(() => {
+    document.querySelector('#plantCatalog .fusion-quick-btn').click();
+    const dock = document.querySelector('.fusion-mobile-dock');
+    const r = dock.getBoundingClientRect();
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const st = getComputedStyle(dock);
+    const inactive = st.display === 'none' || st.visibility === 'hidden' || st.pointerEvents === 'none' || !dock.contains(top);
+    return {
+      sheet: document.getElementById('fusionQuickSheet').classList.contains('open'),
+      backdrop: document.getElementById('fusionSheetBackdrop').classList.contains('open'),
+      dockDisplay: st.display,
+      dockPointerEvents: st.pointerEvents,
+      topTag: top && (top.id || top.className || top.tagName),
+      inactive,
+    };
+  });
+  check('fiche express : dock masque ou non interactif', sheetDock.sheet && sheetDock.backdrop && sheetDock.inactive, sheetDock);
+  await page.keyboard.press('Escape');
+
+  const overlayMatrix = await page.evaluate(() => {
+    function activeOverlays() {
+      return [
+        ['flash', document.body.classList.contains('flash-on')],
+        ['quiz', document.body.classList.contains('quiz-on')],
+        ['calendar', document.body.classList.contains('cal-on')],
+        ['dashboard', document.body.classList.contains('dash-on')],
+        ['care', document.body.classList.contains('care-on')],
+        ['drawer', document.getElementById('plantDrawer').classList.contains('open')],
+        ['sheet', document.getElementById('fusionQuickSheet').classList.contains('open')],
+        ['modal', document.getElementById('v7-modal').classList.contains('open')],
+      ].filter(x => x[1]).map(x => x[0]);
+    }
+    function dockInactive() {
+      const dock = document.querySelector('.fusion-mobile-dock');
+      const r = dock.getBoundingClientRect();
+      const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      const st = getComputedStyle(dock);
+      return st.display === 'none' || st.visibility === 'hidden' || st.pointerEvents === 'none' || !dock.contains(top);
+    }
+    function snap(label) {
+      const active = activeOverlays();
+      return { label, active, single: active.length === 1, dockInactive: dockInactive() };
+    }
+    const out = [];
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="quiz"]').click();
+    out.push(snap('quiz'));
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="care"]').click();
+    out.push(snap('care-after-quiz'));
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="add"]').click();
+    out.push(snap('drawer-after-care'));
+    window.closeDrawer();
+    document.querySelector('#plantCatalog .fusion-quick-btn').click();
+    out.push(snap('sheet'));
+    window.fusionCloseSheet();
+    return out;
+  });
+  check('mobile overlays : un seul overlay actif a la fois', overlayMatrix.every(x => x.single), overlayMatrix);
+  check('mobile overlays : dock masque ou non interactif pendant overlay/drawer/sheet', overlayMatrix.every(x => x.dockInactive), overlayMatrix);
+
+  const sheetEdit = await page.evaluate(() => {
+    document.querySelector('#plantCatalog .fusion-quick-btn').click();
+    const editBtn = [...document.querySelectorAll('#fusionQuickSheet .fusion-sheet-actions .btn-luxe')]
+      .find(b => /Modifier/.test(b.textContent));
+    editBtn.click();
+    return {
+      drawerOpen: document.getElementById('plantDrawer').classList.contains('open'),
+      sheetOpen: document.getElementById('fusionQuickSheet').classList.contains('open'),
+    };
+  });
+  await page.waitForFunction(() => {
+    const drawer = document.getElementById('plantDrawer');
+    if (!drawer || !drawer.classList.contains('open')) return false;
+    const r = drawer.getBoundingClientRect();
+    return r.left < window.innerWidth && r.right > 0;
+  }, null, { timeout: 3000 });
+  const sheetEditLayer = await page.evaluate(() => {
+    const sheet = document.getElementById('fusionQuickSheet');
+    const drawer = document.getElementById('plantDrawer');
+    const r = drawer.getBoundingClientRect();
+    const top = document.elementFromPoint(Math.max(1, r.left + 24), Math.max(1, r.top + 80));
+    return {
+      drawerOpen: drawer.classList.contains('open'),
+      sheetOpen: sheet.classList.contains('open'),
+      drawerForeground: !!(top && top.closest && top.closest('#plantDrawer')),
+      topTag: top && (top.id || top.className || top.tagName),
+    };
+  });
+  check('fiche express > Modifier : tiroir ouvert depuis la sheet', sheetEdit.drawerOpen && !sheetEdit.sheetOpen, sheetEdit);
+  check('fiche express > Modifier : tiroir au premier plan', sheetEditLayer.drawerOpen && !sheetEditLayer.sheetOpen && sheetEditLayer.drawerForeground, sheetEditLayer);
+  await page.keyboard.press('Escape');
+  await page.evaluate(() => { if (window.fusionCloseSheet) window.fusionCloseSheet(); });
+
+  const sheetJournal = await page.evaluate(() => {
+    document.querySelector('#plantCatalog .fusion-quick-btn').click();
+    const journalBtn = [...document.querySelectorAll('#fusionQuickSheet .fusion-sheet-actions .btn-luxe')]
+      .find(b => /Journal/.test(b.textContent));
+    journalBtn.click();
+    const sheet = document.getElementById('fusionQuickSheet');
+    const modal = document.getElementById('v7-modal');
+    const r = modal.getBoundingClientRect();
+    const top = document.elementFromPoint(r.left + r.width / 2, Math.max(1, r.top + 80));
+    return {
+      modalOpen: modal.classList.contains('open'),
+      sheetOpen: sheet.classList.contains('open'),
+      modalForeground: !!(top && top.closest && top.closest('#v7-modal')),
+      topTag: top && (top.id || top.className || top.tagName),
+    };
+  });
+  check('fiche express > Journal : modale au premier plan', sheetJournal.modalOpen && !sheetJournal.sheetOpen && sheetJournal.modalForeground, sheetJournal);
+  await page.keyboard.press('Escape');
+
+  // Retour au test du raccourci Accueil.
   const homeClearsCompare = await page.evaluate(() => {
     document.querySelector('.cmp-btn').click();
     document.querySelector('.fusion-mobile-dock [data-fusion-action="home"]').click();

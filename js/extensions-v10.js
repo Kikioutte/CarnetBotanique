@@ -75,12 +75,50 @@
     var y=el.getBoundingClientRect().top+window.pageYOffset+(offset||-90);
     window.scrollTo({top:y,behavior:'smooth'});
   }
+  function callGlobal(name){
+    var fn=window[name];
+    if(typeof fn!=='function')return false;
+    try{fn();return true;}catch(e){return false;}
+  }
+  function setLenisStopped(stopped){
+    try{
+      if(typeof lenis==='undefined'||!lenis)return;
+      if(stopped&&typeof lenis.stop==='function')lenis.stop();
+      if(!stopped&&typeof lenis.start==='function')lenis.start();
+    }catch(e){}
+  }
+  function anyLockedSurfaceOpen(){
+    var drawer=$('plantDrawer'), modal=$('v7-modal'), confirm=$('confirmModal'), nav=$('mobileNav'), sheet=$('fusionQuickSheet');
+    return !!(
+      (sheet&&sheet.classList.contains('open'))||
+      (drawer&&drawer.classList.contains('open'))||
+      (modal&&modal.classList.contains('open'))||
+      (confirm&&confirm.style.display==='flex')||
+      (nav&&nav.classList.contains('open'))||
+      document.body.classList.contains('flash-on')||
+      document.body.classList.contains('quiz-on')||
+      document.body.classList.contains('cal-on')||
+      document.body.classList.contains('dash-on')||
+      document.body.classList.contains('care-on')
+    );
+  }
+  function restoreScrollIfIdle(){
+    if(anyLockedSurfaceOpen())return;
+    document.body.classList.remove('no-scroll','fusion-sheet-on');
+    setLenisStopped(false);
+  }
   function closePanels(){
+    if(typeof window.releaseFocusTrap==='function')try{window.releaseFocusTrap();}catch(e){}
     closeQuickSheet();
-    if(typeof window.closeDrawer==='function')try{window.closeDrawer();}catch(e){}
-    if(typeof window.closeModal==='function')try{window.closeModal();}catch(e){}
-    if(typeof window.closeMobileNav==='function')try{window.closeMobileNav();}catch(e){}
-    if(typeof window.closeImgZoom==='function')try{window.closeImgZoom();}catch(e){}
+    var confirm=$('confirmModal');
+    if(confirm&&confirm.style.display==='flex'){
+      if(!callGlobal('closeConfirmModal'))confirm.style.display='none';
+    }
+    callGlobal('closeImgZoom');
+    callGlobal('closeDrawer');
+    callGlobal('closeModal');
+    callGlobal('closeMobileNav');
+    document.body.classList.remove('search-open');
     ['flash-on','quiz-on','cal-on','dash-on','care-on'].forEach(function(c){document.body.classList.remove(c);});
     [
       ['flashcardSection','flashBtn'],
@@ -97,7 +135,7 @@
     try{calOn=false;}catch(e){}
     try{dashOn=false;}catch(e){}
     try{careOn=false;}catch(e){}
-    try{if(typeof lenis!=='undefined'&&lenis&&typeof lenis.start==='function')lenis.start();}catch(e){}
+    restoreScrollIfIdle();
   }
   function enhanceCatalogCards(){
     all('#plantCatalog .plant-actions').forEach(function(actions){
@@ -146,13 +184,30 @@
         '<button class="btn-luxe" onclick="openJournal(\''+p.id+'\')"><i class="fa-solid fa-book"></i> Journal</button>'+
         '<button class="btn-luxe" onclick="sharePlant(\''+p.id+'\')"><i class="fa-solid fa-share-nodes"></i> Partager</button>'+
       '</div>';
-    back.classList.add('open');sheet.classList.add('open');document.body.classList.add('fusion-sheet-on');
+    closePanels();
+    back.classList.add('open');sheet.classList.add('open');
+    sheet.setAttribute('aria-hidden','false');
+    document.body.classList.add('fusion-sheet-on','no-scroll');
+    setLenisStopped(true);
+    if(typeof window.trapFocus==='function')try{window.trapFocus(sheet);}catch(e){}
   }
   function closeQuickSheet(){
     var sheet=$('fusionQuickSheet'), back=$('fusionSheetBackdrop');
+    var wasOpen=!!(sheet&&sheet.classList.contains('open'));
+    if(wasOpen&&typeof window.releaseFocusTrap==='function')try{window.releaseFocusTrap();}catch(e){}
     if(sheet)sheet.classList.remove('open');
+    if(sheet)sheet.setAttribute('aria-hidden','true');
     if(back)back.classList.remove('open');
     document.body.classList.remove('fusion-sheet-on');
+    restoreScrollIfIdle();
+  }
+  function sheetIsOpen(){
+    var sheet=$('fusionQuickSheet');
+    return !!(sheet&&sheet.classList.contains('open'));
+  }
+  function closeSheetBeforeSurface(fn,ctx,args){
+    if(sheetIsOpen())closeQuickSheet();
+    return fn.apply(ctx,args);
   }
   window.fusionOpenSheet=openQuickSheet;
   window.fusionCloseSheet=closeQuickSheet;
@@ -262,6 +317,13 @@
         return out;
       };
     }
+    ['openEditDrawer','openJournal','sharePlant'].forEach(function(name){
+      var oldFn=window[name];
+      if(typeof oldFn!=='function')return;
+      window[name]=function(){
+        return closeSheetBeforeSurface(oldFn,this,arguments);
+      };
+    });
   }
   function init(){
     bind();

@@ -32,7 +32,7 @@
 
 html { overflow-x: hidden; max-width: 100vw; }
 /* Bloque le scroll body quand drawer ou menu mobile est ouvert */
-body.no-scroll { overflow: hidden; touch-action: none; }
+body.no-scroll { overflow: hidden; overscroll-behavior: contain; }
 body {
   background-color: var(--bg-sand);
   color: var(--ink-deep);
@@ -1514,7 +1514,7 @@ body.theme-dark .fusion-sheet-item{background:rgba(31,40,35,.7)}
   .fusion-module{min-height:104px;padding:12px}
   .fusion-module b{font-size:.98rem}
   .fusion-module span{font-size:.68rem}
-  .fusion-mobile-dock{position:fixed;left:0;right:0;bottom:0;height:76px;padding:7px 8px calc(8px + env(safe-area-inset-bottom));display:flex;align-items:flex-start;gap:4px;background:rgba(250,247,242,.94);border-top:1px solid var(--glass-border);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);z-index:3800;box-shadow:0 -14px 30px rgba(31,45,36,.12)}
+  .fusion-mobile-dock{position:fixed;left:0;right:0;bottom:0;height:76px;padding:7px 8px calc(8px + env(safe-area-inset-bottom));display:flex;align-items:flex-start;gap:4px;background:rgba(250,247,242,.94);border-top:1px solid var(--glass-border);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);z-index:890;box-shadow:0 -14px 30px rgba(31,45,36,.12)}
   .fusion-mobile-dock button{flex:1;border:0;background:transparent;color:var(--sage-green);font-family:var(--primary-sans);font-size:.62rem;font-weight:700;letter-spacing:.2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:6px 2px;border-radius:12px;cursor:pointer}
   .fusion-mobile-dock button i{font-size:1.05rem}
   .fusion-mobile-dock button.active,.fusion-mobile-dock button:focus-visible{color:var(--ink-deep);background:rgba(125,142,116,.13);outline:none}
@@ -1528,4 +1528,15 @@ body.theme-dark .fusion-sheet-item{background:rgba(31,40,35,.7)}
   .fusion-sheet-hero{grid-template-columns:76px 1fr}
   .fusion-sheet-img{width:76px;height:76px;border-radius:16px}
   .fusion-sheet-title h2{font-size:1.34rem}
+}
+
+/* Couches mobiles : les controles flottants restent sous les modales et drawers. */
+.img-zoom{z-index:4300}
+.flashcard-overlay{padding-left:calc(40px + env(safe-area-inset-left, 0px));padding-right:calc(40px + env(safe-area-inset-right, 0px));padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px));scroll-padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px));touch-action:pan-y}
+.quiz-overlay,.cal-overlay,.dash-overlay,.care-overlay{padding-left:calc(20px + env(safe-area-inset-left, 0px));padding-right:calc(20px + env(safe-area-inset-right, 0px));padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px));scroll-padding-bottom:calc(60px + env(safe-area-inset-bottom, 0px));touch-action:pan-y}
+.v7-modal{padding:calc(40px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-right, 0px)) calc(40px + env(safe-area-inset-bottom, 0px)) calc(16px + env(safe-area-inset-left, 0px));touch-action:pan-y}
+.fusion-sheet-body{padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));touch-action:pan-y}
+body.quiz-on .burger-btn,body.cal-on .burger-btn,body.dash-on .burger-btn,body.care-on .burger-btn,body.flash-on .burger-btn,body.no-scroll .burger-btn,body.fusion-sheet-on .burger-btn{opacity:0;visibility:hidden;pointer-events:none}
+@media(max-width:760px){
+  body.quiz-on .fusion-mobile-dock,body.cal-on .fusion-mobile-dock,body.dash-on .fusion-mobile-dock,body.care-on .fusion-mobile-dock,body.flash-on .fusion-mobile-dock,body.no-scroll .fusion-mobile-dock,body.fusion-sheet-on .fusion-mobile-dock{display:none !important;pointer-events:none}
 }
