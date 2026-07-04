@@ -98,6 +98,73 @@
   </div>
 </section>
 
+<!-- HUB MODULAIRE : fusion du prototype mobile avec le site complet -->
+<section class="fusion-hub" id="fusionHub" aria-label="Espaces de l'Herbier de Vie">
+  <div class="fusion-hub-shell">
+    <div class="fusion-hub-head">
+      <div>
+        <div class="fusion-kicker">Compagnon botanique</div>
+        <h2 class="fusion-hub-title">Un herbier riche, une navigation de poche</h2>
+        <p class="fusion-hub-copy">Retrouvez les grands espaces du carnet, reliés aux fiches, quiz, soins et statistiques déjà présents.</p>
+      </div>
+      <div class="fusion-stats" aria-label="Statistiques rapides">
+        <div class="fusion-stat"><b id="fusionTotal">0</b><span>espèces</span></div>
+        <div class="fusion-stat"><b id="fusionGarden">0</b><span>jardin</span></div>
+        <div class="fusion-stat"><b id="fusionFamilies">0</b><span>familles</span></div>
+        <div class="fusion-stat"><b id="fusionBloom">0</b><span>ce mois</span></div>
+      </div>
+    </div>
+    <div class="fusion-modules">
+      <button class="fusion-module accent" type="button" data-fusion-action="catalog">
+        <i class="fa-solid fa-leaf"></i>
+        <span><b>Mon Herbier</b><span>Explorer toute la collection</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="garden">
+        <i class="fa-solid fa-seedling"></i>
+        <span><b>Mon Jardin</b><span>Vos plantes adoptées</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="add">
+        <i class="fa-solid fa-circle-plus"></i>
+        <span><b>Inscrire</b><span>Nouvelle fiche guidée</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="flash">
+        <i class="fa-solid fa-brain"></i>
+        <span><b>Mémoire</b><span>Cartes à retourner</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="quiz">
+        <i class="fa-solid fa-trophy"></i>
+        <span><b>Révision</b><span>Quiz par nom, famille, photo</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="calendar">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span><b>Floraisons</b><span>Mois par mois</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="dash">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span><b>Tableau de Bord</b><span>Votre herbier en chiffres</span></span>
+      </button>
+      <button class="fusion-module" type="button" data-fusion-action="care">
+        <i class="fa-solid fa-hand-holding-droplet"></i>
+        <span><b>Soins</b><span>Conservation et routines</span></span>
+      </button>
+    </div>
+    <div class="fusion-panels" aria-label="Suivi quotidien">
+      <section class="fusion-panel">
+        <h3>Mon Jardin aujourd'hui</h3>
+        <div class="fusion-panel-list" id="fusionGardenPanel">
+          <div class="fusion-empty">Les rappels et plantes à surveiller apparaîtront ici.</div>
+        </div>
+      </section>
+      <section class="fusion-panel">
+        <h3>Révision intelligente</h3>
+        <div class="fusion-panel-list" id="fusionLearningPanel">
+          <div class="fusion-empty">Les cartes à revoir et familles fragiles apparaîtront ici.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
 <!-- CONTENEUR DU SCROLLYTELLING DES PLANTES -->
 <main class="scrollytelling-container" id="plantCatalog">
   <!-- Les fiches botaniques se génèrent ici en dynamique -->
@@ -428,6 +495,23 @@
 <!-- BANDEAU TOAST -->
 <div id="toast">Fiche mise à jour avec succès</div>
 
+<!-- FICHE EXPRESS MOBILE / TABLETTE -->
+<div class="fusion-sheet-backdrop" id="fusionSheetBackdrop"></div>
+<aside class="fusion-quick-sheet" id="fusionQuickSheet" aria-modal="true" aria-labelledby="fusionSheetTitle" role="dialog" data-lenis-prevent>
+  <div class="fusion-sheet-handle"></div>
+  <button class="fusion-sheet-close" type="button" aria-label="Fermer la fiche express" onclick="window.fusionCloseSheet&&window.fusionCloseSheet()"><i class="fa-solid fa-xmark"></i></button>
+  <div class="fusion-sheet-body" id="fusionSheetBody"></div>
+</aside>
+
+<!-- NAVIGATION MOBILE : raccourcis façon application -->
+<nav class="fusion-mobile-dock" aria-label="Navigation mobile de l'Herbier">
+  <button type="button" class="active" data-fusion-action="home"><i class="fa-solid fa-star"></i><span>Accueil</span></button>
+  <button type="button" data-fusion-action="catalog"><i class="fa-solid fa-leaf"></i><span>Herbier</span></button>
+  <button type="button" data-fusion-action="add"><i class="fa-solid fa-circle-plus"></i><span>Ajouter</span></button>
+  <button type="button" data-fusion-action="quiz"><i class="fa-solid fa-trophy"></i><span>Réviser</span></button>
+  <button type="button" data-fusion-action="care"><i class="fa-solid fa-hand-holding-droplet"></i><span>Soins</span></button>
+</nav>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">L'Herbier</div>
@@ -539,5 +623,6 @@
 <script src="js/extensions-v8.js"></script>
 
 <script src="js/extensions-v9.js"></script>
+<script src="js/extensions-v10.js"></script>
 </body>
 </html>
