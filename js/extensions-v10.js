@@ -164,6 +164,7 @@
     if(!name)return;
     if(name==='home'){
       closePanels();
+      if(typeof window.clearCompare==='function')try{window.clearCompare();}catch(e){}
       smoothTo($('heroSection'),0);
       markDock('home');
       return;

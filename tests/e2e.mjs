@@ -332,6 +332,14 @@ const browser = await chromium.launch(launchOpts);
   const sheetClosed = await page.evaluate(() => !document.getElementById('fusionQuickSheet').classList.contains('open'));
   check('fiche express se ferme à l\'Échap', sheetClosed);
 
+  // Dock "Accueil" referme la barre de comparaison si elle était ouverte
+  const homeClearsCompare = await page.evaluate(() => {
+    document.querySelector('.cmp-btn').click();
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="home"]').click();
+    return document.getElementById('v7-cmpbar').classList.contains('show');
+  });
+  check('dock "Accueil" referme la barre de comparaison', !homeClearsCompare);
+
   await ctx.close();
 }
 
