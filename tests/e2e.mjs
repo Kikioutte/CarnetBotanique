@@ -288,6 +288,61 @@ const browser = await chromium.launch(launchOpts);
   await ctx.close();
 }
 
+// ── 6. Dock mobile, hub et fiche express (v10) ─────────────────────────────
+{
+  console.log('▶ navigation "app mobile" (v10)');
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await newPage(ctx);
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+  await page.waitForTimeout(1500);
+
+  const hub = await page.evaluate(() => ({
+    dockVisible: getComputedStyle(document.querySelector('.fusion-mobile-dock')).display !== 'none',
+    total: parseInt(document.getElementById('fusionTotal').textContent, 10),
+    dockButtons: document.querySelectorAll('.fusion-mobile-dock [data-fusion-action]').length,
+  }));
+  check('dock visible en largeur mobile', hub.dockVisible, hub);
+  check('hub : statistique "espèces" peuplée', hub.total > 300, hub.total);
+  check('dock : 5 raccourcis présents', hub.dockButtons === 5, hub.dockButtons);
+
+  // Clic sur un bouton du dock → ouvre l'écran Soins
+  const care = await page.evaluate(() => {
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="care"]').click();
+    return { careOn: document.body.classList.contains('care-on'), active: document.querySelector('.fusion-mobile-dock [data-fusion-action="care"]').classList.contains('active') };
+  });
+  check('dock "Soins" ouvre l\'écran Soins', care.careOn, care);
+  check('dock "Soins" marqué actif', care.active, care);
+  await page.evaluate(() => window.toggleCareMode()); // referme
+
+  // Clic sur un bouton du dock → ouvre le tiroir d'ajout
+  const add = await page.evaluate(() => {
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="add"]').click();
+    return document.getElementById('plantDrawer').classList.contains('open');
+  });
+  check('dock "Ajouter" ouvre le tiroir', add);
+  await page.evaluate(() => window.closeDrawer());
+
+  // Fiche express : ouverture depuis une carte du catalogue, fermeture à l'Échap
+  const sheetOpen = await page.evaluate(() => {
+    document.querySelector('#plantCatalog .fusion-quick-btn').click();
+    return document.getElementById('fusionQuickSheet').classList.contains('open');
+  });
+  check('fiche express s\'ouvre depuis le catalogue', sheetOpen);
+  await page.keyboard.press('Escape');
+  const sheetClosed = await page.evaluate(() => !document.getElementById('fusionQuickSheet').classList.contains('open'));
+  check('fiche express se ferme à l\'Échap', sheetClosed);
+
+  // Dock "Accueil" referme la barre de comparaison si elle était ouverte
+  const homeClearsCompare = await page.evaluate(() => {
+    document.querySelector('.cmp-btn').click();
+    document.querySelector('.fusion-mobile-dock [data-fusion-action="home"]').click();
+    return document.getElementById('v7-cmpbar').classList.contains('show');
+  });
+  check('dock "Accueil" referme la barre de comparaison', !homeClearsCompare);
+
+  await ctx.close();
+}
+
 // ── Bilan ───────────────────────────────────────────────────────────────────
 const realErrors = pageErrors.filter(e => !/ERR_FAILED|Failed to fetch|NetworkError|Load failed/i.test(e));
 check('aucune erreur JavaScript', realErrors.length === 0, realErrors.slice(0, 5));
