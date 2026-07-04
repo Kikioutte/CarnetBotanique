@@ -939,6 +939,68 @@ function _wikiField(wikitext, keys) {
   return '';
 }
 
+/* Applique la réponse JSON de l'IA au formulaire d'ajout/édition.
+   Règles : ne remplit QUE les champs encore vides (les données Wikipédia/Wikidata,
+   plus factuelles, restent prioritaires) ; les <select> n'acceptent que leurs valeurs
+   légales (correspondance tolérante casse/inclusion) ; la case « invasive » n'est
+   cochée que sur un booléen explicite. Retourne la liste des libellés remplis. */
+function applyAIEnrichment(g) {
+  if (!g || typeof g !== 'object') return [];
+  var filled = [];
+  function txt(id, val, label) {
+    if (val == null || val === '') return;
+    var el = document.getElementById(id);
+    if (!el || String(el.value || '').trim()) return;
+    el.value = String(val);
+    filled.push(label);
+  }
+  function sel(id, val, label) {
+    if (!val) return;
+    var el = document.getElementById(id);
+    if (!el || el.value) return;
+    var v = String(val).trim().toLowerCase();
+    var opts = Array.prototype.filter.call(el.options, function (o) { return o.value; });
+    var hit = opts.find(function (o) { return o.value.toLowerCase() === v; })
+           || opts.find(function (o) { return v.indexOf(o.value.toLowerCase()) >= 0 || o.value.toLowerCase().indexOf(v) >= 0; });
+    if (hit) { el.value = hit.value; filled.push(label); }
+  }
+  txt('formFamille',     g.famille,     'Famille');
+  sel('formType',        g.type,        'Catégorie');
+  txt('formRegion',      g.region,      'Région');
+  txt('formBesoins',     g.besoins,     'Besoins');
+  txt('formEnnemis',     g.ennemis,     'Ennemis');
+  sel('formFeuillage',   g.feuillage,   'Feuillage');
+  sel('formPort',        g.port,        'Port');
+  txt('formHauteur',     g.hauteur,     'Hauteur');
+  txt('formCouleur',     g.couleur,     'Couleur');
+  txt('formRusticite',   g.rusticite,   'Rusticité');
+  txt('formFlTexte',     g.flTexte || g.fl_texte, 'Floraison');
+  sel('formToxPets',     g.toxPets,     'Toxicité animaux');
+  txt('formToxDetail',   g.toxDetail,   'Détail toxicité');
+  if (g.invasive === true && !_gc('formInvasive')) { _sc('formInvasive', true); filled.push('Invasif'); }
+  txt('formVisu1',       g.visu1,       'Fleurs');
+  txt('formVisu2',       g.visu2,       'Feuilles');
+  txt('formMnemonic',    g.mnemonic,    'Mnémo');
+  sel('formExposition',  g.exposition,  'Exposition');
+  sel('formArrosage',    g.arrosage,    'Arrosage');
+  txt('formHumidite',    g.humidite,    'Humidité');
+  txt('formTemperature', g.temperature, 'Température');
+  txt('formRempotage',   g.rempotage,   'Rempotage');
+  txt('formEngrais',     g.engrais,     'Engrais');
+  txt('formPrincipes',   g.principes,   'Principes actifs');
+  txt('formPrepa',       g.prepa,       'Prépa');
+  txt('formTempIdeale',  g.tempIdeale,  'Temp. idéale');
+  txt('formTenueVase',   g.tenueVase,   'Tenue vase');
+  txt('formConservation',g.conservation,'Conservation');
+  txt('formStockage',    g.stockage,    'Stockage');
+  txt('formPrecautions', g.precautions, 'Précautions');
+  if (Array.isArray(g.substrat) && g.substrat.length && !readSubstratRows().length) {
+    var subOk = g.substrat.filter(function (s) { return s && s.m; });
+    if (subOk.length) { renderSubstratRows(subOk); filled.push('Substrat'); }
+  }
+  return filled;
+}
+
 async function autoFillFromWiki(forcedTitle) {
   var term = forcedTitle || (document.getElementById('autoFillInput') || {}).value || '';
   term = term.trim();
@@ -1218,7 +1280,11 @@ async function autoFillFromWiki(forcedTitle) {
     }
     if (typeof switchFormTab === 'function') switchFormTab(0);
 
-    // Enrichissement Gemini Flash si clé disponible
+    // Enrichissement Gemini Flash si clé disponible.
+    // Le prompt couvre TOUS les champs du formulaire (les infobox Wikipédia contiennent
+    // rarement les données de culture) ; les menus déroulants reçoivent leurs valeurs
+    // exactes pour pouvoir être sélectionnés, et la case « invasive » un booléen.
+    // applyAIEnrichment() ne remplit ensuite que ce qui est encore vide.
     var _gKey = localStorage.getItem('herbier_gemini_key');
     if (_gKey) {
       setAutoFillStatus('🤖 Enrichissement IA en cours…', '');
@@ -1230,15 +1296,43 @@ async function autoFillFromWiki(forcedTitle) {
           + '- Catégorie : '  + _gv('formType') + '\n'
           + '- Région : '     + _gv('formRegion') + '\n'
           + '- Description : '+ _gv('formBesoins').substring(0, 300) + '\n\n'
-          + 'Réponds UNIQUEMENT avec un objet JSON valide (sans markdown, sans texte avant/après), '
-          + 'avec ces clés si tu les connais (omet celles inconnues) :\n'
-          + '{"rempotage":"conseil bref","mnemonic":"astuce mnémotechnique courte",'
-          + '"substrat":[{"m":"matériau en français","p":pourcentage_entier}],'
-          + '"prepa":"préparation pro avant mise en vase",'
-          + '"tempIdeale":"ex: 4–8°C","tenueVase":"ex: 7–10 jours",'
-          + '"conservation":"conseil conservation fleuriste",'
-          + '"stockage":"conditions stockage idéales",'
-          + '"precautions":"éthylène, courants d\'air, etc."}';
+          + 'Complète sa fiche botanique. Réponds UNIQUEMENT avec un objet JSON valide '
+          + '(sans markdown, sans texte avant/après). Renseigne un MAXIMUM de clés — '
+          + 'omets uniquement celles dont tu n\'es vraiment pas sûr. Pour les clés à '
+          + 'valeurs imposées, recopie EXACTEMENT une des valeurs proposées :\n'
+          + '{\n'
+          + '"famille":"famille botanique en français (ex: Lamiacées)",\n'
+          + '"type":"une valeur parmi : Fleur coupée / Feuillage / Plante d\'intérieur / Plante d\'extérieur / Plante de jardin / Plante bulbeuse / Plante acidophile / Herbe aromatique / Succulente / Arbre \\/ Arbuste / Autre",\n'
+          + '"region":"origine géographique",\n'
+          + '"besoins":"conseils de soin et conservation en 2-3 phrases",\n'
+          + '"ennemis":"maladies et ravageurs principaux",\n'
+          + '"feuillage":"une valeur parmi : Persistant / Caduc / Semi-persistant / Marcescent",\n'
+          + '"port":"une valeur parmi : Érigé / Retombant / Étalé / Rampant / Grimpant / Touffu",\n'
+          + '"hauteur":"ex: 30–60 cm",\n'
+          + '"couleur":"couleur(s) dominante(s)",\n'
+          + '"rusticite":"ex: Zone 7, -15°C",\n'
+          + '"flTexte":"période de floraison, ex: Juin à août",\n'
+          + '"toxPets":"safe ou toxic (pour chiens/chats)",\n'
+          + '"toxDetail":"précisions toxicité animaux (symptômes, parties toxiques)",\n'
+          + '"invasive":false,\n'
+          + '"visu1":"reconnaissance visuelle — fleurs/inflorescence",\n'
+          + '"visu2":"reconnaissance visuelle — feuilles/port",\n'
+          + '"mnemonic":"astuce mnémotechnique courte",\n'
+          + '"exposition":"une valeur parmi : Plein soleil / Mi-ombre / Ombre partielle / Ombre complète",\n'
+          + '"arrosage":"une valeur parmi : Faible (1x par mois) / Modéré (1x par semaine) / Fréquent (2x par semaine)",\n'
+          + '"humidite":"ex: 50–70%",\n'
+          + '"temperature":"ex: 15–25°C",\n'
+          + '"rempotage":"conseil bref",\n'
+          + '"engrais":"ex: NPK équilibré, mars–sept.",\n'
+          + '"substrat":[{"m":"matériau en français","p":60}],\n'
+          + '"principes":"principes actifs / composés notables",\n'
+          + '"prepa":"préparation pro avant mise en vase",\n'
+          + '"tempIdeale":"ex: 4–8°C",\n'
+          + '"tenueVase":"ex: 7–10 jours",\n'
+          + '"conservation":"conseil conservation fleuriste",\n'
+          + '"stockage":"conditions stockage idéales",\n'
+          + '"precautions":"éthylène, courants d\'air, etc."\n'
+          + '}';
 
         // Essai en cascade sur plusieurs modèles (disponibilité variable selon la clé/région)
         var _gModels = [
@@ -1249,7 +1343,7 @@ async function autoFillFromWiki(forcedTitle) {
         var _gData = null;
         var _gLastErr = '';
         var _gBody = JSON.stringify({ contents:[{parts:[{text:_gPrompt}]}],
-          generationConfig:{temperature:0.2, maxOutputTokens:1500} });
+          generationConfig:{temperature:0.2, maxOutputTokens:3000, responseMimeType:'application/json'} });
         for (var _mi = 0; _mi < _gModels.length; _mi++) {
           try {
             var _gRes = await _ft(_gModels[_mi] + '?key=' + encodeURIComponent(_gKey),
@@ -1290,21 +1384,11 @@ async function autoFillFromWiki(forcedTitle) {
         }
 
         if (_gJson) {
-          var _gFilled = [];
-          if (_gJson.rempotage)                         { _sv('formRempotage',   _gJson.rempotage);    _gFilled.push('Rempotage'); }
-          if (_gJson.mnemonic)                          { _sv('formMnemonic',    _gJson.mnemonic);     _gFilled.push('Mnémo'); }
-          if (_gJson.prepa)                             { _sv('formPrepa',       _gJson.prepa);        _gFilled.push('Prépa'); }
-          if (_gJson.tempIdeale)                        { _sv('formTempIdeale',  _gJson.tempIdeale);   _gFilled.push('Temp'); }
-          if (_gJson.tenueVase)                         { _sv('formTenueVase',   _gJson.tenueVase);    _gFilled.push('Tenue vase'); }
-          if (_gJson.conservation)                      { _sv('formConservation',_gJson.conservation); _gFilled.push('Conservation'); }
-          if (_gJson.stockage)                          { _sv('formStockage',    _gJson.stockage);     _gFilled.push('Stockage'); }
-          if (_gJson.precautions)                       { _sv('formPrecautions', _gJson.precautions);  _gFilled.push('Précautions'); }
-          if (Array.isArray(_gJson.substrat) && _gJson.substrat.length) {
-            renderSubstratRows(_gJson.substrat); _gFilled.push('Substrat IA');
-          }
+          var _gFilled = applyAIEnrichment(_gJson);
           var _tot = filled.length + _gFilled.length;
-          setAutoFillStatus('✓ ' + _tot + ' champs importés' +
-            (_gFilled.length ? ' · IA : ' + _gFilled.join(', ') : ''), 'ok');
+          setAutoFillStatus('✓ ' + _tot + ' champs importés (' + filled.length + ' Wikipedia'
+            + (_gFilled.length ? ' + ' + _gFilled.length + ' IA' : '') + ')'
+            + (_gFilled.length ? ' · IA : ' + _gFilled.join(', ') : ''), 'ok');
         } else {
           // (message déjà affiché dans le bloc de debug ci-dessus)
         }

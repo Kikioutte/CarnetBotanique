@@ -103,6 +103,45 @@ const browser = await chromium.launch(launchOpts);
   check('adoption : bouton mis à jour en place', adopt.btnReflects);
   check('adoption : catalogue non reconstruit', adopt.noRebuild);
 
+  // Enrichissement IA : tous les champs remplis/cochés, sans écraser Wikipédia
+  const ai = await page.evaluate(() => {
+    openDrawer('add');
+    document.getElementById('formRegion').value = 'Provence (source Wikipédia)'; // déjà rempli → ne doit PAS être écrasé
+    const filled = applyAIEnrichment({
+      famille: 'Lamiacées', type: "Plante d'extérieur", region: 'Méditerranée',
+      besoins: 'Sol drainé.', ennemis: 'Cécidomyie.', feuillage: 'persistant',
+      port: 'Touffu', hauteur: '40 cm', couleur: 'Violet', rusticite: '-15°C',
+      flTexte: 'Juin à août', toxPets: 'safe', toxDetail: 'Sans danger',
+      invasive: true, visu1: 'Épis violets', visu2: 'Feuilles linéaires',
+      mnemonic: 'Lavande = lavage', exposition: 'Plein soleil',
+      arrosage: 'Faible (1x par mois)', humidite: '40%', temperature: '15–25°C',
+      rempotage: 'Printemps', engrais: 'Aucun', principes: 'Linalol',
+      prepa: 'Recoupe', tempIdeale: '4–8°C', tenueVase: '7 jours',
+      conservation: 'Chambre froide', stockage: 'Sec', precautions: 'Éthylène',
+      substrat: [{ m: 'Terreau', p: 60 }, { m: 'Sable', p: 40 }],
+    });
+    const out = {
+      count: filled.length,
+      type: document.getElementById('formType').value,
+      feuillage: document.getElementById('formFeuillage').value,  // « persistant » minuscule → doit matcher
+      exposition: document.getElementById('formExposition').value,
+      arrosage: document.getElementById('formArrosage').value,
+      toxPets: document.getElementById('formToxPets').value,
+      invasive: document.getElementById('formInvasive').checked,
+      regionPreserved: document.getElementById('formRegion').value === 'Provence (source Wikipédia)',
+      substrat: readSubstratRows().length,
+    };
+    closeDrawer();
+    return out;
+  });
+  check('IA : ~30 champs appliqués', ai.count >= 28, ai.count);
+  check('IA : selects renseignés (type/feuillage/expo/arrosage/toxicité)',
+    ai.type === "Plante d'extérieur" && ai.feuillage === 'Persistant' && ai.exposition === 'Plein soleil'
+    && ai.arrosage === 'Faible (1x par mois)' && ai.toxPets === 'safe', ai);
+  check('IA : case invasive cochée', ai.invasive === true);
+  check('IA : champ Wikipédia non écrasé', ai.regionPreserved);
+  check('IA : substrat appliqué', ai.substrat === 2, ai.substrat);
+
   // Suppression + annulation
   const undo = await page.evaluate(async () => {
     const n0 = plants.length;
