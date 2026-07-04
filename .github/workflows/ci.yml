@@ -23,5 +23,5 @@ jobs:
       - name: Vérifier que le SEO statique est à jour
         run: |
           node scripts/build-seo.mjs
-          git diff --exit-code especes.html || {
-            echo "::error::especes.html n'est pas à jour — lancez 'npm run build:seo' et committez."; exit 1; }
+          git diff --exit-code especes.html sitemap.xml robots.txt || {
+            echo "::error::SEO statique obsolète — lancez 'npm run build:seo' et committez."; exit 1; }

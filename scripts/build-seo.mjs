@@ -63,17 +63,18 @@ header a{color:#C36A4B}footer{margin-top:48px;font-size:.85em;color:#7D8E74}
      <a href="index.html">ouvrir le carnet interactif</a>.</p>
 </header>
 ${rows}
-<footer>Généré depuis plants.json — ${new Date().toISOString().slice(0, 10)} · <a href="index.html">L'Herbier de Vie</a></footer>
+<footer>Généré depuis plants.json · <a href="index.html">L'Herbier de Vie</a></footer>
 </body>
 </html>
 `;
 writeFileSync(join(ROOT, 'especes.html'), html);
 
-const today = new Date().toISOString().slice(0, 10);
+// Sortie volontairement déterministe (pas de date de génération) : la CI vérifie que
+// les fichiers committés correspondent exactement à une régénération depuis plants.json.
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${SITE}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>
-  <url><loc>${SITE}especes.html</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>${SITE}</loc><changefreq>weekly</changefreq></url>
+  <url><loc>${SITE}especes.html</loc><changefreq>weekly</changefreq></url>
 </urlset>
 `;
 writeFileSync(join(ROOT, 'sitemap.xml'), sitemap);
