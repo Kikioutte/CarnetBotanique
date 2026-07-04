@@ -343,6 +343,36 @@ const browser = await chromium.launch(launchOpts);
   await ctx.close();
 }
 
+// ── 7. Résilience photo : retomber sur les candidats suivants avant le générique ──
+{
+  console.log('▶ résilience des photos de fiche');
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+  const page = await newPage(ctx);
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+  await page.waitForTimeout(1200);
+
+  const r = await page.evaluate(() => {
+    const id = plants[0].id;
+    const sec = document.getElementById('section-' + id);
+    const img = sec.querySelector('.scrolly-img');
+    sectionImgs[id] = { imgs: ['https://bad1.example/x.jpg', 'https://bad2.example/y.jpg', 'https://good.example/z.jpg'], idx: 0 };
+    applySectionImg(id);
+    const step0 = img.src;
+    handleSectionImgError(img);
+    const step1 = { src: img.src, idx: sectionImgs[id].idx };
+    handleSectionImgError(img);
+    const step2 = { src: img.src, idx: sectionImgs[id].idx };
+    handleSectionImgError(img); // plus de candidat → doit retomber sur la photo générique
+    const step3 = { src: img.src, idx: sectionImgs[id].idx };
+    return { step0, step1, step2, step3 };
+  });
+  check('1er échec → tente le 2e candidat', r.step1.src === 'https://bad2.example/y.jpg' && r.step1.idx === 1, r);
+  check('2e échec → tente le 3e candidat', r.step2.src === 'https://good.example/z.jpg' && r.step2.idx === 2, r);
+  check('candidats épuisés → repli sur la photo générique', /images\.unsplash\.com/.test(r.step3.src), r);
+
+  await ctx.close();
+}
+
 // ── Bilan ───────────────────────────────────────────────────────────────────
 const realErrors = pageErrors.filter(e => !/ERR_FAILED|Failed to fetch|NetworkError|Load failed/i.test(e));
 check('aucune erreur JavaScript', realErrors.length === 0, realErrors.slice(0, 5));

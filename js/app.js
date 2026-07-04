@@ -298,6 +298,14 @@ function applySectionImg(id){
   var dots=document.getElementById('dots-'+id);
   if(dots){ var ds=dots.querySelectorAll('.dot'); for(var k=0;k<ds.length;k++){ ds[k].classList.toggle('on',k===st.idx); } }
 }
+// Si la photo choisie échoue (lien mort, hoquet réseau), on tente les autres
+// candidats déjà trouvés par Wikimedia avant de retomber sur la photo générique.
+function handleSectionImgError(imgEl){
+  var sec=imgEl.closest('.scrolly-section'); var id=sec&&sec.id.replace('section-','');
+  var st=id&&sectionImgs[id];
+  if(st&&st.imgs&&st.idx<st.imgs.length-1){ st.idx++; applySectionImg(id); return; }
+  imgEl.removeAttribute('srcset'); imgEl.removeAttribute('sizes'); imgEl.src=HERO_FALLBACK;
+}
 function sectionImg(id,dir,ev){
   if(ev&&ev.stopPropagation) ev.stopPropagation();
   var st=sectionImgs[id]; if(!st) return;
@@ -363,7 +371,7 @@ function renderCatalog() {
       <section class="scrolly-section" id="section-${p.id}" data-w1="${esc(p.w1||p.nomLat)}" data-w2="${esc(p.w2||p.nomLat)}">
         <div class="scrolly-grid">
           <div class="scrolly-media" id="media-${p.id}">
-            <img alt="${esc(p.nomFr)}" class="scrolly-img" loading="lazy" decoding="async" width="1200" height="900" src="${HERO_FALLBACK}" onerror="this.removeAttribute('srcset');this.removeAttribute('sizes');this.src='${HERO_FALLBACK}'">
+            <img alt="${esc(p.nomFr)}" class="scrolly-img" loading="lazy" decoding="async" width="1200" height="900" src="${HERO_FALLBACK}" onerror="handleSectionImgError(this)">
             ${isTox ? `<div class="scrolly-overlay-badge"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(p.toxDetail||p.tox_detail||'Toxique animaux')}</div>` : ''}
             <div class="water-indicator-floating"><i class="fa-solid fa-scissors"></i> ${esc(p.type||'')}</div>
             <div class="media-zoom-cue"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
