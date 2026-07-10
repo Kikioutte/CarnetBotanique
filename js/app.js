@@ -506,52 +506,232 @@ function initGSAPAnimations() {
 // --- APPRENTISSAGE & MODE FLASHCARDS ---
 /* ══ SOINS & CONSERVATION — logique ══ */
 var careOn=false;
-var CARE_TASKS=[
-  "Recouper la tige en biseau",
-  "Eau propre + conservateur floral",
-  "Effeuiller la partie immergée",
-  "À l'abri de l'éthylène & des courants d'air"
+var GLOBAL_CARE_TIPS=[
+  "Observer la plante avant d'intervenir",
+  "Adapter l'arrosage au substrat, à la saison et à la température",
+  "Utiliser du matériel propre",
+  "Ne jamais fertiliser une plante affaiblie ou fraîchement rempotée"
 ];
-var careState={};
-function loadCareState(){ try{ var s=JSON.parse(localStorage.getItem('herbier_care_v1')); if(s&&typeof s==='object') careState=s; }catch(e){} }
-function saveCareState(){ try{ localStorage.setItem('herbier_care_v1', JSON.stringify(careState)); }catch(e){} }
-function toggleCareTask(id, idx){
-  if(!careState[id]) careState[id]={};
-  careState[id][idx] = !careState[id][idx];
-  saveCareState(); renderCare();
+var careState={version:2,startedAt:'',months:{},legacy:{}};
+var careStateLoaded=false;
+
+function normalizeCareText(value){
+  return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+/* Interprète uniquement les indications saisonnières explicites.
+   « Planté à l'achat », « acheté en godet », etc. ne sont pas des mois. */
+function parseCareMonths(value){
+  var text=normalizeCareText(value);
+  if(!text || /plante?e?\s+a?\s*l'achat|achete?e?\s*(en|au)?\s*godet|mise\s+en\s+terre|achat|semis|bouture|non\s+concerne|aucun\s+engrais/.test(text)) return [];
+  var months=[
+    ['janvier|janv|jan',1],['fevrier|fevr|fev',2],['mars',3],
+    ['avril|avr',4],['mai',5],['juin',6],['juillet|juil',7],
+    ['aout|aou',8],['septembre|sept',9],['octobre|oct',10],
+    ['novembre|nov',11],['decembre|dec',12]
+  ];
+  var matches=[];
+  months.forEach(function(m){
+    var re=new RegExp('(?:^|[^a-z])('+m[0]+')(?=[^a-z]|$)','ig'), hit;
+    while((hit=re.exec(text))){ matches.push({month:m[1],index:hit.index}); if(re.lastIndex===hit.index) re.lastIndex++; }
+  });
+  matches.sort(function(a,b){return a.index-b.index;});
+  var found=matches.map(function(x){return x.month;});
+  var seasons=[
+    [/printemps/, [3,4,5]], [/ete/, [6,7,8]], [/automne/, [9,10,11]], [/hiver/, [12,1,2]]
+  ];
+  seasons.forEach(function(s){ if(s[0].test(text)) found=found.concat(s[1]); });
+  if(matches.length===2){
+    var between=text.slice(matches[0].index,matches[1].index);
+    if(/\b(a|au|jusqu|jusqu'a)\b|[-–—]/.test(between)){
+      found=[];
+      for(var n=matches[0].month;;n=(n%12)+1){
+        found.push(n);
+        if(n===matches[1].month||found.length>=12) break;
+      }
+    }
+  }
+  return found.filter(function(m,i,a){ return a.indexOf(m)===i; }).sort(function(a,b){return a-b;});
+}
+function careMonthName(month){
+  return ['','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][month]||'';
+}
+function carePeriod(offset){
+  var d=new Date(); d.setDate(1); d.setMonth(d.getMonth()+(offset||0));
+  var m=d.getMonth()+1;
+  return {key:d.getFullYear()+'-'+String(m).padStart(2,'0'),month:m,year:d.getFullYear(),label:careMonthName(m)+' '+d.getFullYear()};
+}
+function plantCareKind(p){
+  var type=normalizeCareText(p&&p.type), text=normalizeCareText([p&&p.nomFr,p&&p.nomLat,p&&p.famille].join(' '));
+  if(type.indexOf('fleur coupee')>=0) return 'cut';
+  if(type==='feuillage') return 'foliage-cut';
+  if(type.indexOf('acidophile')>=0) return 'acid';
+  if(type.indexOf('bulbeuse')>=0) return 'bulb';
+  if(/dionaea|nepenthes|drosera|sarracenia|droseracees|nepenthacees/.test(text)) return 'carnivorous';
+  if(/orchidacees|phalaenopsis|cymbidium|dendrobium|oncidium|cattleya|vanda|miltonia|odontoglossum|paphiopedilum/.test(text)) return 'orchid';
+  if(/cactacees|crassulacees|euphorbia|aloe|sansevier|zamioculcas|aeonium|sedum|kalanchoe|echeveria|crassula/.test(text)) return 'succulent';
+  if(type.indexOf('interieur')>=0) return 'indoor';
+  if(type.indexOf('exterieur')>=0||type.indexOf('jardin')>=0||type.indexOf('aromatique')>=0) return 'outdoor';
+  return 'indoor';
+}
+function baseCareTaskDefs(p){
+  var kind=plantCareKind(p), defs={
+    cut:[
+      {key:'cut-stem',label:'Recouper les tiges avec un outil propre'},
+      {key:'fresh-water',label:'Renouveler l’eau et le conservateur floral'},
+      {key:'strip-leaves',label:'Retirer les feuilles immergées et les fleurs fanées'},
+      {key:'check-vase',label:'Contrôler le niveau d’eau et éloigner des fruits mûrs'}
+    ],
+    'foliage-cut':[
+      {key:'cut-stem',label:'Recouper les tiges avec un outil propre'},
+      {key:'fresh-water',label:'Renouveler l’eau du vase'},
+      {key:'clean-foliage',label:'Nettoyer le feuillage et retirer les parties abîmées'},
+      {key:'check-vase',label:'Contrôler le niveau d’eau et l’exposition'}
+    ],
+    indoor:[
+      {key:'check-water',label:'Vérifier l’humidité du substrat avant d’arroser'},
+      {key:'health-check',label:'Observer feuilles, tiges et parasites'},
+      {key:'clean-leaves',label:'Retirer les feuilles fanées et dépoussiérer si nécessaire'},
+      {key:'check-light',label:'Contrôler l’exposition et tourner le pot si utile'}
+    ],
+    orchid:[
+      {key:'check-roots',label:'Vérifier les racines et l’humidité du substrat'},
+      {key:'drain-pot',label:'Vider toute eau stagnante après l’arrosage'},
+      {key:'health-check',label:'Observer feuilles, hampes et parasites'},
+      {key:'flower-care',label:'Retirer seulement les parties totalement sèches'}
+    ],
+    succulent:[
+      {key:'check-dryness',label:'Arroser uniquement lorsque le substrat est bien sec'},
+      {key:'check-rot',label:'Vérifier l’absence de pourriture au collet'},
+      {key:'health-check',label:'Observer cochenilles et autres parasites'},
+      {key:'check-light',label:'Contrôler la lumière sans brûlure directe'}
+    ],
+    carnivorous:[
+      {key:'check-water-tray',label:'Maintenir une eau adaptée selon l’espèce'},
+      {key:'no-fertilizer',label:'Ne pas ajouter d’engrais au substrat'},
+      {key:'remove-traps',label:'Retirer uniquement les pièges totalement noirs'},
+      {key:'check-dormancy',label:'Respecter la période de repos de l’espèce'}
+    ],
+    outdoor:[
+      {key:'check-water',label:'Vérifier l’humidité du sol ou du pot'},
+      {key:'deadhead',label:'Retirer les fleurs fanées et parties abîmées'},
+      {key:'health-check',label:'Observer ravageurs et maladies'},
+      {key:'support-mulch',label:'Contrôler paillage, tuteurage et drainage'}
+    ],
+    bulb:[
+      {key:'check-water',label:'Vérifier l’humidité sans détremper le bulbe'},
+      {key:'deadhead',label:'Retirer les fleurs fanées sans couper le feuillage vert'},
+      {key:'check-rot',label:'Observer le bulbe et le collet pour prévenir la pourriture'},
+      {key:'check-dormancy',label:'Respecter le repos après jaunissement du feuillage'}
+    ],
+    acid:[
+      {key:'check-water',label:'Vérifier l’humidité et privilégier une eau peu calcaire'},
+      {key:'check-acidity',label:'Contrôler paillage et maintien d’un substrat acide'},
+      {key:'deadhead',label:'Retirer les fleurs fanées et parties abîmées'},
+      {key:'health-check',label:'Observer chlorose, ravageurs et maladies'}
+    ]
+  };
+  return (defs[kind]||defs.indoor).slice();
+}
+function seasonalCareTaskDefsForMonth(p, month){
+  var tasks=[], repot=String(p&&p.rempotage||'').trim(), fert=String(p&&p.engrais||'').trim();
+  if(repot && parseCareMonths(repot).indexOf(Number(month))>=0) tasks.push({key:'repot',label:'Rempotage — '+repot});
+  if(fert && parseCareMonths(fert).indexOf(Number(month))>=0) tasks.push({key:'fertilize',label:'Fertilisation — '+fert});
+  return tasks;
+}
+function careTaskDefsForMonth(p, month){
+  return baseCareTaskDefs(p).concat(seasonalCareTaskDefsForMonth(p,month));
+}
+/* Compatibilité et tests : renvoie les libellés comme l'ancienne fonction. */
+function careTasksForMonth(p, month){
+  return careTaskDefsForMonth(p,month).map(function(t){return t.label;});
+}
+function loadCareState(){
+  if(careStateLoaded) return;
+  careStateLoaded=true;
+  var raw=null;
+  try{ raw=JSON.parse(localStorage.getItem('herbier_care_v1')); }catch(e){}
+  if(raw&&raw.version===2&&raw.months&&typeof raw.months==='object'){
+    careState=raw;
+    if(!careState.legacy) careState.legacy={};
+    if(!careState.startedAt) careState.startedAt=carePeriod(0).key;
+  } else {
+    careState={version:2,startedAt:carePeriod(0).key,months:{},legacy:(raw&&typeof raw==='object'?raw:{})};
+    saveCareState();
+  }
+}
+function saveCareState(){
+  try{ localStorage.setItem('herbier_care_v1',JSON.stringify(careState)); }catch(e){}
+}
+function carePlantState(periodKey,id,create){
+  if(create&&!careState.months[periodKey]) careState.months[periodKey]={};
+  var month=careState.months[periodKey];
+  if(!month) return {};
+  if(create&&!month[id]) month[id]={};
+  return month[id]||{};
+}
+function migrateLegacyCare(p,defs,periodKey){
+  var legacy=careState.legacy&&careState.legacy[p.id];
+  if(!legacy) return false;
+  var st=carePlantState(periodKey,p.id,true);
+  defs.forEach(function(t,i){ if(legacy[i]) st[t.key]=true; });
+  delete careState.legacy[p.id];
+  return true;
+}
+function toggleCareTask(id,taskKey,periodKey){
+  loadCareState();
+  var st=carePlantState(periodKey||carePeriod(0).key,id,true);
+  st[taskKey]=!st[taskKey];
+  saveCareState();
+  renderCare();
+}
+function careOverdueTaskDefs(p){
+  loadCareState();
+  var prev=carePeriod(-1);
+  if(!careState.months[prev.key]||prev.key<careState.startedAt) return [];
+  var st=carePlantState(prev.key,p.id,false);
+  return seasonalCareTaskDefsForMonth(p,prev.month).filter(function(t){return !st[t.key];});
 }
 function renderCare(){
   loadCareState();
   var body=document.getElementById('careBody'); if(!body) return;
-  var adopted=plants.filter(function(p){ return p.inGarden===true; });
-  var html='';
-  html+='<div class="care-sec"><h3>Protocoles essentiels</h3><div class="care-tips">'+
-    CARE_TASKS.map(function(t){ return '<div class="care-tip"><i class="fa-solid fa-leaf"></i> '+esc(t)+'</div>'; }).join('')+
+  var adopted=plants.filter(function(p){return p.inGarden===true;});
+  var current=carePeriod(0), html='', migrated=false;
+  html+='<div class="care-sec"><h3>Principes essentiels</h3><div class="care-tips">'+
+    GLOBAL_CARE_TIPS.map(function(t){return '<div class="care-tip"><i class="fa-solid fa-leaf"></i> '+esc(t)+'</div>';}).join('')+
     '</div></div>';
   html+='<div class="care-sec"><h3>Mes fiches à soigner ('+adopted.length+')</h3>';
+  html+='<p class="care-month-context"><i class="fa-solid fa-calendar-days"></i> '+esc(current.label)+' · les validations repartent automatiquement à zéro chaque mois.</p>';
   if(!adopted.length){
     html+='<div class="care-empty">Aucune espèce adoptée pour l\'instant.<br>Passez en <b>Mon Jardin</b> et adoptez des fiches pour suivre leurs soins ici.</div>';
-  } else {
-    adopted.sort(function(a,b){ return a.nomFr.localeCompare(b.nomFr); });
+  }else{
+    adopted.sort(function(a,b){return a.nomFr.localeCompare(b.nomFr);});
     html+=adopted.map(function(p){
-      var st=careState[p.id]||{};
-      var done=0; for(var k=0;k<CARE_TASKS.length;k++){ if(st[k]) done++; }
-      var tasks=CARE_TASKS.map(function(t,i){
-        var on=!!st[i];
-        return '<button class="care-task'+(on?' done':'')+'" onclick="toggleCareTask(\''+p.id+'\','+i+')"><span class="cbx">'+(on?'<i class="fa-solid fa-check"></i>':'')+'</span>'+esc(t)+'</button>';
+      var defs=careTaskDefsForMonth(p,current.month);
+      if(migrateLegacyCare(p,defs,current.key)) migrated=true;
+      var st=carePlantState(current.key,p.id,true);
+      var done=defs.filter(function(t){return !!st[t.key];}).length;
+      var seasonal=defs.slice(baseCareTaskDefs(p).length);
+      var overdue=careOverdueTaskDefs(p);
+      var tasksHtml=defs.map(function(t){
+        var on=!!st[t.key];
+        return '<button class="care-task'+(on?' done':'')+'" onclick="toggleCareTask(\''+p.id+'\',\''+t.key+'\',\''+current.key+'\')"><span class="cbx">'+(on?'<i class="fa-solid fa-check"></i>':'')+'</span>'+esc(t.label)+'</button>';
       }).join('');
-      return '<div class="care-card">'+
-        '<div class="care-h"><span class="care-n">'+esc(p.nomFr)+'</span><span class="care-prog">'+done+'/'+CARE_TASKS.length+'</span></div>'+
+      return '<div class="care-card" data-care-kind="'+esc(plantCareKind(p))+'">'+
+        '<div class="care-h"><span class="care-n">'+esc(p.nomFr)+'</span><span class="care-prog">'+done+'/'+defs.length+'</span></div>'+
         '<div class="care-lat">'+esc(p.nomLat)+' · '+esc(p.famille)+'</div>'+
-        '<div class="care-proto"><b>Conservation</b> &nbsp;'+esc(p.besoins)+'</div>'+
-        (p.ennemis ? '<div class="care-warn"><i class="fa-solid fa-triangle-exclamation"></i> '+esc(p.ennemis)+'</div>' : '')+
-        '<div class="care-tasks">'+tasks+'</div>'+
+        '<div class="care-proto"><b>Conseil principal</b> &nbsp;'+esc(p.besoins||p.description||'')+'</div>'+
+        (seasonal.length?'<div class="care-seasonal"><i class="fa-solid fa-calendar-check"></i> '+seasonal.length+' tâche(s) saisonnière(s) à faire ce mois-ci</div>':'')+
+        (overdue.length?'<div class="care-overdue"><i class="fa-solid fa-clock-rotate-left"></i> <b>En retard :</b> '+esc(overdue.map(function(t){return t.label;}).join(' · '))+'</div>':'')+
+        (p.ennemis?'<div class="care-warn"><i class="fa-solid fa-triangle-exclamation"></i> '+esc(p.ennemis)+'</div>':'')+
+        '<div class="care-tasks">'+tasksHtml+'</div>'+
       '</div>';
     }).join('');
   }
   html+='</div>';
   body.innerHTML=html;
+  if(migrated) saveCareState();
 }
+
 function toggleCareMode(){
   var willOpen=!careOn;
   _closeAllPanels();

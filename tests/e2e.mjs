@@ -68,6 +68,63 @@ const browser = await chromium.launch(launchOpts);
   check('JSON-LD non vide', r.jsonld > 300, r.jsonld);
   check('toutes les icônes masquées', r.icons.total > 100 && r.icons.ok === r.icons.total, r.icons);
 
+
+  // Soins saisonniers : données, profils, mois et réinitialisation
+  const careMonths = await page.evaluate(() => {
+    const current = carePeriod(0);
+    const previous = carePeriod(-1);
+    const originalState = JSON.parse(JSON.stringify(careState));
+    const originalLoaded = careStateLoaded;
+    const fake = {
+      id: 'qa-care-plant', nomFr: 'QA soins', nomLat: 'Qualitas cura',
+      famille: 'Testacées', type: "Plante d'intérieur",
+      rempotage: careMonthName(previous.month), engrais: ''
+    };
+    careState = { version: 2, startedAt: previous.key, months: {}, legacy: {} };
+    careStateLoaded = true;
+    careState.months[previous.key] = { 'qa-care-plant': {} };
+    const overdueBefore = careOverdueTaskDefs(fake).map(t => t.key);
+    careState.months[previous.key]['qa-care-plant'].repot = true;
+    const overdueAfter = careOverdueTaskDefs(fake).map(t => t.key);
+    const currentFresh = carePlantState(current.key, fake.id, true).repot !== true;
+    careState = originalState;
+    careStateLoaded = originalLoaded;
+    return {
+      purchase: parseCareMonths("Planté à l'achat"),
+      purchaseCurly: parseCareMonths("Planté à l’achat"),
+      godet: parseCareMonths('Acheté en godet'),
+      spring: parseCareMonths('Au printemps'),
+      range: parseCareMonths('de mars à septembre'),
+      crossYear: parseCareMonths('de novembre à février'),
+      marchTasks: careTasksForMonth({ rempotage: "Planté à l'achat", engrais: 'mars à septembre' }, 3),
+      coverage: plants.filter(p => p.rempotage && p.engrais).length,
+      total: plants.length,
+      cutKind: plantCareKind({ type: 'Fleur coupée' }),
+      orchidKind: plantCareKind({ type: "Plante d'intérieur", famille: 'Orchidacées' }),
+      carnKind: plantCareKind({ type: "Plante d'intérieur", nomLat: 'Dionaea muscipula' }),
+      cutKeys: baseCareTaskDefs({ type: 'Fleur coupée' }).map(t => t.key),
+      indoorKeys: baseCareTaskDefs({ type: "Plante d'intérieur", famille: 'Aracées' }).map(t => t.key),
+      overdueBefore, overdueAfter, currentFresh
+    };
+  });
+  check('soins : les 335 fiches ont rempotage et engrais',
+    careMonths.total === 335 && careMonths.coverage === careMonths.total, careMonths);
+  check('soins : achat/plantation ne produit aucun mois',
+    careMonths.purchase.length === 0 && careMonths.purchaseCurly.length === 0 && careMonths.godet.length === 0, careMonths);
+  check('soins : saison printemps interprétée', JSON.stringify(careMonths.spring) === '[3,4,5]', careMonths.spring);
+  check('soins : plage mars-septembre interprétée', JSON.stringify(careMonths.range) === '[3,4,5,6,7,8,9]', careMonths.range);
+  check('soins : plage novembre-février interprétée', JSON.stringify(careMonths.crossYear) === '[1,2,11,12]', careMonths.crossYear);
+  check('soins : aucun faux rappel de rempotage en mars',
+    careMonths.marchTasks.some(t => /^Fertilisation/.test(t)) && !careMonths.marchTasks.some(t => /^Rempotage/.test(t)), careMonths.marchTasks);
+  check('soins : profils fleur/orchidée/carnivore reconnus',
+    careMonths.cutKind === 'cut' && careMonths.orchidKind === 'orchid' && careMonths.carnKind === 'carnivorous', careMonths);
+  check('soins : tâches adaptées au type',
+    careMonths.cutKeys.includes('fresh-water') && careMonths.indoorKeys.includes('check-water')
+    && !careMonths.indoorKeys.includes('fresh-water'), careMonths);
+  check('soins : tâche précédente signalée puis retirée après validation',
+    careMonths.overdueBefore.includes('repot') && careMonths.overdueAfter.length === 0, careMonths);
+  check('soins : validation du mois précédent non reportée au mois courant', careMonths.currentFresh, careMonths);
+
   // Recherche visible sur tablette
   await page.setViewportSize({ width: 900, height: 800 });
   check('recherche visible @900px', await page.evaluate(() => getComputedStyle(document.querySelector('.search-wrapper')).display !== 'none'));

@@ -1259,6 +1259,9 @@ html:has(body.care-on),html:has(body.quiz-on),html:has(body.cal-on),html:has(bod
 .care-lat{font-family:var(--primary-sans);font-style:italic;font-size:.8rem;color:var(--sage-green);margin-bottom:8px}
 .care-proto{font-family:var(--primary-sans);font-size:.85rem;color:var(--ink-deep);line-height:1.5;margin-bottom:6px}
 .care-proto b{color:var(--sage-green);text-transform:uppercase;letter-spacing:.5px;font-size:.7rem}
+.care-month-context{display:flex;align-items:center;justify-content:center;gap:8px;margin:-4px 0 16px;padding:10px 14px;border-radius:10px;background:rgba(104,128,109,.09);color:var(--sage-green);font-family:var(--primary-sans);font-size:.82rem;text-align:center}
+.care-seasonal{display:flex;align-items:center;gap:8px;margin:8px 0 10px;padding:8px 10px;border-radius:8px;background:rgba(104,128,109,.12);color:var(--sage-green);font-family:var(--primary-sans);font-size:.8rem;font-weight:600}
+.care-overdue{display:flex;align-items:flex-start;gap:8px;margin:8px 0 10px;padding:9px 10px;border:1px solid rgba(195,106,75,.24);border-radius:8px;background:rgba(195,106,75,.1);color:var(--terracotta-dark);font-family:var(--primary-sans);font-size:.8rem;line-height:1.45}
 .care-warn{display:flex;gap:8px;font-family:var(--primary-sans);font-size:.8rem;color:var(--terracotta-dark);background:rgba(195,106,75,.08);border-radius:8px;padding:8px 10px;margin-bottom:10px}
 .care-tasks{display:flex;flex-direction:column;gap:8px}
 .care-task{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--bg-sand);border:1px solid var(--glass-border);border-radius:10px;padding:12px 14px;font-family:var(--primary-sans);font-size:.9rem;color:var(--ink-deep);cursor:pointer;transition:var(--transition-smooth)}
