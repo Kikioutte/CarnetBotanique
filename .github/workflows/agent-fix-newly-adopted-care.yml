@@ -4,16 +4,21 @@ on:
   push:
     branches:
       - fix/newly-adopted-care-overdue
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   apply-fix:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: fix/newly-adopted-care-overdue
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
