@@ -512,7 +512,7 @@ var GLOBAL_CARE_TIPS=[
   "Utiliser du matériel propre",
   "Ne jamais fertiliser une plante affaiblie ou fraîchement rempotée"
 ];
-var careState={version:2,startedAt:'',months:{},legacy:{}};
+var careState={version:2,startedAt:'',months:{},legacy:{},adoptedAt:{}};
 var careStateLoaded=false;
 
 function normalizeCareText(value){
@@ -653,9 +653,10 @@ function loadCareState(){
   if(raw&&raw.version===2&&raw.months&&typeof raw.months==='object'){
     careState=raw;
     if(!careState.legacy) careState.legacy={};
+    if(!careState.adoptedAt) careState.adoptedAt={};
     if(!careState.startedAt) careState.startedAt=carePeriod(0).key;
   } else {
-    careState={version:2,startedAt:carePeriod(0).key,months:{},legacy:(raw&&typeof raw==='object'?raw:{})};
+    careState={version:2,startedAt:carePeriod(0).key,months:{},legacy:(raw&&typeof raw==='object'?raw:{}),adoptedAt:{}};
     saveCareState();
   }
 }
@@ -688,6 +689,8 @@ function careOverdueTaskDefs(p){
   loadCareState();
   var prev=carePeriod(-1);
   if(!careState.months[prev.key]||prev.key<careState.startedAt) return [];
+  var adoptedAt=careState.adoptedAt&&careState.adoptedAt[p.id];
+  if(adoptedAt&&prev.key<adoptedAt) return [];
   var st=carePlantState(prev.key,p.id,false);
   return seasonalCareTaskDefsForMonth(p,prev.month).filter(function(t){return !st[t.key];});
 }
@@ -882,6 +885,10 @@ function toggleGardenStatus(id) {
   const p = plants.find(item => item.id === id);
   if (!p) return;
   p.inGarden = !p.inGarden;
+  loadCareState();
+  if(p.inGarden) careState.adoptedAt[p.id]=carePeriod(0).key;
+  else delete careState.adoptedAt[p.id];
+  saveCareState();
   saveData();
   showToast(p.inGarden ? `${p.nomFr} ajoutée à votre Jardin` : `${p.nomFr} retirée de votre Jardin`);
   // En mode Jardin la liste filtrée change : re-rendu complet nécessaire.

@@ -80,9 +80,12 @@ const browser = await chromium.launch(launchOpts);
       famille: 'Testacées', type: "Plante d'intérieur",
       rempotage: careMonthName(previous.month), engrais: ''
     };
-    careState = { version: 2, startedAt: previous.key, months: {}, legacy: {} };
+    careState = { version: 2, startedAt: previous.key, months: {}, legacy: {}, adoptedAt: {} };
     careStateLoaded = true;
     careState.months[previous.key] = { 'qa-care-plant': {} };
+    careState.adoptedAt[fake.id] = current.key;
+    const newlyAdoptedOverdue = careOverdueTaskDefs(fake).map(t => t.key);
+    delete careState.adoptedAt[fake.id];
     const overdueBefore = careOverdueTaskDefs(fake).map(t => t.key);
     careState.months[previous.key]['qa-care-plant'].repot = true;
     const overdueAfter = careOverdueTaskDefs(fake).map(t => t.key);
@@ -104,7 +107,7 @@ const browser = await chromium.launch(launchOpts);
       carnKind: plantCareKind({ type: "Plante d'intérieur", nomLat: 'Dionaea muscipula' }),
       cutKeys: baseCareTaskDefs({ type: 'Fleur coupée' }).map(t => t.key),
       indoorKeys: baseCareTaskDefs({ type: "Plante d'intérieur", famille: 'Aracées' }).map(t => t.key),
-      overdueBefore, overdueAfter, currentFresh
+      newlyAdoptedOverdue, overdueBefore, overdueAfter, currentFresh
     };
   });
   check('soins : les 335 fiches ont rempotage et engrais',
@@ -121,6 +124,8 @@ const browser = await chromium.launch(launchOpts);
   check('soins : tâches adaptées au type',
     careMonths.cutKeys.includes('fresh-water') && careMonths.indoorKeys.includes('check-water')
     && !careMonths.indoorKeys.includes('fresh-water'), careMonths);
+  check('soins : une plante adoptée ce mois-ci n’a aucun faux retard',
+    careMonths.newlyAdoptedOverdue.length === 0, careMonths.newlyAdoptedOverdue);
   check('soins : tâche précédente signalée puis retirée après validation',
     careMonths.overdueBefore.includes('repot') && careMonths.overdueAfter.length === 0, careMonths);
   check('soins : validation du mois précédent non reportée au mois courant', careMonths.currentFresh, careMonths);
