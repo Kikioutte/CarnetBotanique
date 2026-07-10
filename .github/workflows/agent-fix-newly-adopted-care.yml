@@ -89,6 +89,7 @@ jobs:
           node --check tests/e2e.mjs
           node --check sw.js
           npm install
+          npx playwright install --with-deps chromium
           npm test
           npm run build:seo
       - name: Commit validated fix
