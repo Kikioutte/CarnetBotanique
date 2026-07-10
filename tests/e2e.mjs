@@ -68,6 +68,25 @@ const browser = await chromium.launch(launchOpts);
   check('JSON-LD non vide', r.jsonld > 300, r.jsonld);
   check('toutes les icônes masquées', r.icons.total > 100 && r.icons.ok === r.icons.total, r.icons);
 
+
+  // Soins saisonniers : mois explicites uniquement, sans faux positif « achat »
+  const careMonths = await page.evaluate(() => ({
+    purchase: parseCareMonths("Planté à l'achat"),
+    purchaseCurly: parseCareMonths("Planté à l’achat"),
+    godet: parseCareMonths('Acheté en godet'),
+    spring: parseCareMonths('Au printemps'),
+    range: parseCareMonths('de mars à septembre'),
+    crossYear: parseCareMonths('de novembre à février'),
+    marchTasks: careTasksForMonth({ rempotage: "Planté à l'achat", engrais: 'mars à septembre' }, 3),
+  }));
+  check('soins : achat/plantation ne produit aucun mois',
+    careMonths.purchase.length === 0 && careMonths.purchaseCurly.length === 0 && careMonths.godet.length === 0, careMonths);
+  check('soins : saison printemps interprétée', JSON.stringify(careMonths.spring) === '[3,4,5]', careMonths.spring);
+  check('soins : plage mars-septembre interprétée', JSON.stringify(careMonths.range) === '[3,4,5,6,7,8,9]', careMonths.range);
+  check('soins : plage novembre-février interprétée', JSON.stringify(careMonths.crossYear) === '[1,2,11,12]', careMonths.crossYear);
+  check('soins : aucun faux rappel de rempotage en mars',
+    careMonths.marchTasks.some(t => /^Fertilisation/.test(t)) && !careMonths.marchTasks.some(t => /^Rempotage/.test(t)), careMonths.marchTasks);
+
   // Recherche visible sur tablette
   await page.setViewportSize({ width: 900, height: 800 });
   check('recherche visible @900px', await page.evaluate(() => getComputedStyle(document.querySelector('.search-wrapper')).display !== 'none'));
