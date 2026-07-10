@@ -37,6 +37,81 @@ function check(name, cond, extra) {
   else { failures++; console.error('  ✗ ' + name + (extra !== undefined ? ' — ' + JSON.stringify(extra) : '')); }
 }
 
+// ── Audit botanique des données ─────────────────────────────────────────────
+{
+  console.log('▶ audit botanique');
+  const auditedPlants = JSON.parse(fs.readFileSync(path.join(ROOT, 'plants.json'), 'utf8'));
+  const botanicalSources = JSON.parse(fs.readFileSync(path.join(ROOT, 'botanical-sources.json'), 'utf8'));
+  const liveTypes = new Set(["Plante d'intérieur", "Plante d'extérieur", 'Plante bulbeuse', 'Plante acidophile']);
+  const living = auditedPlants.filter(p => liveTypes.has(p.type));
+  const ids = new Set(auditedPlants.map(p => p.id));
+  const knownSources = new Set(botanicalSources.sources.map(s => s.id));
+  const usedSources = new Set(auditedPlants.flatMap(p => p.verification?.sourceIds || []));
+  const carePairs = new Set(living.map(p => p.rempotage + '|' + p.engrais));
+  const careProfiles = new Set(living.map(p => p.careProfile).filter(Boolean));
+  const careFields = ['exposition', 'arrosage', 'temperature', 'humidite', 'rempotage', 'engrais', 'careProfile'];
+  const missingCare = living.filter(p => careFields.some(k => !String(p[k] || '').trim()));
+  const badSubstrate = living.filter(p => !Array.isArray(p.substrat) || !p.substrat.length ||
+    p.substrat.reduce((sum, row) => sum + Number(row.p || 0), 0) !== 100);
+  const badVerification = auditedPlants.filter(p => p.verification?.date !== '2026-07-10' ||
+    !(p.verification?.sourceIds || []).length);
+  const knownToxic = [
+    'p112-zamioculcas-zamiifolia', 'p150-anthurium-andreanum',
+    'p155-monstera-deliciosa', 'p208-buxus-sempervirens',
+    'p217-citrofortunella-microcarpa', 'p220-petroselinum-sativum',
+    'p266-cyclamen-persicum', 'p309-prunus-laurocerasus'
+  ];
+  const knownSafe = [
+    'p118-echeveria-setosa', 'p121-sedum-morganianum',
+    'p133-phoenix-roebelenii', 'p169-sinningia-speciosa',
+    'p172-pachira-aquatica', 'p234-ocimum-basilicum',
+    'p246-petunia-hybrides', 'p275-camellia-japonica'
+  ];
+  const byId = id => auditedPlants.find(p => p.id === id);
+  const taxonExamples = {
+    snake: byId('p113-sansevieria-trifasciata-s-cylindrica')?.nomLat,
+    rosemary: byId('p213-rosmarinus-officinalis')?.nomLat,
+    calathea: byId('p173-calathea-makoyana')?.nomLat,
+    cyperus: byId('p180-cyperus-alternifolius')?.nomLat,
+    pericallis: byId('p223-senecio-cruentus')?.nomLat,
+    philodendron: byId('p153-philodendron-scandens-xanadu-selloum')?.nomLat,
+    azalea: byId('p270-azalea-japonica')?.nomLat
+  };
+
+  check('botanique : 335 identifiants uniques',
+    auditedPlants.length === 335 && ids.size === auditedPlants.length,
+    { total: auditedPlants.length, unique: ids.size });
+  check('botanique : 181 plantes vivantes couvertes par 107 profils',
+    living.length === 181 && careProfiles.size === 107,
+    { living: living.length, profiles: careProfiles.size });
+  check('botanique : calendriers réellement différenciés',
+    carePairs.size >= 100, carePairs.size);
+  check('botanique : besoins et substrats complets',
+    missingCare.length === 0 && badSubstrate.length === 0,
+    { missingCare: missingCare.map(p => p.id), badSubstrate: badSubstrate.map(p => p.id) });
+  check('botanique : audit daté et sources résolues',
+    badVerification.length === 0 && [...usedSources].every(id => knownSources.has(id)) &&
+    botanicalSources.scope.records === auditedPlants.length,
+    { badVerification: badVerification.map(p => p.id), unknownSources: [...usedSources].filter(id => !knownSources.has(id)) });
+  check('botanique : corrections taxonomiques conservées',
+    taxonExamples.snake?.startsWith('Dracaena ') &&
+    taxonExamples.rosemary === 'Salvia rosmarinus' &&
+    taxonExamples.calathea === 'Goeppertia makoyana' &&
+    taxonExamples.cyperus === 'Cyperus alternifolius subsp. flabelliformis' &&
+    taxonExamples.pericallis === 'Pericallis cruenta' &&
+    taxonExamples.philodendron === 'Philodendron hederaceum / P. xanadu / P. bipinnatifidum' &&
+    taxonExamples.azalea === 'Rhododendron Obtusum Group',
+    taxonExamples);
+  check('botanique : espèces toxiques connues jamais déclarées sûres',
+    knownToxic.every(id => byId(id)?.toxPets === 'toxic'),
+    knownToxic.filter(id => byId(id)?.toxPets !== 'toxic'));
+  check('botanique : espèces non toxiques vérifiées conservées',
+    knownSafe.every(id => byId(id)?.toxPets === 'safe'),
+    knownSafe.filter(id => byId(id)?.toxPets !== 'safe'));
+  check('botanique : incertitude jamais affichée comme non toxique',
+    auditedPlants.filter(p => p.toxPets === 'unknown').every(p => !/non toxique/i.test(p.toxicite || '')));
+}
+
 const pageErrors = [];
 async function newPage(context) {
   const page = await context.newPage();
