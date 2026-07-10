@@ -513,6 +513,56 @@ var CARE_TASKS=[
   "À l'abri de l'éthylène & des courants d'air"
 ];
 var careState={};
+
+/* Interprète uniquement les indications saisonnières explicites.
+   Important : « planté à l'achat », « acheté en godet », etc. ne sont
+   pas des mois et ne doivent jamais déclencher un rappel en mars. */
+function parseCareMonths(value){
+  var text=String(value||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if(!text || /plante?e?\s+a?\s*l'achat|achete?e?\s*(en|au)?\s*godet|mise\s+en\s+terre|achat|semis|bouture/.test(text)) return [];
+  var months=[
+    ['janvier|janv|jan',1],['fevrier|fevr|fev',2],['mars',3],
+    ['avril|avr',4],['mai',5],['juin',6],['juillet|juil',7],
+    ['aout|aou',8],['septembre|sept',9],['octobre|oct',10],
+    ['novembre|nov',11],['decembre|dec',12]
+  ];
+  var matches=[];
+  months.forEach(function(m){
+    var re=new RegExp('(?:^|[^a-z])('+m[0]+')(?=[^a-z]|$)','ig'), hit;
+    while((hit=re.exec(text))){ matches.push({month:m[1],index:hit.index}); if(re.lastIndex===hit.index) re.lastIndex++; }
+  });
+  matches.sort(function(a,b){return a.index-b.index;});
+  var found=matches.map(function(x){return x.month;});
+  var seasons=[
+    [/printemps/, [3,4,5]], [/ete/, [6,7,8]], [/automne/, [9,10,11]], [/hiver/, [12,1,2]]
+  ];
+  seasons.forEach(function(s){ if(s[0].test(text)) found=found.concat(s[1]); });
+  /* Gère les plages explicites, y compris « novembre à février ». */
+  if(matches.length===2){
+    var between=text.slice(matches[0].index,matches[1].index);
+    if(/\b(a|au|jusqu|jusqu'a)\b|[-–—]/.test(between)){
+      found=[];
+      for(var n=matches[0].month;;n=(n%12)+1){
+        found.push(n);
+        if(n===matches[1].month||found.length>=12) break;
+      }
+    }
+  }
+  return found.filter(function(m,i,a){ return a.indexOf(m)===i; }).sort(function(a,b){return a-b;});
+}
+function careMonthName(month){
+  return ['','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][month]||'';
+}
+function careTasksForMonth(p, month){
+  var m=Number(month)||new Date().getMonth()+1;
+  var tasks=CARE_TASKS.slice();
+  var repot=String(p&&p.rempotage||'').trim();
+  var fert=String(p&&p.engrais||'').trim();
+  if(repot && parseCareMonths(repot).indexOf(m)>=0) tasks.push('Rempotage — '+repot);
+  if(fert && parseCareMonths(fert).indexOf(m)>=0) tasks.push('Fertilisation — '+fert);
+  return tasks;
+}
 function loadCareState(){ try{ var s=JSON.parse(localStorage.getItem('herbier_care_v1')); if(s&&typeof s==='object') careState=s; }catch(e){} }
 function saveCareState(){ try{ localStorage.setItem('herbier_care_v1', JSON.stringify(careState)); }catch(e){} }
 function toggleCareTask(id, idx){
@@ -524,34 +574,40 @@ function renderCare(){
   loadCareState();
   var body=document.getElementById('careBody'); if(!body) return;
   var adopted=plants.filter(function(p){ return p.inGarden===true; });
+  var month=new Date().getMonth()+1;
   var html='';
   html+='<div class="care-sec"><h3>Protocoles essentiels</h3><div class="care-tips">'+
     CARE_TASKS.map(function(t){ return '<div class="care-tip"><i class="fa-solid fa-leaf"></i> '+esc(t)+'</div>'; }).join('')+
     '</div></div>';
   html+='<div class="care-sec"><h3>Mes fiches à soigner ('+adopted.length+')</h3>';
+  html+='<p class="care-month-context">Tâches saisonnières de '+esc(careMonthName(month))+' · basées uniquement sur les mois renseignés dans chaque fiche.</p>';
   if(!adopted.length){
     html+='<div class="care-empty">Aucune espèce adoptée pour l\'instant.<br>Passez en <b>Mon Jardin</b> et adoptez des fiches pour suivre leurs soins ici.</div>';
   } else {
     adopted.sort(function(a,b){ return a.nomFr.localeCompare(b.nomFr); });
     html+=adopted.map(function(p){
       var st=careState[p.id]||{};
-      var done=0; for(var k=0;k<CARE_TASKS.length;k++){ if(st[k]) done++; }
-      var tasks=CARE_TASKS.map(function(t,i){
+      var tasks=careTasksForMonth(p,month);
+      var done=0; for(var k=0;k<tasks.length;k++){ if(st[k]) done++; }
+      var seasonal=tasks.slice(CARE_TASKS.length);
+      var tasksHtml=tasks.map(function(t,i){
         var on=!!st[i];
         return '<button class="care-task'+(on?' done':'')+'" onclick="toggleCareTask(\''+p.id+'\','+i+')"><span class="cbx">'+(on?'<i class="fa-solid fa-check"></i>':'')+'</span>'+esc(t)+'</button>';
       }).join('');
       return '<div class="care-card">'+
-        '<div class="care-h"><span class="care-n">'+esc(p.nomFr)+'</span><span class="care-prog">'+done+'/'+CARE_TASKS.length+'</span></div>'+
+        '<div class="care-h"><span class="care-n">'+esc(p.nomFr)+'</span><span class="care-prog">'+done+'/'+tasks.length+'</span></div>'+
         '<div class="care-lat">'+esc(p.nomLat)+' · '+esc(p.famille)+'</div>'+
-        '<div class="care-proto"><b>Conservation</b> &nbsp;'+esc(p.besoins)+'</div>'+
+        '<div class="care-proto"><b>Conservation</b> &nbsp;'+esc(p.besoins||p.description||'')+'</div>'+
+        (seasonal.length ? '<div class="care-seasonal"><i class="fa-solid fa-calendar-check"></i> '+esc(seasonal.length+' tâche(s) saisonnière(s) ce mois-ci')+'</div>' : '')+
         (p.ennemis ? '<div class="care-warn"><i class="fa-solid fa-triangle-exclamation"></i> '+esc(p.ennemis)+'</div>' : '')+
-        '<div class="care-tasks">'+tasks+'</div>'+
+        '<div class="care-tasks">'+tasksHtml+'</div>'+
       '</div>';
     }).join('');
   }
   html+='</div>';
   body.innerHTML=html;
 }
+
 function toggleCareMode(){
   var willOpen=!careOn;
   _closeAllPanels();
