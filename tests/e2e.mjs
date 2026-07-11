@@ -68,6 +68,21 @@ const browser = await chromium.launch(launchOpts);
   check('JSON-LD non vide', r.jsonld > 300, r.jsonld);
   check('toutes les icônes masquées', r.icons.total > 100 && r.icons.ok === r.icons.total, r.icons);
 
+  // Statique : chaque classe fa-* référencée dans le code a sa règle de masque dans icons.css
+  // (le check DOM ci-dessus ne voit que les icônes rendues au chargement).
+  {
+    const iconCss = fs.readFileSync(path.join(ROOT, 'css/icons.css'), 'utf8');
+    const defined = new Set([...iconCss.matchAll(/\.fa-([a-z0-9-]+)/g)].map(m => m[1]));
+    defined.add('solid'); defined.add('regular');
+    const used = new Set();
+    for (const f of ['index.html', 'especes.html', 'js/app.js', 'js/extensions-v7.js', 'js/extensions-v8.js', 'js/extensions-v9.js', 'js/extensions-v10.js']) {
+      const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
+      for (const m of src.matchAll(/fa-(?:solid|regular)\s+fa-([a-z0-9-]+)/g)) used.add(m[1]);
+    }
+    const missing = [...used].filter(u => !defined.has(u));
+    check('icônes : toutes les classes fa-* du code définies dans icons.css', missing.length === 0, missing);
+  }
+
 
   // Soins saisonniers : données, profils, mois et réinitialisation
   const careMonths = await page.evaluate(() => {
@@ -166,6 +181,20 @@ const browser = await chromium.launch(launchOpts);
   check('adoption : état basculé', adopt.stateFlipped);
   check('adoption : bouton mis à jour en place', adopt.btnReflects);
   check('adoption : catalogue non reconstruit', adopt.noRebuild);
+
+  // Rappels d'arrosage v9 : les plantes adoptées apparaissent bien
+  // (régression : lecture de window.plants, qui n'existe pas — `plants` est un let de portée script)
+  const rem = await page.evaluate(() => {
+    const p = plants.find(x => !x.inGarden);
+    toggleGardenStatus(p.id);
+    window.openReminders();
+    const groups = document.querySelectorAll('#v7-modal .sp-group').length;
+    const empty = !!document.querySelector('#v7-modal .v7-empty');
+    window.closeModal();
+    toggleGardenStatus(p.id); // restaure
+    return { groups, empty };
+  });
+  check('rappels v9 : plante adoptée listée dans la modale', rem.groups >= 1 && !rem.empty, rem);
 
   // Enrichissement IA : tous les champs remplis/cochés, sans écraser Wikipédia
   const ai = await page.evaluate(() => {

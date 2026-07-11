@@ -9,7 +9,9 @@
   function store(){return lg(KEY,{});}
   function save(s){ls(KEY,s);}
   function uid(){return 's'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-  function adopted(){try{return window.plants.filter(function(p){return p.inGarden===true;});}catch(e){return [];}}
+  /* `plants` est un `let` de portée script (app.js) : jamais attaché à window,
+     mais visible depuis les <script> suivants — on le référence donc directement. */
+  function adopted(){try{return (Array.isArray(plants)?plants:[]).filter(function(p){return p.inGarden===true;});}catch(e){return [];}}
   function ensure(pid){var s=store();if(!s[pid]||!s[pid].length){var j=(window.journal&&window.journal[pid])||{};s[pid]=[{id:uid(),label:'',zone:j.zone||'',every:j.waterEvery||0,last:j.lastWater||''}];save(s);}return s;}
   function specs(pid){return ensure(pid)[pid];}
   function specDue(sp){if(!sp.every||sp.every<=0)return false;if(!sp.last)return true;return (Date.now()-new Date(sp.last).getTime())>=sp.every*86400000;}
