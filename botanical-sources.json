@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 1,
+  "auditedAt": "2026-07-10",
+  "scope": {
+    "records": 335,
+    "livingPlants": 181,
+    "careProfiles": 107
+  },
+  "methodology": [
+    "Les calendriers saisonniers concernent les plantes vivantes ; fleurs et feuillages coupés conservent des consignes post-récolte.",
+    "Les périodes sont adaptées au climat tempéré de l’hémisphère Nord et doivent être décalées dans l’hémisphère Sud.",
+    "La toxicité n’est déclarée sûre que lorsqu’une source vétérinaire la répertorie comme non toxique ; sinon la fiche reste toxique ou non confirmée.",
+    "Les hybrides et groupes horticoles sont nommés comme tels ; les synonymes commerciaux restent disponibles pour la recherche."
+  ],
+  "sources": [
+    {
+      "id": "kew-powo",
+      "organisation": "Royal Botanic Gardens, Kew",
+      "title": "Plants of the World Online (POWO)",
+      "url": "https://powo.science.kew.org/",
+      "usage": "Noms acceptés, synonymes, familles et répartition native."
+    },
+    {
+      "id": "rhs-houseplants",
+      "organisation": "Royal Horticultural Society",
+      "title": "Houseplants growing guide",
+      "url": "https://www.rhs.org.uk/plants/types/houseplants/growing-guide",
+      "usage": "Besoins généraux des plantes d’intérieur."
+    },
+    {
+      "id": "rhs-feeding",
+      "organisation": "Royal Horticultural Society",
+      "title": "Nutrition and feeding plants",
+      "url": "https://www.rhs.org.uk/garden-jobs/nutrition-feeding-plants",
+      "usage": "Périodes et précautions de fertilisation."
+    },
+    {
+      "id": "rhs-repotting",
+      "organisation": "Royal Horticultural Society",
+      "title": "How to repot a plant",
+      "url": "https://www.rhs.org.uk/container-gardening/how-to-repot-a-plant",
+      "usage": "Déclencheurs et périodes de rempotage."
+    },
+    {
+      "id": "rhs-cacti-succulents",
+      "organisation": "Royal Horticultural Society",
+      "title": "Cacti and succulents as houseplants",
+      "url": "https://www.rhs.org.uk/plants/types/cacti-succulents/houseplants/growing-guide",
+      "usage": "Repos, arrosage, substrat et fertilisation des cactus et succulentes."
+    },
+    {
+      "id": "rhs-bulbs",
+      "organisation": "Royal Horticultural Society",
+      "title": "Bulbs growing guide",
+      "url": "https://www.rhs.org.uk/plants/types/bulbs/growing-guide",
+      "usage": "Cycle végétatif et repos des bulbes."
+    },
+    {
+      "id": "rhs-bulb-planting",
+      "organisation": "Royal Horticultural Society",
+      "title": "How to plant bulbs",
+      "url": "https://www.rhs.org.uk/plants/types/bulbs/planting",
+      "usage": "Fenêtres de plantation des bulbes."
+    },
+    {
+      "id": "rhs-bromeliads",
+      "organisation": "Royal Horticultural Society",
+      "title": "How to grow bromeliads",
+      "url": "https://www.rhs.org.uk/plants/bromeliads/growing-guide",
+      "usage": "Lumière, humidité et entretien des broméliacées."
+    },
+    {
+      "id": "rhs-orchids",
+      "organisation": "Royal Horticultural Society",
+      "title": "Indoor orchids",
+      "url": "https://www.rhs.org.uk/plants/types/orchids/indoor",
+      "usage": "Principes communs des orchidées d’intérieur."
+    },
+    {
+      "id": "rhs-phalaenopsis",
+      "organisation": "Royal Horticultural Society",
+      "title": "Phalaenopsis growing guide",
+      "url": "https://www.rhs.org.uk/plants/phalaenopsis/growing-guide",
+      "usage": "Calendrier et besoins des Phalaenopsis."
+    },
+    {
+      "id": "rhs-cymbidium",
+      "organisation": "Royal Horticultural Society",
+      "title": "How to grow Cymbidium orchids",
+      "url": "https://www.rhs.org.uk/plants/cymbidium-orchids/how-to-grow-cymbidium-orchids",
+      "usage": "Calendrier et besoins des Cymbidium."
+    },
+    {
+      "id": "rhs-paphiopedilum",
+      "organisation": "Royal Horticultural Society",
+      "title": "Paphiopedilum growing guide",
+      "url": "https://www.rhs.org.uk/plants/paphiopedilum/growing-guide",
+      "usage": "Calendrier et besoins des Paphiopedilum."
+    },
+    {
+      "id": "rhs-oncidium",
+      "organisation": "Royal Horticultural Society",
+      "title": "Oncidium orchids growing guide",
+      "url": "https://www.rhs.org.uk/plants/oncidium-orchids/cool/growing-guide",
+      "usage": "Calendrier et besoins des Oncidium et apparentés horticoles."
+    },
+    {
+      "id": "rhs-harmful-plants",
+      "organisation": "Royal Horticultural Society",
+      "title": "Potentially harmful garden plants",
+      "url": "https://www.rhs.org.uk/prevention-protection/potentially-harmful-garden-plants",
+      "usage": "Contrôle de la toxicité et des irritations pour l’humain."
+    },
+    {
+      "id": "aspca-toxic-plants",
+      "organisation": "ASPCA Animal Poison Control Center",
+      "title": "Toxic and non-toxic plant lists for cats and dogs",
+      "url": "https://www.aspca.org/pet-care/animal-poison-control/toxic-and-non-toxic-plants",
+      "relatedUrls": [
+        "https://www.aspca.org/pet-care/animal-poison-control/cats-plant-list",
+        "https://www.aspca.org/pet-care/animal-poison-control/dogs-plant-list"
+      ],
+      "usage": "Classification prudente de la toxicité pour les animaux de compagnie."
+    },
+    {
+      "id": "ucdavis-cut-flowers",
+      "organisation": "University of California, Davis — Postharvest Research and Extension Center",
+      "title": "Postharvest recommendations for cut flowers",
+      "url": "https://ucanr.edu/sites/default/files/2015-09/220303.pdf",
+      "relatedUrls": [
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/roses-spray-rose-sweetheart-rose",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/daffodil",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/anthurium",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/orchids",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/alstromeria",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/chrysanthemum",
+        "https://postharvest.ucdavis.edu/produce-facts-sheets/calla-lily"
+      ],
+      "usage": "Conservation post-récolte des fleurs et feuillages coupés."
+    }
+  ],
+  "taxonomicChecks": [
+    {
+      "plantId": "p113-sansevieria-trifasciata-s-cylindrica",
+      "previousName": "Sansevieria trifasciata / S. cylindrica",
+      "checkedName": "Dracaena trifasciata / D. angolensis",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A540541-1",
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A77182375-1"
+      ]
+    },
+    {
+      "plantId": "p114-yucca-elephantipes",
+      "previousName": "Yucca elephantipes",
+      "checkedName": "Yucca gigantea",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A57110-1"
+      ]
+    },
+    {
+      "plantId": "p116-senecio-rowleyanus",
+      "previousName": "Senecio rowleyanus",
+      "checkedName": "Curio rowleyanus",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A1011412-1"
+      ]
+    },
+    {
+      "plantId": "p117-aloe-aristata-aloe-vera",
+      "previousName": "Aloe aristata / Aloe vera",
+      "checkedName": "Aristaloe aristata / Aloe vera",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A77142512-1",
+        "https://powo.science.kew.org/results?q=Aloe%20vera"
+      ]
+    },
+    {
+      "plantId": "p123-cereus-peruvianus",
+      "previousName": "Cereus peruvianus",
+      "checkedName": "Cereus repandus",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A130627-1"
+      ]
+    },
+    {
+      "plantId": "p135-nolina-recurvata",
+      "previousName": "Nolina recurvata",
+      "checkedName": "Beaucarnea recurvata",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A531735-1"
+      ]
+    },
+    {
+      "plantId": "p142-saintpaulia-ionantha",
+      "previousName": "Saintpaulia ionantha",
+      "checkedName": "Streptocarpus ionanthus",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A77117375-1"
+      ]
+    },
+    {
+      "plantId": "p152-dieffenbachia-picta-d-seguine",
+      "previousName": "Dieffenbachia picta / D. seguine",
+      "checkedName": "Dieffenbachia seguine",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A86911-1"
+      ]
+    },
+    {
+      "plantId": "p153-philodendron-scandens-xanadu-selloum",
+      "previousName": "Philodendron scandens / xanadu / selloum",
+      "checkedName": "Philodendron hederaceum / P. xanadu / P. bipinnatifidum",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A87797-1",
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A20011461-1",
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A77306988-1"
+      ]
+    },
+    {
+      "plantId": "p154-epipremnum-pinnatum",
+      "previousName": "Epipremnum pinnatum",
+      "checkedName": "Epipremnum aureum",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A87014-1"
+      ]
+    },
+    {
+      "plantId": "p159-schefflera-arboricola",
+      "previousName": "Schefflera arboricola",
+      "checkedName": "Heptapleurum arboricola",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A90845-1"
+      ]
+    },
+    {
+      "plantId": "p173-calathea-makoyana",
+      "previousName": "Calathea makoyana",
+      "checkedName": "Goeppertia makoyana",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A565015-1"
+      ]
+    },
+    {
+      "plantId": "p180-cyperus-alternifolius",
+      "previousName": "Cyperus alternifolius",
+      "checkedName": "Cyperus alternifolius subsp. flabelliformis",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A74451-2"
+      ]
+    },
+    {
+      "plantId": "p191-paphiopedilum-hybrides-cypripedium-calce",
+      "previousName": "Paphiopedilum hybrides / Cypripedium calceolus",
+      "checkedName": "Paphiopedilum spp. et hybrides",
+      "sourceUrls": [
+        "https://www.rhs.org.uk/plants/paphiopedilum/growing-guide"
+      ]
+    },
+    {
+      "plantId": "p211-lavandula-officinalis-l-angustifolia",
+      "previousName": "Lavandula officinalis / L. angustifolia",
+      "checkedName": "Lavandula angustifolia",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A449008-1"
+      ]
+    },
+    {
+      "plantId": "p213-rosmarinus-officinalis",
+      "previousName": "Rosmarinus officinalis",
+      "checkedName": "Salvia rosmarinus",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A455509-1"
+      ]
+    },
+    {
+      "plantId": "p217-citrofortunella-microcarpa",
+      "previousName": "Citrofortunella microcarpa",
+      "checkedName": "Citrus × microcarpa",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/927792-1"
+      ]
+    },
+    {
+      "plantId": "p220-petroselinum-sativum",
+      "previousName": "Petroselinum sativum",
+      "checkedName": "Petroselinum crispum",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A60442790-2"
+      ]
+    },
+    {
+      "plantId": "p222-cineraria-maritima-senecio-maritima",
+      "previousName": "Cineraria maritima (= Senecio maritima)",
+      "checkedName": "Jacobaea maritima",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A77075194-1"
+      ]
+    },
+    {
+      "plantId": "p223-senecio-cruentus",
+      "previousName": "Senecio cruentus",
+      "checkedName": "Pericallis cruenta",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A1205448-2"
+      ]
+    },
+    {
+      "plantId": "p241-hebe-andersonii",
+      "previousName": "Hebe andersonii",
+      "checkedName": "Veronica × andersonii",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A811614-1"
+      ]
+    },
+    {
+      "plantId": "p246-petunia-hybrides",
+      "previousName": "Petunia hybrides",
+      "checkedName": "Petunia × atkinsiana",
+      "sourceUrls": [
+        "https://powo.science.kew.org/taxon/urn%3Alsid%3Aipni.org%3Anames%3A282570-2"
+      ]
+    },
+    {
+      "plantId": "p270-azalea-japonica",
+      "previousName": "Azalea japonica",
+      "checkedName": "Rhododendron Obtusum Group",
+      "sourceUrls": [
+        "https://www.rhs.org.uk/plants/97919/rhododendron-obtusum-group-%28ea%29/details"
+      ]
+    }
+  ]
+}
