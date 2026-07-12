@@ -97,6 +97,8 @@ const browser = await chromium.launch(launchOpts);
     };
     careState = { version: 2, startedAt: previous.key, months: {}, legacy: {}, adoptedAt: {} };
     careStateLoaded = true;
+    // Mois précédent jamais visité (aucune entrée months) : le retard doit quand même remonter
+    const unvisitedOverdue = careOverdueTaskDefs(fake).map(t => t.key);
     careState.months[previous.key] = { 'qa-care-plant': {} };
     careState.adoptedAt[fake.id] = current.key;
     const newlyAdoptedOverdue = careOverdueTaskDefs(fake).map(t => t.key);
@@ -122,7 +124,7 @@ const browser = await chromium.launch(launchOpts);
       carnKind: plantCareKind({ type: "Plante d'intérieur", nomLat: 'Dionaea muscipula' }),
       cutKeys: baseCareTaskDefs({ type: 'Fleur coupée' }).map(t => t.key),
       indoorKeys: baseCareTaskDefs({ type: "Plante d'intérieur", famille: 'Aracées' }).map(t => t.key),
-      newlyAdoptedOverdue, overdueBefore, overdueAfter, currentFresh
+      unvisitedOverdue, newlyAdoptedOverdue, overdueBefore, overdueAfter, currentFresh
     };
   });
   check('soins : les 335 fiches ont rempotage et engrais',
@@ -141,6 +143,8 @@ const browser = await chromium.launch(launchOpts);
     && !careMonths.indoorKeys.includes('fresh-water'), careMonths);
   check('soins : une plante adoptée ce mois-ci n’a aucun faux retard',
     careMonths.newlyAdoptedOverdue.length === 0, careMonths.newlyAdoptedOverdue);
+  check('soins : mois précédent jamais visité → retard signalé quand même',
+    careMonths.unvisitedOverdue.includes('repot'), careMonths.unvisitedOverdue);
   check('soins : tâche précédente signalée puis retirée après validation',
     careMonths.overdueBefore.includes('repot') && careMonths.overdueAfter.length === 0, careMonths);
   check('soins : validation du mois précédent non reportée au mois courant', careMonths.currentFresh, careMonths);
@@ -195,6 +199,43 @@ const browser = await chromium.launch(launchOpts);
     return { groups, empty };
   });
   check('rappels v9 : plante adoptée listée dans la modale', rem.groups >= 1 && !rem.empty, rem);
+
+  // Migration v5 : l'heuristique texte libre ne doit pas écraser un champ legacy fiable
+  const mig = await page.evaluate(() => {
+    const flag = localStorage.getItem('herbier_v5_migrated_r3');
+    localStorage.removeItem('herbier_v5_migrated_r3');
+    plants.push({
+      id: 'qa-migrate-plant', nomFr: 'QA migration', nomLat: 'Qualitas migratio',
+      famille: 'Testacées', type: "Plante d'intérieur",
+      soleil: 'Mi-ombre', eau: 'Par la soucoupe uniquement',
+      besoins: 'Plein soleil, arrosage modéré.' // heuristique contradictoire : ne doit PAS gagner
+    });
+    migrateToV5();
+    const m = plants.find(x => x.id === 'qa-migrate-plant');
+    const out = { exposition: m.exposition, arrosage: m.arrosage };
+    plants = plants.filter(x => x.id !== 'qa-migrate-plant');
+    saveData();
+    if (flag) localStorage.setItem('herbier_v5_migrated_r3', flag);
+    return out;
+  });
+  check('migration v5 : les champs legacy fiables (soleil/eau) ne sont pas écrasés',
+    mig.exposition === 'Mi-ombre' && mig.arrosage === 'Par la soucoupe uniquement', mig);
+
+  // Re-rendu du catalogue : l'ancien IntersectionObserver doit être déconnecté (pas de fuite)
+  const io = await page.evaluate(() => {
+    let created = 0, disconnected = 0;
+    const Orig = window.IntersectionObserver;
+    window.IntersectionObserver = class extends Orig {
+      constructor(...a) { super(...a); created++; }
+      disconnect() { disconnected++; super.disconnect(); }
+    };
+    renderCatalog();
+    renderCatalog();
+    window.IntersectionObserver = Orig;
+    return { created, disconnected };
+  });
+  check('lazy images : observateur précédent déconnecté au re-rendu',
+    io.created === 2 && io.disconnected >= 1, io);
 
   // Enrichissement IA : tous les champs remplis/cochés, sans écraser Wikipédia
   const ai = await page.evaluate(() => {

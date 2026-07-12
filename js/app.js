@@ -170,17 +170,19 @@ function migrateToV5() {
     if(!p.stockage&&p.pro_stock)u.stockage=p.pro_stock;
     if(!p.precautions&&p.pro_prec)u.precautions=p.pro_prec;
     if(!Array.isArray(p.substrat)||!p.substrat.length){var sd=SUB[t];if(sd)u.substrat=sd;}
+    // Les heuristiques texte libre ci-dessous ne doivent jamais écraser une valeur
+    // déjà reprise d'un champ legacy fiable (u.X posé plus haut) : on teste u.X aussi.
     if(t==='Fleur coupée'||t==='Feuillage'){
-      if(!p.prepa){var pr=_pr(b);if(pr)u.prepa=pr;}
-      if(!p.conservation)u.conservation=_cn(b);
-      if(!p.tempIdeale)u.tempIdeale=_ct(b);
-      if(!p.precautions){var pc=_pc(e);if(pc)u.precautions=pc;}
-      if(!p.tenueVase)u.tenueVase=_tv(p);
-      if(!p.stockage)u.stockage='En boîte ou vase à '+_ct(b)+", à l'abri de la lumière directe.";
+      if(!p.prepa&&!u.prepa){var pr=_pr(b);if(pr)u.prepa=pr;}
+      if(!p.conservation&&!u.conservation)u.conservation=_cn(b);
+      if(!p.tempIdeale&&!u.tempIdeale)u.tempIdeale=_ct(b);
+      if(!p.precautions&&!u.precautions){var pc=_pc(e);if(pc)u.precautions=pc;}
+      if(!p.tenueVase&&!u.tenueVase)u.tenueVase=_tv(p);
+      if(!p.stockage&&!u.stockage)u.stockage='En boîte ou vase à '+_ct(b)+", à l'abri de la lumière directe.";
     }
     if(t==="Plante d'intérieur"||t==="Plante d'extérieur"||t==="Plante bulbeuse"||t==="Plante acidophile"){
-      if(!p.exposition){var xp=_xp(b);if(xp)u.exposition=xp;}
-      if(!p.arrosage){var ar=_ar(b);if(ar)u.arrosage=ar;}
+      if(!p.exposition&&!u.exposition){var xp=_xp(b);if(xp)u.exposition=xp;}
+      if(!p.arrosage&&!u.arrosage){var ar=_ar(b);if(ar)u.arrosage=ar;}
       if(!p.temperature){var tm=_tp(b);if(tm)u.temperature=tm;}
       if(!p.humidite){var hm=_hm(b);if(hm)u.humidite=hm;}
     }
@@ -312,9 +314,15 @@ function sectionImg(id,dir,ev){
   st.idx=(st.idx+dir+st.imgs.length)%st.imgs.length;
   applySectionImg(id);
 }
+// Observateur unique, déconnecté avant chaque re-rendu : renderCatalog() remplace le
+// innerHTML du catalogue (à chaque frappe de recherche), les observateurs des nœuds
+// détachés s'accumuleraient sinon pour toute la durée de vie de la page.
+let _lazyIO=null;
 function initLazyImages(){
   if(!('IntersectionObserver' in window)){document.querySelectorAll('.scrolly-section').forEach(loadSectionImage);return;}
+  if(_lazyIO)_lazyIO.disconnect();
   const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){loadSectionImage(e.target);io.unobserve(e.target);}});},{rootMargin:'150px'});
+  _lazyIO=io;
   document.querySelectorAll('.scrolly-section').forEach(s=>io.observe(s));
 }
 
@@ -688,7 +696,10 @@ function toggleCareTask(id,taskKey,periodKey){
 function careOverdueTaskDefs(p){
   loadCareState();
   var prev=carePeriod(-1);
-  if(!careState.months[prev.key]||prev.key<careState.startedAt) return [];
+  // Un mois jamais visité (careState.months[prev.key] absent) est un mois où RIEN
+  // n'a été validé : les tâches saisonnières y sont bien en retard. Seules bornes
+  // légitimes : avant le début du suivi (startedAt) ou avant l'adoption (adoptedAt).
+  if(prev.key<careState.startedAt) return [];
   var adoptedAt=careState.adoptedAt&&careState.adoptedAt[p.id];
   if(adoptedAt&&prev.key<adoptedAt) return [];
   var st=carePlantState(prev.key,p.id,false);
