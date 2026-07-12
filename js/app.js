@@ -197,7 +197,18 @@ function migrateToV5() {
 // --- RENDU DYNAMIQUE DU SCROLLYTELLING (CATALOGUE) ---
 
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+// Prédicat UNIQUE « toxique pour les animaux » — badge, tags, tableau de bord, filtres
+// (v7) et tri/stats (v8) doivent donner la même réponse pour une même fiche, quels que
+// soient les champs présents selon l'origine des données : toxPets (v5), tox_anim
+// (legacy booléen) ou toxicite (legacy texte). Déclaration top-level → window.plantIsToxic.
+function plantIsToxic(p){
+  return !!p && (p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique'));
+}
 const HERO_FALLBACK="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop";
+// Jetons anti-course : #flashPhoto/#quizPhoto/#pdPhoto sont recréés à chaque rendu avec
+// le même id ; seule la requête photo la plus récente a le droit d'écrire dedans, sinon
+// une réponse lente d'une carte précédente s'affiche sur la carte actuellement visible.
+var _photoSeq={flash:0,quiz:0,pd:0};
 const imgCache=(function(){try{return JSON.parse(localStorage.getItem('hdv_imgCache')||'{}')||{};}catch(e){return {};}})();
 let _imgCacheSaveT=null;
 let _imgCacheFirstPending=0;
@@ -362,8 +373,7 @@ function renderCatalog() {
 
   catalog.innerHTML = filtered.map(p => {
     const inG = p.inGarden === true;
-    const toxPets = p.toxPets || (p.tox_anim ? 'toxic' : '');
-    const isTox = toxPets === 'toxic';
+    const isTox = plantIsToxic(p);
     const soins = p.besoins || p.description || '';
     const exposi = p.exposition || p.soleil || '';
     const arrosa = p.arrosage  || p.eau    || '';
@@ -848,7 +858,8 @@ function renderFlashcard() {
     </div>
   `;
   const _fp = p;
-  (_fp.imgUrl?Promise.resolve(_fp.imgUrl):fetchWiki(_fp.w1||_fp.nomLat).then(function(s){return s||fetchWiki(_fp.w2||_fp.nomLat);})).then(function(s){var el=document.getElementById('flashPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';}});
+  const _seq = ++_photoSeq.flash;
+  (_fp.imgUrl?Promise.resolve(_fp.imgUrl):fetchWiki(_fp.w1||_fp.nomLat).then(function(s){return s||fetchWiki(_fp.w2||_fp.nomLat);})).then(function(s){if(_seq!==_photoSeq.flash)return;var el=document.getElementById('flashPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';}});
 }
 
 function prevFlashcard() {
@@ -1011,9 +1022,8 @@ function mkSubstratBar(substrat) {
 // Tags d'alerte v5 (toxicité animaux, invasif) intégrés au design luxe
 function mkV5Tags(p) {
   var tags = [];
-  var toxPets = p.toxPets || (p.tox_anim ? 'toxic' : '');
-  if (toxPets === 'safe') tags.push('<span class="v5-tag tag-safe">🐾 Sans danger animaux</span>');
-  else if (toxPets === 'toxic') tags.push('<span class="v5-tag tag-tox">☠️ Toxique animaux</span>');
+  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe">🐾 Sans danger animaux</span>');
+  else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox">☠️ Toxique animaux</span>');
   if (p.invasive) tags.push('<span class="v5-tag tag-inv">⚠️ Invasive / Épillets</span>');
   if (p.inGarden) tags.push('<span class="v5-tag tag-garden">🌱 Au jardin</span>');
   return tags.length ? '<div class="v5-tags">'+tags.join('')+'</div>' : '';
@@ -1918,7 +1928,7 @@ function newQuestion(){
   if(sub){ html+='<div class="quiz-sub">'+sub+'</div>'; }
   html+='<div class="quiz-opts">'+opts.map(function(o){return '<button class="quiz-opt" onclick="answerQuiz(this)">'+esc(o)+'</button>';}).join('')+'</div>';
   card.innerHTML=html;
-  if(photo){ (p.imgUrl?Promise.resolve(p.imgUrl):fetchWiki(p.w1||p.nomLat).then(function(s){return s||fetchWiki(p.w2||p.nomLat);})).then(function(s){var el=document.getElementById('quizPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';el.style.cursor='zoom-in';el.title='Agrandir';el.onclick=function(){openImgZoom(s);};}}); }
+  if(photo){ var _qseq=++_photoSeq.quiz; (p.imgUrl?Promise.resolve(p.imgUrl):fetchWiki(p.w1||p.nomLat).then(function(s){return s||fetchWiki(p.w2||p.nomLat);})).then(function(s){if(_qseq!==_photoSeq.quiz)return;var el=document.getElementById('quizPhoto');if(el&&s){el.style.backgroundImage='url('+s+')';el.innerHTML='';el.style.cursor='zoom-in';el.title='Agrandir';el.onclick=function(){openImgZoom(s);};}}); }
 }
 function answerQuiz(btn){
   if(quizAnswered)return; quizAnswered=true;
@@ -2100,7 +2110,7 @@ function toggleDashMode(){
 function renderDash(){
   const fams=new Set(plants.map(p=>p.famille)); 
   const adopt=plants.filter(p=>p.inGarden===true).length;
-  const tox=plants.filter(p=>p.toxicite&&p.toxicite!=='Non toxique').length;
+  const tox=plants.filter(plantIsToxic).length;
   let qs={ok:0,no:0}; try{const s=JSON.parse(localStorage.getItem('herbier_quiz_v1'));if(s)qs=s;}catch(e){}
   const qt=qs.ok+qs.no, qpc=qt?Math.round(qs.ok/qt*100):0;
   const stats=[
@@ -2174,9 +2184,11 @@ function openPlantDetail(id){
   openModalHTML(h);
   try { history.replaceState(null, '', '#plante=' + encodeURIComponent(p.id)); } catch (e) {}
   // Photo asynchrone : image utilisateur prioritaire, sinon Wikimedia
+  var _pdSeq = ++_photoSeq.pd;
   (p.imgUrl ? Promise.resolve(p.imgUrl)
             : fetchWiki(p.w1 || p.nomLat).then(function (s) { return s || fetchWiki(p.w2 || p.nomLat); }))
     .then(function (s) {
+      if (_pdSeq !== _photoSeq.pd) return;
       var el = document.getElementById('pdPhoto');
       if (el && s) { el.style.backgroundImage = 'url(' + s + ')'; el.innerHTML = ''; el.onclick = function () { openImgZoom(s); }; }
     });

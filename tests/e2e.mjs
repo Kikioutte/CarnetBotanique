@@ -237,6 +237,69 @@ const browser = await chromium.launch(launchOpts);
   check('lazy images : observateur précédent déconnecté au re-rendu',
     io.created === 2 && io.disconnected >= 1, io);
 
+  // Course de photos : la réponse lente d'une carte précédente ne doit pas
+  // s'afficher sur la carte actuellement visible (#flashPhoto recréé à même id)
+  const race = await page.evaluate(async () => {
+    const orig = window.fetchWiki;
+    const pending = [];
+    window.fetchWiki = () => new Promise(res => pending.push(res));
+    toggleFlashMode();                       // carte A → 1re requête photo en attente
+    const resolveA = pending.shift();
+    nextFlashcard();                         // carte B affichée, requête A toujours en vol
+    resolveA('http://localhost:8890/img-A.png'); // la réponse de A arrive APRÈS
+    await new Promise(r => setTimeout(r, 50));
+    const el = document.getElementById('flashPhoto');
+    const bg = el ? el.style.backgroundImage : '';
+    window.fetchWiki = orig;
+    toggleFlashMode();                       // referme le panneau
+    return { bg };
+  });
+  check('flashcards : réponse photo obsolète ignorée (anti-course)', !race.bg.includes('img-A'), race);
+
+  // Photos personnelles : clé pas encore migrée vers IndexedDB → repli localStorage
+  const ph = await page.evaluate(async () => {
+    const pid = plants[0].id;
+    const tiny = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+    localStorage.setItem('hdv_photos', JSON.stringify({ [pid]: [tiny] }));
+    openJournal(pid);                        // v8 injecte le bloc photos (async)
+    await new Promise(r => setTimeout(r, 300));
+    const imgs = document.querySelectorAll('#v8-photos-' + pid + ' img').length;
+    window.closeModal();
+    localStorage.removeItem('hdv_photos');
+    return { imgs };
+  });
+  check('photos : clé non migrée vers IndexedDB → repli localStorage', ph.imgs === 1, ph);
+
+  // Empilement : le toast doit rester visible au-dessus de toutes les couches modales
+  const z = await page.evaluate(() => ({
+    toast:   parseInt(getComputedStyle(document.getElementById('toast')).zIndex, 10),
+    confirm: parseInt(getComputedStyle(document.getElementById('confirmModal')).zIndex, 10),
+    v7modal: parseInt(getComputedStyle(document.getElementById('v7-modal')).zIndex, 10),
+    zoom:    parseInt(getComputedStyle(document.getElementById('imgZoom')).zIndex, 10),
+  }));
+  check('toast au-dessus de toutes les couches modales',
+    z.toast > z.confirm && z.toast > z.v7modal && z.toast > z.zoom, z);
+
+  // Toxicité : prédicat unique — tous les écrans donnent la même réponse pour une même fiche
+  const tox = await page.evaluate(() => {
+    const modern = { id: 'qa-t1', nomFr: 'B', toxPets: 'toxic' };      // sans toxicite legacy
+    const legacy = { id: 'qa-t2', nomFr: 'C', toxicite: 'Toxique chats' };
+    const safe   = { id: 'qa-t3', nomFr: 'A', toxicite: 'Non toxique' };
+    const sel = document.getElementById('v7-sort'); const prev = sel.value;
+    sel.value = 'tox';                       // le tri v8 lit la valeur du select directement
+    const sorted = window.__advSort([safe, modern]);
+    sel.value = prev;
+    return {
+      modern: plantIsToxic(modern), legacy: plantIsToxic(legacy),
+      anim: plantIsToxic({ tox_anim: 1 }), safe: plantIsToxic(safe),
+      firstSorted: sorted[0].id
+    };
+  });
+  check('toxicité : prédicat unique cohérent (toxPets/tox_anim/toxicite)',
+    tox.modern && tox.legacy && tox.anim && !tox.safe, tox);
+  check('toxicité : le tri v8 reconnaît une fiche toxPets sans toxicite legacy',
+    tox.firstSorted === 'qa-t1', tox);
+
   // Enrichissement IA : tous les champs remplis/cochés, sans écraser Wikipédia
   const ai = await page.evaluate(() => {
     openDrawer('add');

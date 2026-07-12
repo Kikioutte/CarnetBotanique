@@ -48,7 +48,7 @@ var advFilters={fam:'',type:'',tox:'',zone:'',inv:''},advSort='default';
 window.__advFilter=function(p){
   if(advFilters.fam&&p.famille!==advFilters.fam)return false;
   if(advFilters.type&&p.type!==advFilters.type)return false;
-  var _isToxic=(p.toxPets==='toxic')||(p.tox_anim===true)||((p.toxicite)&&p.toxicite!=='Non toxique');
+  var _isToxic=plantIsToxic(p); // prédicat partagé (app.js) — même réponse sur tous les écrans
   if(advFilters.tox==='toxic'&&!_isToxic)return false;
   if(advFilters.tox==='safe'&&_isToxic)return false;
   if(advFilters.inv==='invasive'&&!p.invasive)return false;
@@ -75,8 +75,7 @@ window.__enrichChips=function(p){
   if(_chip_eau)c.push('<span class="v7-chip"><i class="fa-solid fa-droplet"></i> '+esc2(_chip_eau)+'</span>');
   if(p.temperature)c.push('<span class="v7-chip"><i class="fa-solid fa-thermometer-half"></i> '+esc2(p.temperature)+'</span>');
   if(p.principes)c.push('<span class="v7-chip"><i class="fa-solid fa-flask"></i> '+esc2(p.principes)+'</span>');
-  var _chip_tox=(p.toxPets==='toxic')||p.tox_anim;
-  if(_chip_tox)c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">⚠️ Toxique animaux</span>');
+  if(plantIsToxic(p))c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">⚠️ Toxique animaux</span>');
   if(p.invasive)c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">🌾 Invasive</span>');
   var z=(journal[p.id]&&journal[p.id].zone);
   if(z)c.push('<span class="v7-chip"><i class="fa-solid fa-location-dot"></i> '+esc2(z)+'</span>');

@@ -703,7 +703,10 @@ body.theme-dark .tag-inv  { background:rgba(154,98,18,0.15); }
   font-size: 0.8rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  z-index: 2000;
+  /* Au-dessus de TOUTES les couches modales (modal-overlay 2000, v7-modal 4000,
+     fusion-sheet 4210, img-zoom 4300) : les toasts confirment des actions faites
+     depuis ces overlays et le piège de focus les exclut pour cette raison. */
+  z-index: 5000;
   transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }

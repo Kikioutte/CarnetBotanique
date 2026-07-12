@@ -56,7 +56,7 @@
     if(v==='zone'){a.sort(function(x,y){return zoneOf(x).localeCompare(zoneOf(y))||x.nomFr.localeCompare(y.nomFr);});return a;}
     if(v==='adopt'){var ad=L('hdv_adoptDates',{});a.sort(function(x,y){return (ad[y.id]||0)-(ad[x.id]||0);});return a;}
     return orig?orig(list):a;};})();
-  function toxRank(p){return (p.toxicite&&p.toxicite!=='Non toxique')?1:0;}
+  function toxRank(p){return plantIsToxic(p)?1:0;} // prédicat partagé (app.js)
   function zoneOf(p){var j=L('hdv_journal',{});return (j[p.id]&&j[p.id].zone)||'\uffff';}
   // vues enregistrees
   window.v8Views=function(){
@@ -90,13 +90,16 @@
     });
   }
   function getPhotos(id){
+    // Clé absente d'IDB (get résout undefined, pas un rejet) : repli sur hdv_photos,
+    // encore présent tant que migratePhotosToIDB n'a pas fini de copier toutes les clés.
+    function lsFallback(){var ph=L('hdv_photos',{});return ph[id]||[];}
     return idbOpen().then(function(db){
       return new Promise(function(res){
         var rq=db.transaction('photos','readonly').objectStore('photos').get(id);
-        rq.onsuccess=function(){res(rq.result||[]);};
-        rq.onerror=function(){res([]);};
+        rq.onsuccess=function(){res(rq.result||lsFallback());};
+        rq.onerror=function(){res(lsFallback());};
       });
-    }).catch(function(){var ph=L('hdv_photos',{});return ph[id]||[];});
+    }).catch(lsFallback);
   }
   function setPhotos(id,arr){
     return idbOpen().then(function(db){
@@ -209,7 +212,7 @@
     var spark='<div class="v8-spark">'+days.map(function(k){var h=hist[k]||{ok:0,no:0};var okh=Math.round(h.ok/maxd*54),noh=Math.round(h.no/maxd*54);var dd=k.slice(8);return '<div class="col" title="'+k+' : '+h.ok+' OK / '+h.no+' KO"><div class="ok" style="height:'+okh+'px"></div><div class="no" style="height:'+noh+'px"></div><div class="d">'+dd+'</div></div>';}).join('')+'</div>';
     var byReg={};getPlants().forEach(function(p){var r=p.region||'\u2014';byReg[r]=(byReg[r]||0)+1;});var regs=Object.keys(byReg).map(function(k){return [k,byReg[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,6);var rmax=regs.length?regs[0][1]:1;
     var regHTML=regs.map(function(r){return '<div class="v8-bar"><span class="lbl" title="'+esc2(r[0])+'">'+esc2(r[0])+'</span><span class="track"><span class="fill" style="width:'+Math.round(r[1]/rmax*100)+'%"></span></span><span class="num">'+r[1]+'</span></div>';}).join('');
-    var safe=getPlants().filter(function(p){return !p.toxicite||p.toxicite==='Non toxique';}).length;var toxc=getPlants().length-safe;var tt=safe+toxc||1;
+    var safe=getPlants().filter(function(p){return !plantIsToxic(p);}).length;var toxc=getPlants().length-safe;var tt=safe+toxc||1;
     var toxHTML='<div class="v8-bar"><span class="lbl">'+(fr?'Non toxiques':'Non-toxic')+'</span><span class="track"><span class="fill" style="width:'+Math.round(safe/tt*100)+'%;background:var(--sage-green)"></span></span><span class="num">'+safe+'</span></div>'+'<div class="v8-bar"><span class="lbl">'+(fr?'Toxiques':'Toxic')+'</span><span class="track"><span class="fill" style="width:'+Math.round(toxc/tt*100)+'%;background:var(--terracotta)"></span></span><span class="num">'+toxc+'</span></div>';
     box.innerHTML='<div class="v8-panel"><h4><i class="fa-solid fa-layer-group"></i> '+(fr?'Progression (revision espacee)':'Spaced repetition progress')+'</h4>'+leitHTML+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-chart-column"></i> '+(fr?'Quiz \u2014 14 derniers jours':'Quiz \u2014 last 14 days')+'</h4>'+spark+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-earth-europe"></i> '+(fr?'Top regions':'Top regions')+'</h4>'+regHTML+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-triangle-exclamation"></i> '+(fr?'Toxicite':'Toxicity')+'</h4>'+toxHTML+'</div>';
   }
