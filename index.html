@@ -172,17 +172,17 @@
 
 <!-- PANNEAU ET SYSTEME DE FLASHCARDS (APPRENTISSAGE) -->
 <div class="flashcard-overlay" id="flashcardSection" data-lenis-prevent>
-  <button class="btn-luxe flash-close" onclick="toggleFlashMode()"><i class="fa-solid fa-xmark"></i> <span data-fr="Fermer" data-en="Close">Fermer</span></button>
+  <button class="btn-luxe flash-close" onclick="toggleFlashMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-    <h2 style="font-size: 2.5rem; margin-bottom: 10px;" data-fr="Gymnastique Mémorielle" data-en="Memory Gymnastics">Gymnastique Mémorielle</h2>
-    <p style="font-family: var(--primary-serif); font-style: italic;" data-fr="Retenez les caractéristiques clés de vos herbes en retournant les cartes." data-en="Memorise the key traits of your plants by flipping the cards.">Retenez les caractéristiques clés de vos herbes en retournant les cartes.</p>
+    <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Gymnastique Mémorielle</h2>
+    <p style="font-family: var(--primary-serif); font-style: italic;">Retenez les caractéristiques clés de vos herbes en retournant les cartes.</p>
   </div>
   <div class="flash-container" id="flashContainer">
     <!-- Contenu flashcard généré par JS -->
   </div>
   <div style="text-align: center; margin-top: 30px;">
-    <button class="btn-luxe" onclick="prevFlashcard()" style="display:inline-flex;"><i class="fa-solid fa-arrow-left"></i> <span data-fr="Précédent" data-en="Previous">Précédent</span></button>
-    <button class="btn-luxe btn-luxe-accent" onclick="nextFlashcard()" style="display:inline-flex; margin-left: 15px;"><span data-fr="Suivant" data-en="Next">Suivant</span> <i class="fa-solid fa-arrow-right"></i></button>
+    <button class="btn-luxe" onclick="prevFlashcard()" style="display:inline-flex;"><i class="fa-solid fa-arrow-left"></i> <span>Précédent</span></button>
+    <button class="btn-luxe btn-luxe-accent" onclick="nextFlashcard()" style="display:inline-flex; margin-left: 15px;"><span>Suivant</span> <i class="fa-solid fa-arrow-right"></i></button>
   </div>
 </div>
 
@@ -530,7 +530,7 @@
 <div class="quiz-overlay" id="quizSection" data-lenis-prevent>
   <div class="quiz-wrap">
     <div class="quiz-head">
-      <h2 data-fr="Salle de Révision" data-en="Review Room">Salle de Révision</h2>
+      <h2>Salle de Révision</h2>
       <p id="quizSubtitle">Testez votre reconnaissance de vos espèces.</p>
     </div>
     <div class="quiz-modes">
@@ -540,7 +540,7 @@
       <button id="qm-photo" onclick="setQuizMode('photo')">Photo</button>
     </div>
     <div class="quiz-scope-row">
-      <label for="quizScope" data-fr="Catégorie" data-en="Category">Catégorie</label>
+      <label for="quizScope">Catégorie</label>
       <select id="quizScope" onchange="newQuestion()"></select>
       <button id="quizErrBtn" class="btn-luxe" onclick="toggleQuizErrMode()" style="display:none" title="Rejouer uniquement les espèces ratées récemment"><i class="fa-solid fa-rotate-left"></i> Réviser mes erreurs (<span id="quizErrCount">0</span>)</button>
     </div>
@@ -551,18 +551,18 @@
         <div class="no"><b id="qsNo">0</b>Manquées</div>
         <div class="pc"><b id="qsPc">0%</b>Taux</div>
       </div>
-      <button class="btn-luxe btn-luxe-accent" onclick="nextQuiz()"><span data-fr="Suivante" data-en="Next">Suivante</span> <i class="fa-solid fa-arrow-right"></i></button>
+      <button class="btn-luxe btn-luxe-accent" onclick="nextQuiz()"><span>Suivante</span> <i class="fa-solid fa-arrow-right"></i></button>
     </div>
   </div>
 </div>
 
 <!-- OVERLAY CALENDRIER DES FLORAISONS -->
 <div class="cal-overlay" id="calSection" data-lenis-prevent>
-  <button class="btn-luxe cal-close" onclick="toggleCalMode()"><i class="fa-solid fa-xmark"></i> <span data-fr="Fermer" data-en="Close">Fermer</span></button>
+  <button class="btn-luxe cal-close" onclick="toggleCalMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="cal-wrap">
     <div class="cal-head">
-      <h2 data-fr="Calendrier des Floraisons" data-en="Bloom Calendar">Calendrier des Floraisons</h2>
-      <p data-fr="Quand fleurissent vos espèces, mois par mois." data-en="When your species bloom, month by month.">Quand fleurissent vos espèces, mois par mois.</p>
+      <h2>Calendrier des Floraisons</h2>
+      <p>Quand fleurissent vos espèces, mois par mois.</p>
     </div>
     <div class="cal-note" id="calNote"></div>
     <div class="cal-grid" id="calGrid"></div>
@@ -575,12 +575,12 @@
 
 <!-- OVERLAY TABLEAU DE BORD -->
 <div class="dash-overlay" id="dashSection" data-lenis-prevent>
-  <button class="btn-luxe dash-close" onclick="toggleDashMode()"><i class="fa-solid fa-xmark"></i> <span data-fr="Fermer" data-en="Close">Fermer</span></button>
+  <button class="btn-luxe dash-close" onclick="toggleDashMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="dash-wrap">
-    <div class="dash-head"><h2 data-fr="Tableau de Bord" data-en="Dashboard">Tableau de Bord</h2><p data-fr="Votre herbier en chiffres." data-en="Your herbarium in numbers.">Votre herbier en chiffres.</p></div>
+    <div class="dash-head"><h2>Tableau de Bord</h2><p>Votre herbier en chiffres.</p></div>
     <div class="dash-stats" id="dashStats"></div>
-    <div class="dash-sec"><h3 data-fr="Répartition par catégorie" data-en="Breakdown by category">Répartition par catégorie</h3><div id="dashCats"></div></div>
-    <div class="dash-sec"><h3 data-fr="Maîtrise au quiz" data-en="Quiz mastery">Maîtrise au quiz</h3><div class="dash-mastery" id="dashMastery"></div></div>
+    <div class="dash-sec"><h3>Répartition par catégorie</h3><div id="dashCats"></div></div>
+    <div class="dash-sec"><h3>Maîtrise au quiz</h3><div class="dash-mastery" id="dashMastery"></div></div>
   </div>
 </div>
 
@@ -592,29 +592,29 @@
 <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile" aria-hidden="true" data-lenis-prevent onclick="if(event.target===this)closeMobileNav()">
   <button class="mnav-close" aria-label="Fermer le menu" onclick="closeMobileNav()"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
   <div class="mnav-head"><h2>Navigation</h2><p>L'Herbier de vie</p></div>
-  <button class="mnav-btn mnav-learn" onclick="closeMobileNav();setMode('learn')"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> <span data-fr="Apprentissage" data-en="Learning">Apprentissage</span></button>
-  <button class="mnav-btn mnav-garden" onclick="closeMobileNav();setMode('garden')"><i class="fa-solid fa-seedling" aria-hidden="true"></i> <span data-fr="Mon Jardin" data-en="My Garden">Mon Jardin</span></button>
+  <button class="mnav-btn mnav-learn" onclick="closeMobileNav();setMode('learn')"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> <span>Apprentissage</span></button>
+  <button class="mnav-btn mnav-garden" onclick="closeMobileNav();setMode('garden')"><i class="fa-solid fa-seedling" aria-hidden="true"></i> <span>Mon Jardin</span></button>
   <div class="mnav-divider"></div>
   <button class="mnav-btn learn-only" onclick="closeMobileNav();toggleFlashMode()"><i class="fa-solid fa-brain" aria-hidden="true"></i> Flashcards</button>
   <button class="mnav-btn learn-only" onclick="closeMobileNav();toggleQuizMode()"><i class="fa-solid fa-trophy" aria-hidden="true"></i> Quiz</button>
-  <button class="mnav-btn" onclick="closeMobileNav();toggleCalMode()"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> <span data-fr="Floraisons" data-en="Bloom">Floraisons</span></button>
-  <button class="mnav-btn" onclick="closeMobileNav();toggleCareMode()"><i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i> <span data-fr="Soins" data-en="Care">Soins</span></button>
-  <button class="mnav-btn" onclick="closeMobileNav();buildPrint()"><i class="fa-solid fa-print" aria-hidden="true"></i> <span data-fr="Imprimer" data-en="Print">Imprimer</span></button>
-  <button class="mnav-btn" onclick="closeMobileNav();toggleDashMode()"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> <span data-fr="Tableau de bord" data-en="Dashboard">Tableau de bord</span></button>
-  <button class="mnav-btn btn-luxe-accent garden-only" onclick="closeMobileNav();openDrawer('add')"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span data-fr="Ajouter une fiche" data-en="Add a plant">Ajouter une fiche</span></button>
+  <button class="mnav-btn" onclick="closeMobileNav();toggleCalMode()"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> <span>Floraisons</span></button>
+  <button class="mnav-btn" onclick="closeMobileNav();toggleCareMode()"><i class="fa-solid fa-hand-holding-droplet" aria-hidden="true"></i> <span>Soins</span></button>
+  <button class="mnav-btn" onclick="closeMobileNav();buildPrint()"><i class="fa-solid fa-print" aria-hidden="true"></i> <span>Imprimer</span></button>
+  <button class="mnav-btn" onclick="closeMobileNav();toggleDashMode()"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> <span>Tableau de bord</span></button>
+  <button class="mnav-btn btn-luxe-accent garden-only" onclick="closeMobileNav();openDrawer('add')"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Ajouter une fiche</span></button>
 </nav>
 
 <!-- OVERLAY SOINS & CONSERVATION -->
 <div class="care-overlay" id="careSection" data-lenis-prevent>
-  <button class="btn-luxe care-close" onclick="toggleCareMode()"><i class="fa-solid fa-xmark"></i> <span data-fr="Fermer" data-en="Close">Fermer</span></button>
+  <button class="btn-luxe care-close" onclick="toggleCareMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="care-wrap">
-    <div class="care-head"><h2 data-fr="Soins &amp; Conservation" data-en="Care &amp; Conservation">Soins &amp; Conservation</h2><p data-fr="Gardez vos fleurs éclatantes plus longtemps." data-en="Keep your flowers radiant for longer.">Gardez vos fleurs éclatantes plus longtemps.</p></div>
+    <div class="care-head"><h2>Soins &amp; Conservation</h2><p>Gardez vos fleurs éclatantes plus longtemps.</p></div>
     <div id="careBody"></div>
   </div>
 </div>
 <!-- ===================== EXTENSIONS v7 ===================== -->
 <div id="v7-modal" class="v7-modal" role="dialog" aria-modal="true" aria-label="Boîte de dialogue"><div class="v7-modal-card"><button class="v7-modal-x" onclick="window.closeModal()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button><div id="v7-modal-body"></div></div></div>
-<div id="v7-cmpbar" class="v7-cmpbar"><span><i class="fa-solid fa-scale-balanced"></i> <b id="v7-cmpcount">0</b> <span data-fr="selectionnees" data-en="selected">selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span data-fr="Comparer" data-en="Compare">Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark"></i></button></div>
+<div id="v7-cmpbar" class="v7-cmpbar"><span><i class="fa-solid fa-scale-balanced"></i> <b id="v7-cmpcount">0</b> <span>selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span>Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark"></i></button></div>
 <script src="js/extensions-v7.js"></script>
 <!-- =================== FIN EXTENSIONS v7 =================== -->
 

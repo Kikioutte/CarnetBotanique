@@ -12,7 +12,7 @@ statique **sans étape de build**, installable en PWA et utilisable **hors-ligne
 | `css/styles.css`         | Styles (blocs v5→v8 concaténés, ordre de cascade préservé) |
 | `css/icons.css`          | Sous-ensemble d'icônes Font Awesome auto-hébergé (masques SVG) |
 | `js/app.js`              | Cœur : données, catalogue, quiz, flashcards, calendrier, soins |
-| `js/extensions-v7.js`    | Thème sombre, i18n, filtres, journal, comparaison, import/export |
+| `js/extensions-v7.js`    | Thème sombre, filtres, journal, comparaison, import/export |
 | `js/extensions-v8.js`    | Pagination, recherche floue, photos (IndexedDB), vues, partage jardin |
 | `js/extensions-v9.js`    | Suivi d'arrosage par exemplaire |
 | `plants.json`            | Catalogue de base (chargé au premier lancement, puis localStorage) |

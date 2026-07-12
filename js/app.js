@@ -883,17 +883,16 @@ function updateModeUI() {
   document.body.classList.toggle('mode-learn', appMode!=='garden');
   var l=document.getElementById('modeLearn'), g=document.getElementById('modeGarden');
   if(l)l.classList.toggle('on', appMode!=='garden'); if(g)g.classList.toggle('on', appMode==='garden');
-  var en=(window.hdvLang==='en');
   if (appMode==='garden') {
-    if(heroBadge)heroBadge.textContent=en?'Your Private Domain':'Votre Domaine Privé';
-    if(heroTitle)heroTitle.innerHTML=en?'My <i>personal</i> Garden':'Mon Jardin <i>personnel</i>';
-    if(heroText)heroText.textContent=en?'The species you have adopted, to grow and follow.':'Les espèces que vous avez adoptées, à cultiver et à suivre.';
+    if(heroBadge)heroBadge.textContent='Votre Domaine Privé';
+    if(heroTitle)heroTitle.innerHTML='Mon Jardin <i>personnel</i>';
+    if(heroText)heroText.textContent='Les espèces que vous avez adoptées, à cultiver et à suivre.';
   } else {
-    if(heroBadge)heroBadge.textContent=en?'Royal Academy of Botany':'Académie Royale de Botanique';
-    if(heroTitle)heroTitle.innerHTML=en?'The <i>living</i> botanical journal':'Le carnet botanique <i>vivant</i>';
+    if(heroBadge)heroBadge.textContent='Académie Royale de Botanique';
+    if(heroTitle)heroTitle.innerHTML='Le carnet botanique <i>vivant</i>';
     if(heroText)heroText.textContent=plants.length
-      ?(en?('Discover, learn and review all '+plants.length+' species with elegance.'):('Découvrez, apprenez et révisez les '+plants.length+' espèces avec élégance.'))
-      :(en?'Discover, learn and care for the finest species with elegance.':'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.');
+      ?('Découvrez, apprenez et révisez les '+plants.length+' espèces avec élégance.')
+      :'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.';
   }
 }
 function setMode(m){
@@ -1892,7 +1891,7 @@ function toggleQuizMode(){
     var b=document.getElementById('quizBtn'); if(b)b.classList.add('active');
     var sec=document.getElementById('quizSection'); if(sec)sec.style.display='block';
     try{lenis.stop();}catch(e){}
-    var qs=document.getElementById('quizSubtitle'); if(qs&&plants.length)qs.textContent=(window.hdvLang==='en')?('Test your recognition of all '+plants.length+' species.'):('Testez votre reconnaissance des '+plants.length+' espèces.');
+    var qs=document.getElementById('quizSubtitle'); if(qs&&plants.length)qs.textContent='Testez votre reconnaissance des '+plants.length+' espèces.';
     loadQuizScore(); populateQuizScope(); updateQuizErrBtn(); newQuestion();
     trapFocus(sec);
   } else { try{lenis.start();}catch(e){} }

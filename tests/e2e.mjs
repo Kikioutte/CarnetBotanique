@@ -366,21 +366,6 @@ const browser = await chromium.launch(launchOpts);
   check('hash #plante= posé', /plante=/.test(detail.hash), detail.hash);
   check('hash nettoyé à la fermeture', detail.hashCleared);
 
-  // i18n : bascule EN
-  const i18n = await page.evaluate(() => {
-    toggleLang();
-    const out = {
-      quizH2: document.querySelector('#quizSection .quiz-head h2').textContent,
-      mode: document.getElementById('modeLearn').textContent.trim(),
-      hero: document.getElementById('heroText').textContent,
-    };
-    toggleLang(); // retour FR
-    return out;
-  });
-  check('i18n EN : titre quiz', i18n.quizH2 === 'Review Room', i18n.quizH2);
-  check('i18n EN : bouton mode', /Learning/.test(i18n.mode), i18n.mode);
-  check('i18n EN : héro', /species/.test(i18n.hero), i18n.hero);
-
   // Quiz : erreur → Leitner + « Réviser mes erreurs »
   const quiz = await page.evaluate(() => {
     localStorage.removeItem('hdv_quiz_errors');
