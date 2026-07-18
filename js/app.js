@@ -460,13 +460,13 @@ function renderCatalog() {
               ${p.hauteur ? `<div class="tech-item"><span class="tech-label">Hauteur</span><span class="tech-val">${esc(p.hauteur)}</span></div>` : ''}
               ${p.couleur ? `<div class="tech-item"><span class="tech-label">Couleur</span><span class="tech-val">${esc(p.couleur)}</span></div>` : ''}
               ${p.rusticite ? `<div class="tech-item"><span class="tech-label">Rusticité</span><span class="tech-val">${esc(p.rusticite)}</span></div>` : ''}
-              ${p.fl_texte ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Floraison</span><span class="tech-val">${esc(p.fl_texte)}</span></div>` : ''}
-              ${exposi ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-sun" aria-hidden="true"></i> Exposition</span><span class="tech-val">${esc(exposi)}</span></div>` : ''}
-              ${arrosa ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Arrosage</span><span class="tech-val">${esc(arrosa)}</span></div>` : ''}
+              ${p.fl_texte ? `<div class="tech-item"><span class="tech-label">Floraison</span><span class="tech-val">${esc(p.fl_texte)}</span></div>` : ''}
+              ${exposi ? `<div class="tech-item"><span class="tech-label">Exposition</span><span class="tech-val">${esc(exposi)}</span></div>` : ''}
+              ${arrosa ? `<div class="tech-item"><span class="tech-label">Arrosage</span><span class="tech-val">${esc(arrosa)}</span></div>` : ''}
               ${p.humidite ? `<div class="tech-item"><span class="tech-label">Humidité</span><span class="tech-val">${esc(p.humidite)}</span></div>` : ''}
               ${p.temperature ? `<div class="tech-item"><span class="tech-label">Température</span><span class="tech-val">${esc(p.temperature)}</span></div>` : ''}
-              ${p.rempotage ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage</span><span class="tech-val">${esc(p.rempotage)}</span></div>` : ''}
-              ${p.engrais ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais</span><span class="tech-val">${esc(p.engrais)}</span></div>` : ''}
+              ${p.rempotage ? `<div class="tech-item"><span class="tech-label">Rempotage</span><span class="tech-val">${esc(p.rempotage)}</span></div>` : ''}
+              ${p.engrais ? `<div class="tech-item"><span class="tech-label">Engrais</span><span class="tech-val">${esc(p.engrais)}</span></div>` : ''}
               ${subBar ? `<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">Substrat conseillé</span>${subBar}</div>` : ''}
             </div>
             ${(typeof window.__enrichChips === 'function') ? window.__enrichChips(p) : ''}
