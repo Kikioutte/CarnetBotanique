@@ -939,6 +939,8 @@ function toggleGardenStatus(id) {
 function openDrawer(type, plantId = null) {
   const drawer = document.getElementById('plantDrawer');
   const title = document.getElementById('drawerTitle');
+  drawer.removeAttribute('inert');
+  drawer.setAttribute('aria-hidden', 'false');
   document.getElementById('plantForm').reset();
   document.getElementById('formPlantId').value = "";
   var _gkRestore = localStorage.getItem('herbier_gemini_key');
@@ -958,7 +960,10 @@ function openDrawer(type, plantId = null) {
 
 function closeDrawer() {
   releaseFocusTrap();
-  document.getElementById('plantDrawer').classList.remove('open');
+  const drawer = document.getElementById('plantDrawer');
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden', 'true');
+  drawer.setAttribute('inert', '');
   document.body.classList.remove('no-scroll');
   try { lenis.start(); } catch(e) {}
 }
@@ -2244,18 +2249,22 @@ function initV6Enhancements(){
   }
 }
 
-/* Menu burger mobile — ouverture/fermeture (memes fonctions JS que la nav PC) */
+/* Menu principal responsive — mêmes fonctions sur mobile, tablette et ordinateur. */
 function openMobileNav(){
-  var m=document.getElementById('mobileNav'); if(m){ m.classList.add('open'); m.setAttribute('aria-hidden','false'); }
-  var b=document.getElementById('burgerBtn'); if(b) b.setAttribute('aria-expanded','true');
+  var m=document.getElementById('mobileNav');
+  if(m){ m.removeAttribute('inert'); m.classList.add('open'); m.setAttribute('aria-hidden','false'); }
+  var b=document.getElementById('burgerBtn');
+  if(b){ b.setAttribute('aria-expanded','true'); b.setAttribute('aria-label','Fermer le menu principal'); }
   document.body.classList.add('no-scroll');
   try { lenis.stop(); } catch(e) {}
   trapFocus(m);
 }
 function closeMobileNav(){
   releaseFocusTrap();
-  var m=document.getElementById('mobileNav'); if(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); }
-  var b=document.getElementById('burgerBtn'); if(b) b.setAttribute('aria-expanded','false');
+  var m=document.getElementById('mobileNav');
+  if(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); m.setAttribute('inert',''); }
+  var b=document.getElementById('burgerBtn');
+  if(b){ b.setAttribute('aria-expanded','false'); b.setAttribute('aria-label','Ouvrir le menu principal'); }
   document.body.classList.remove('no-scroll');
   try { lenis.start(); } catch(e) {}
 }
@@ -2265,31 +2274,19 @@ function toggleMobileNav(){
 }
 /* Échap sur le menu mobile : géré par le handler unique d'initV6Enhancements() */
 
-/* PC : loupe cliquable -> ouvre/ferme la bulle de recherche (searchInput inchange) */
+/* Compatibilité : la recherche est désormais toujours visible à toutes les largeurs. */
 (function(){
-  function isPC(){ return !!(window.matchMedia && window.matchMedia('(min-width:769px)').matches); }
   window.toggleSearchPop=function(){
-    document.body.classList.toggle('search-open');
-    if(document.body.classList.contains('search-open')){
-      var i=document.getElementById('searchInput'); if(i) setTimeout(function(){ try{ i.focus(); }catch(e){} }, 60);
-    }
+    var i=document.getElementById('searchInput');
+    if(i) try{ i.focus(); }catch(e){}
   };
   var ic=document.querySelector('.search-wrapper i');
   if(ic){
-    ic.addEventListener('click', function(e){ if(isPC()){ e.stopPropagation(); toggleSearchPop(); } });
-    /* Accessibilité : la loupe agit comme un bouton sur PC — focus clavier + Entrée/Espace */
-    if(isPC()){
-      ic.setAttribute('role','button'); ic.setAttribute('tabindex','0');
-      ic.setAttribute('aria-label','Ouvrir la recherche');
-      ic.addEventListener('keydown', function(e){ if(isPC()&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); toggleSearchPop(); } });
-    }
+    ic.removeAttribute('role');
+    ic.removeAttribute('tabindex');
+    ic.removeAttribute('aria-label');
   }
-  document.addEventListener('click', function(e){
-    if(!document.body.classList.contains('search-open')) return;
-    var w=document.querySelector('.search-wrapper');
-    if(w && !w.contains(e.target)) document.body.classList.remove('search-open');
-  });
-  /* Échap sur la bulle de recherche PC : géré par le handler unique d'initV6Enhancements() */
+  document.body.classList.remove('search-open');
 })();
 
 // --- PWA : enregistrement du service worker (hors-ligne complet + mises à jour fiables) ---

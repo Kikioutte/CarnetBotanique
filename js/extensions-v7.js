@@ -12,7 +12,7 @@ function opt(v){return '<option value="'+esc2(v)+'">'+esc2(v)+'</option>';}
 
 /* ---------- Mode sombre ---------- */
 var theme=L('hdv_theme','light');
-function applyTheme(){document.body.classList.toggle('theme-dark',theme==='dark');var b=$('v7-theme');if(b)b.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>');}
+function applyTheme(){document.body.classList.toggle('theme-dark',theme==='dark');var b=$('v7-theme');if(b)b.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>');var mb=$('mnavThemeBtn');if(mb)mb.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun" aria-hidden="true"></i> <span class="mnav-theme-label">Mode clair</span>':'<i class="fa-solid fa-moon" aria-hidden="true"></i> <span class="mnav-theme-label">Mode sombre</span>');}
 window.toggleTheme=function(){theme=(theme==='dark'?'light':'dark');S('hdv_theme',theme);applyTheme();};
 
 /* ---------- Journal / zones / arrosage ---------- */
