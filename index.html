@@ -202,7 +202,7 @@
 
     <!-- Autofill Wikipedia/Wikidata -->
     <fieldset class="autofill-zone">
-      <legend>🔍 Recherche automatique</legend>
+      <legend><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Recherche automatique</legend>
       <div class="autofill-row">
         <div class="autofill-suggest-wrap">
           <label class="v8-sr" for="autoFillInput">Rechercher une plante à importer automatiquement</label>
@@ -219,7 +219,7 @@
       </div>
       <div id="autoFillStatus" class="autofill-status"></div>
       <div style="margin-top:10px;border-top:1px dashed rgba(194,162,106,0.3);padding-top:10px;">
-        <label for="geminiKeyInput" style="font-size:0.72rem;color:var(--gold-text);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">🤖 Enrichissement IA — clé Gemini (optionnelle)</label>
+        <label for="geminiKeyInput" style="font-size:0.72rem;color:var(--gold-text);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Enrichissement IA — clé Gemini (optionnelle)</label>
         <div style="display:flex;gap:8px;align-items:center;">
           <input type="password" id="geminiKeyInput" class="form-control"
             placeholder="Clé gratuite sur aistudio.google.com"
@@ -231,7 +231,7 @@
           </button>
         </div>
         <details style="margin-top:8px;">
-          <summary style="font-size:0.72rem;color:var(--sage-green);cursor:pointer;user-select:none;">❓ Comment obtenir une clé gratuite ?</summary>
+          <summary style="font-size:0.72rem;color:var(--sage-green);cursor:pointer;user-select:none;">Comment obtenir une clé gratuite ?</summary>
           <ol style="font-size:0.72rem;color:var(--sage-green);line-height:1.8;margin:8px 0 0 16px;padding:0;">
             <li>Va sur <strong style="color:var(--ink-deep);">aistudio.google.com</strong></li>
             <li>Connecte-toi avec un compte Google</li>
@@ -246,10 +246,10 @@
 
     <!-- Onglets de navigation -->
     <div class="form-tabs" role="tablist" aria-label="Sections de la fiche botanique">
-      <button type="button" id="formTab0" class="form-tab-btn active" onclick="switchFormTab(0)" onkeydown="formTabKeydown(event,0)" role="tab" aria-selected="true" aria-controls="ftab-0">📋 Général</button>
-      <button type="button" id="formTab1" class="form-tab-btn" onclick="switchFormTab(1)" onkeydown="formTabKeydown(event,1)" role="tab" aria-selected="false" aria-controls="ftab-1" tabindex="-1">🌿 Botanique</button>
-      <button type="button" id="formTab2" class="form-tab-btn" onclick="switchFormTab(2)" onkeydown="formTabKeydown(event,2)" role="tab" aria-selected="false" aria-controls="ftab-2" tabindex="-1">🌱 Culture</button>
-      <button type="button" id="formTab3" class="form-tab-btn" onclick="switchFormTab(3)" onkeydown="formTabKeydown(event,3)" role="tab" aria-selected="false" aria-controls="ftab-3" tabindex="-1">✂️ Pro</button>
+      <button type="button" id="formTab0" class="form-tab-btn active" onclick="switchFormTab(0)" onkeydown="formTabKeydown(event,0)" role="tab" aria-selected="true" aria-controls="ftab-0"><i class="fa-solid fa-book" aria-hidden="true"></i> Général</button>
+      <button type="button" id="formTab1" class="form-tab-btn" onclick="switchFormTab(1)" onkeydown="formTabKeydown(event,1)" role="tab" aria-selected="false" aria-controls="ftab-1" tabindex="-1"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Botanique</button>
+      <button type="button" id="formTab2" class="form-tab-btn" onclick="switchFormTab(2)" onkeydown="formTabKeydown(event,2)" role="tab" aria-selected="false" aria-controls="ftab-2" tabindex="-1"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Culture</button>
+      <button type="button" id="formTab3" class="form-tab-btn" onclick="switchFormTab(3)" onkeydown="formTabKeydown(event,3)" role="tab" aria-selected="false" aria-controls="ftab-3" tabindex="-1"><i class="fa-solid fa-scissors" aria-hidden="true"></i> Pro</button>
     </div>
 
     <!-- BLOC 1 : Informations générales -->
@@ -349,17 +349,17 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label" for="formToxPets" style="color:var(--terracotta-text)">🐾 Toxicité pour animaux</label>
+          <label class="form-label" for="formToxPets" style="color:var(--terracotta-text)">Toxicité pour animaux</label>
           <select id="formToxPets" class="form-control" style="margin-bottom:8px;">
             <option value="">— Non renseigné</option>
-            <option value="safe">✅ Sans danger pour chiens/chats</option>
-            <option value="toxic">☠️ Toxique pour chiens/chats</option>
+            <option value="safe">Sans danger pour chiens/chats</option>
+            <option value="toxic">Toxique pour chiens/chats</option>
           </select>
           <label class="v8-sr" for="formToxDetail">Précisions sur la toxicité pour les animaux</label>
           <input type="text" id="formToxDetail" class="form-control" placeholder="Précisions : espèces concernées, symptômes...">
         </div>
         <div class="form-group">
-          <label class="form-label" for="formInvasive" style="color:#d32f2f">🌾 Caractère Invasif</label>
+          <label class="form-label" for="formInvasive" style="color:#d32f2f"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Caractère invasif</label>
           <div style="display:flex;align-items:center;gap:10px;">
             <input type="checkbox" id="formInvasive" style="width:auto;accent-color:#d32f2f;">
             <span style="font-size:0.85rem;font-family:var(--primary-sans);">Espèce invasive / risque d'épillets</span>
@@ -388,7 +388,7 @@
         <legend>Besoins de Culture &amp; Substrat</legend>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label" for="formExposition">☀️ Exposition</label>
+            <label class="form-label" for="formExposition"><i class="fa-solid fa-sun" aria-hidden="true"></i> Exposition</label>
             <select id="formExposition" class="form-control">
               <option value="">—</option>
               <option value="Plein soleil">Plein soleil</option>
@@ -398,7 +398,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="formArrosage">💧 Arrosage</label>
+            <label class="form-label" for="formArrosage"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Arrosage</label>
             <select id="formArrosage" class="form-control">
               <option value="">—</option>
               <option value="Faible (1x par mois)">Faible (1x/mois)</option>
@@ -409,26 +409,26 @@
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label" for="formHumidite">💨 Humidité</label>
+            <label class="form-label" for="formHumidite">Humidité</label>
             <input type="text" id="formHumidite" class="form-control" placeholder="ex: 50–70%">
           </div>
           <div class="form-group">
-            <label class="form-label" for="formTemperature">🌡️ Température</label>
+            <label class="form-label" for="formTemperature">Température</label>
             <input type="text" id="formTemperature" class="form-control" placeholder="ex: 15–25°C">
           </div>
         </div>
         <div class="form-row-2">
           <div class="form-group">
-            <label class="form-label" for="formRempotage">🪴 Rempotage</label>
+            <label class="form-label" for="formRempotage"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage</label>
             <input type="text" id="formRempotage" class="form-control" placeholder="ex: Tous les 2 ans, printemps">
           </div>
           <div class="form-group">
-            <label class="form-label" for="formEngrais">🌿 Engrais</label>
+            <label class="form-label" for="formEngrais"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais</label>
             <input type="text" id="formEngrais" class="form-control" placeholder="ex: NPK équilibré, mars–sept.">
           </div>
         </div>
         <div class="form-group">
-          <div class="form-label" id="subEditorLabel">🪨 Substrat conseillé</div>
+          <div class="form-label" id="subEditorLabel">Substrat conseillé</div>
           <div class="sub-editor" id="subEditor" aria-labelledby="subEditorLabel"></div>
           <button type="button" class="btn-luxe sub-add" onclick="addSubstratRow()"><i class="fa-solid fa-plus"></i> Ajouter un composant</button>
           <div class="sub-preview" id="subPreview"></div>

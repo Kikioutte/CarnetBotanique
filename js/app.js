@@ -96,6 +96,7 @@ window.onload = function() {
     try { initHeaderScroll(); } catch (e) { console.warn('initHeaderScroll', e); }
     try { initGSAPAnimations(); } catch (e) { console.warn('initGSAPAnimations', e); }
     try { initV6Enhancements(); } catch (e) { console.warn('initV6Enhancements', e); }
+    try { initLiquidGlass(); } catch (e) { console.warn('initLiquidGlass', e); }
     try { openDetailFromHash(); } catch (e) { console.warn('openDetailFromHash', e); }
   });
 };
@@ -459,14 +460,14 @@ function renderCatalog() {
               ${p.hauteur ? `<div class="tech-item"><span class="tech-label">Hauteur</span><span class="tech-val">${esc(p.hauteur)}</span></div>` : ''}
               ${p.couleur ? `<div class="tech-item"><span class="tech-label">Couleur</span><span class="tech-val">${esc(p.couleur)}</span></div>` : ''}
               ${p.rusticite ? `<div class="tech-item"><span class="tech-label">Rusticité</span><span class="tech-val">${esc(p.rusticite)}</span></div>` : ''}
-              ${p.fl_texte ? `<div class="tech-item"><span class="tech-label">Floraison</span><span class="tech-val">🌸 ${esc(p.fl_texte)}</span></div>` : ''}
-              ${exposi ? `<div class="tech-item"><span class="tech-label">☀️ Exposition</span><span class="tech-val">${esc(exposi)}</span></div>` : ''}
-              ${arrosa ? `<div class="tech-item"><span class="tech-label">💧 Arrosage</span><span class="tech-val">${esc(arrosa)}</span></div>` : ''}
-              ${p.humidite ? `<div class="tech-item"><span class="tech-label">💨 Humidité</span><span class="tech-val">${esc(p.humidite)}</span></div>` : ''}
-              ${p.temperature ? `<div class="tech-item"><span class="tech-label">🌡️ Température</span><span class="tech-val">${esc(p.temperature)}</span></div>` : ''}
-              ${p.rempotage ? `<div class="tech-item"><span class="tech-label">🪴 Rempotage</span><span class="tech-val">${esc(p.rempotage)}</span></div>` : ''}
-              ${p.engrais ? `<div class="tech-item"><span class="tech-label">🌿 Engrais</span><span class="tech-val">${esc(p.engrais)}</span></div>` : ''}
-              ${subBar ? `<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">🪨 Substrat conseillé</span>${subBar}</div>` : ''}
+              ${p.fl_texte ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Floraison</span><span class="tech-val">${esc(p.fl_texte)}</span></div>` : ''}
+              ${exposi ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-sun" aria-hidden="true"></i> Exposition</span><span class="tech-val">${esc(exposi)}</span></div>` : ''}
+              ${arrosa ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Arrosage</span><span class="tech-val">${esc(arrosa)}</span></div>` : ''}
+              ${p.humidite ? `<div class="tech-item"><span class="tech-label">Humidité</span><span class="tech-val">${esc(p.humidite)}</span></div>` : ''}
+              ${p.temperature ? `<div class="tech-item"><span class="tech-label">Température</span><span class="tech-val">${esc(p.temperature)}</span></div>` : ''}
+              ${p.rempotage ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage</span><span class="tech-val">${esc(p.rempotage)}</span></div>` : ''}
+              ${p.engrais ? `<div class="tech-item"><span class="tech-label"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais</span><span class="tech-val">${esc(p.engrais)}</span></div>` : ''}
+              ${subBar ? `<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">Substrat conseillé</span>${subBar}</div>` : ''}
             </div>
             ${(typeof window.__enrichChips === 'function') ? window.__enrichChips(p) : ''}
             <div class="plant-actions">
@@ -2232,12 +2233,12 @@ function openPlantDetail(id){
     + _pdRow('Reconnaissance — feuilles', p.visu2)
     + _pdRow('Feuillage', p.feuillage) + _pdRow('Port', p.port)
     + _pdRow('Hauteur', p.hauteur) + _pdRow('Couleur', p.couleur)
-    + _pdRow('Rusticité', p.rusticite) + _pdRow('Floraison', p.fl_texte)
-    + _pdRow('☀️ Exposition', exposi) + _pdRow('💧 Arrosage', arrosa)
-    + _pdRow('💨 Humidité', p.humidite) + _pdRow('🌡️ Température', p.temperature)
-    + _pdRow('🪴 Rempotage', p.rempotage) + _pdRow('🌿 Engrais', p.engrais)
-    + _pdRow('🧪 Principes actifs', p.principes)
-    + (subBar ? '<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">🪨 Substrat conseillé</span>'+subBar+'</div>' : '')
+    + _pdRow('Rusticité', p.rusticite) + _pdRow('<i class="fa-solid fa-seedling" aria-hidden="true"></i> Floraison', p.fl_texte)
+    + _pdRow('<i class="fa-solid fa-sun" aria-hidden="true"></i> Exposition', exposi) + _pdRow('<i class="fa-solid fa-droplet" aria-hidden="true"></i> Arrosage', arrosa)
+    + _pdRow('Humidité', p.humidite) + _pdRow('Température', p.temperature)
+    + _pdRow('<i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage', p.rempotage) + _pdRow('<i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais', p.engrais)
+    + _pdRow('<i class="fa-solid fa-flask" aria-hidden="true"></i> Principes actifs', p.principes)
+    + (subBar ? '<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">Substrat conseillé</span>'+subBar+'</div>' : '')
     + '</div>'
     + (p.ennemis ? '<div class="pd-sec"><b><i class="fa-solid fa-bug-slash"></i> Sensibilités &amp; ennemis</b>'+esc(p.ennemis)+'</div>' : '')
     + ((fPrepa||fTempI||fTenue||fCons||fPrec) ? '<div class="pd-sec"><b><i class="fa-solid fa-scissors"></i> Fiche fleuriste</b>'
@@ -2271,6 +2272,37 @@ function openDetailFromHash(){
   if (!m) return;
   var id = decodeURIComponent(m[1]);
   if (plants.some(function (p) { return p.id === id; })) openPlantDetail(id);
+}
+
+/* Reflet Liquid Glass : un seul listener délégué, limité aux souris fines et
+   cadencé par requestAnimationFrame pour préserver la fluidité. */
+function initLiquidGlass(){
+  if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches ||
+      window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  var selector = '.hero-content,.fusion-hub-shell,.fusion-module,.fusion-panel,.fusion-stat,.v7-toolbar,.scrolly-content,.side-drawer,.v7-modal-card,.fusion-quick-sheet';
+  var pending = null, frame = 0, previous = null;
+
+  document.addEventListener('pointermove', function(event){
+    var surface = event.target.closest && event.target.closest(selector);
+    if (previous && previous !== surface) {
+      previous.style.setProperty('--glass-x', '50%');
+      previous.style.setProperty('--glass-y', '0%');
+    }
+    previous = surface;
+    if (!surface) return;
+    pending = { surface:surface, x:event.clientX, y:event.clientY };
+    if (frame) return;
+    frame = requestAnimationFrame(function(){
+      frame = 0;
+      if (!pending) return;
+      var rect = pending.surface.getBoundingClientRect();
+      var x = Math.max(0, Math.min(rect.width, pending.x - rect.left));
+      var y = Math.max(0, Math.min(rect.height, pending.y - rect.top));
+      pending.surface.style.setProperty('--glass-x', x + 'px');
+      pending.surface.style.setProperty('--glass-y', y + 'px');
+      pending = null;
+    });
+  }, { passive:true });
 }
 
 /* ===================================================================

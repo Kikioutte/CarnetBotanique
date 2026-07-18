@@ -18,7 +18,7 @@
 'use strict';
 
 const VERSION = 'hdv-v10';
-const SHELL_HASH = '22b7897e5d5c'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
+const SHELL_HASH = 'be5beda998bb'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
 const CACHE_PREFIX = 'hdv-';
 const SHELL_CACHE = VERSION + '-' + SHELL_HASH + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
