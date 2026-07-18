@@ -400,16 +400,16 @@ function renderCatalog() {
           <div class="scrolly-content">
             <span class="plant-family">${esc(p.famille)}</span>
             <div class="plant-name-lat">${esc(p.nomLat)}</div>
-            <h2 class="plant-name-fr pd-link" role="link" tabindex="0" title="Ouvrir la fiche complète" onclick="openPlantDetail('${p.id}')" onkeydown="if(event.key==='Enter')openPlantDetail('${p.id}')">${esc(p.nomFr)}</h2>
+            <h2 class="plant-name-fr"><button type="button" class="plant-name-trigger pd-link" title="Ouvrir la fiche complète de ${esc(p.nomFr)}" aria-label="Ouvrir la fiche complète de ${esc(p.nomFr)}" onclick="openPlantDetail('${p.id}')">${esc(p.nomFr)}</button></h2>
             ${mkV5Tags(p)}
             <p class="plant-desc" style="margin-top:10px">${esc(soins.substring(0,120))}${soins.length>120?'…':''}</p>
             <div class="pro-details">
-              <span class="tech-label" style="color:var(--terracotta)"><i class="fa-solid fa-bug-slash"></i> Sensibilités &amp; Ennemis</span>
+              <span class="tech-label" style="color:var(--terracotta-text)"><i class="fa-solid fa-bug-slash"></i> Sensibilités &amp; Ennemis</span>
               <p style="margin-top:5px;font-size:0.85rem;">${esc(p.ennemis||'')}</p>
             </div>
             ${hasPro ? `
             <div class="pro-fleuriste">
-              <span class="tech-label" style="color:var(--gold)"><i class="fa-solid fa-scissors"></i> Fiche Fleuriste</span>
+              <span class="tech-label" style="color:var(--gold-text)"><i class="fa-solid fa-scissors"></i> Fiche Fleuriste</span>
               ${fPrepa ? `<p style="margin-top:5px;font-size:0.82rem;"><strong>Préparation :</strong> ${esc(fPrepa)}</p>` : ''}
               ${fTempI ? `<p style="font-size:0.82rem;"><strong>Température :</strong> ${esc(fTempI)}</p>` : ''}
               ${fTenue ? `<p style="font-size:0.82rem;"><strong>Tenue en vase :</strong> ${esc(fTenue)}</p>` : ''}
@@ -438,11 +438,11 @@ function renderCatalog() {
               <button class="btn-luxe ${inG ? 'active' : ''}" onclick="toggleGardenStatus('${p.id}')"><i class="fa-solid fa-heart"></i> ${inG ? 'Adopt&eacute;e' : 'Adopter'}</button>
               <button class="btn-luxe wl-btn" data-wl="${p.id}" onclick="wishToggle('${p.id}',event)" title="Liste de souhaits" aria-label="Ajouter aux souhaits"><i class="fa-regular fa-star"></i></button>
               <button class="btn-luxe" onclick="openPlantDetail('${p.id}')" title="Fiche complète" aria-label="Fiche complète"><i class="fa-solid fa-book-open"></i></button>
-              <button class="btn-luxe" onclick="openEditDrawer('${p.id}')"><i class="fa-solid fa-pen-to-square"></i> Modifier</button>
+              <button class="btn-luxe" onclick="openEditDrawer('${p.id}')"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Modifier</button>
               <button class="btn-luxe cmp-btn" data-cmp="${p.id}" onclick="cmpToggle('${p.id}',event)" title="Comparer" aria-label="Comparer"><i class="fa-solid fa-scale-balanced"></i></button>
-              <button class="btn-luxe" onclick="openJournal('${p.id}')" title="Journal &amp; emplacement"><i class="fa-solid fa-book"></i></button>
-              <button class="btn-luxe" onclick="sharePlant('${p.id}')" title="Partager / Imprimer la fiche"><i class="fa-solid fa-share-nodes"></i></button>
-              <button class="btn-luxe" onclick="triggerDelete('${p.id}')" style="border-color:rgba(195,106,75,0.3);color:var(--terracotta);"><i class="fa-solid fa-trash"></i></button>
+              <button class="btn-luxe" onclick="openJournal('${p.id}')" title="Journal et emplacement" aria-label="Ouvrir le journal de ${esc(p.nomFr)}"><i class="fa-solid fa-book" aria-hidden="true"></i></button>
+              <button class="btn-luxe" onclick="sharePlant('${p.id}')" title="Partager ou imprimer la fiche" aria-label="Partager ou imprimer la fiche de ${esc(p.nomFr)}"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></button>
+              <button class="btn-luxe" onclick="triggerDelete('${p.id}')" title="Supprimer la fiche" aria-label="Supprimer la fiche de ${esc(p.nomFr)}" style="border-color:rgba(159,79,51,0.45);color:var(--terracotta-dark);"><i class="fa-solid fa-trash" aria-hidden="true"></i></button>
             </div>
           </div>
         </div>
@@ -758,15 +758,16 @@ function renderCare(){
 
 function toggleCareMode(){
   var willOpen=!careOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     careOn=true;
     document.body.classList.add('care-on');
     var b=document.getElementById('careBtn'); if(b) b.classList.add('active');
-    var sec=document.getElementById('careSection'); if(sec) sec.style.display='block';
+    var sec=document.getElementById('careSection'); if(sec){ _setOverlayState(sec,true); sec.style.display='block'; }
     try{lenis.stop();}catch(e){}
     renderCare();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 
@@ -774,19 +775,25 @@ function toggleCareMode(){
    WCAG 2.4.3 : tant qu'un overlay est ouvert, Tab cycle à l'intérieur ; le fond
    passe en aria-hidden ; à la fermeture, le focus revient à l'élément déclencheur. */
 var _trapState=null;
+function _setOverlayState(overlay,open){
+  if(!overlay)return;
+  overlay.setAttribute('aria-hidden',open?'false':'true');
+  if(open)overlay.removeAttribute('inert');
+  else overlay.setAttribute('inert','');
+}
 function _focusablesIn(el){
   return el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
 }
-function trapFocus(overlay){
+function trapFocus(overlay,returnFocus){
   if(!overlay) return;
   releaseFocusTrap();
-  _trapState={overlay:overlay,prev:document.activeElement,hidden:[]};
+  _trapState={overlay:overlay,prev:returnFocus||document.activeElement,hidden:[]};
   Array.prototype.forEach.call(document.body.children,function(el){
     if(el===overlay||el.contains(overlay)||el.tagName==='SCRIPT'||el.tagName==='STYLE')return;
     // Éléments transitoires susceptibles de s'afficher PAR-DESSUS l'overlay piégé
     if(el.id==='toast'||el.id==='imgZoom'||el.id==='v7-modal')return;
-    if(el.getAttribute('aria-hidden')==='true')return;
-    el.setAttribute('aria-hidden','true');el.setAttribute('data-trap-hidden','1');
+    if(el.getAttribute('aria-hidden')==='true'||el.hasAttribute('inert'))return;
+    el.setAttribute('aria-hidden','true');el.setAttribute('inert','');el.setAttribute('data-trap-hidden','1');
     _trapState.hidden.push(el);
   });
   var f=_focusablesIn(overlay);
@@ -794,7 +801,7 @@ function trapFocus(overlay){
 }
 function releaseFocusTrap(){
   if(!_trapState)return;
-  _trapState.hidden.forEach(function(el){ el.removeAttribute('aria-hidden'); el.removeAttribute('data-trap-hidden'); });
+  _trapState.hidden.forEach(function(el){ el.removeAttribute('aria-hidden'); el.removeAttribute('inert'); el.removeAttribute('data-trap-hidden'); });
   var prev=_trapState.prev; _trapState=null;
   if(prev&&typeof prev.focus==='function'){ try{prev.focus();}catch(e){} }
 }
@@ -809,23 +816,24 @@ document.addEventListener('keydown',function(e){
 
 function _closeAllPanels(){
   releaseFocusTrap();
-  flashMode=false; document.body.classList.remove('flash-on'); var _fb=document.getElementById('flashBtn'); if(_fb)_fb.classList.remove('active'); var _fs=document.getElementById('flashcardSection'); if(_fs)_fs.style.display='none';
-  quizOn=false; document.body.classList.remove('quiz-on'); var _qb=document.getElementById('quizBtn'); if(_qb)_qb.classList.remove('active'); var _qs=document.getElementById('quizSection'); if(_qs)_qs.style.display='none';
-  calOn=false; document.body.classList.remove('cal-on'); var _cb=document.getElementById('calBtn'); if(_cb)_cb.classList.remove('active'); var _cs=document.getElementById('calSection'); if(_cs)_cs.style.display='none';
-  dashOn=false; document.body.classList.remove('dash-on'); var _db=document.getElementById('dashBtn'); if(_db)_db.classList.remove('active'); var _ds=document.getElementById('dashSection'); if(_ds)_ds.style.display='none';
-  careOn=false; document.body.classList.remove('care-on'); var _ceb=document.getElementById('careBtn'); if(_ceb)_ceb.classList.remove('active'); var _ce=document.getElementById('careSection'); if(_ce)_ce.style.display='none';
+  flashMode=false; document.body.classList.remove('flash-on'); var _fb=document.getElementById('flashBtn'); if(_fb)_fb.classList.remove('active'); var _fs=document.getElementById('flashcardSection'); if(_fs){_fs.style.display='none';_setOverlayState(_fs,false);}
+  quizOn=false; document.body.classList.remove('quiz-on'); var _qb=document.getElementById('quizBtn'); if(_qb)_qb.classList.remove('active'); var _qs=document.getElementById('quizSection'); if(_qs){_qs.style.display='none';_setOverlayState(_qs,false);}
+  calOn=false; document.body.classList.remove('cal-on'); var _cb=document.getElementById('calBtn'); if(_cb)_cb.classList.remove('active'); var _cs=document.getElementById('calSection'); if(_cs){_cs.style.display='none';_setOverlayState(_cs,false);}
+  dashOn=false; document.body.classList.remove('dash-on'); var _db=document.getElementById('dashBtn'); if(_db)_db.classList.remove('active'); var _ds=document.getElementById('dashSection'); if(_ds){_ds.style.display='none';_setOverlayState(_ds,false);}
+  careOn=false; document.body.classList.remove('care-on'); var _ceb=document.getElementById('careBtn'); if(_ceb)_ceb.classList.remove('active'); var _ce=document.getElementById('careSection'); if(_ce){_ce.style.display='none';_setOverlayState(_ce,false);}
 }
 function toggleFlashMode(){
   const willOpen=!flashMode;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     flashMode=true;
     document.body.classList.add('flash-on');
     var b=document.getElementById('flashBtn'); if(b)b.classList.add('active');
-    var sec=document.getElementById('flashcardSection'); if(sec)sec.style.display='block';
+    var sec=document.getElementById('flashcardSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     currentFlashIndex=0; renderFlashcard();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 
@@ -837,7 +845,7 @@ function renderFlashcard() {
   if (currentFlashIndex < 0) currentFlashIndex = list.length - 1;
   const p = list[currentFlashIndex];
   container.innerHTML = `
-    <div class="flash-card" id="currentCard" onclick="this.classList.toggle('flipped')">
+    <button type="button" class="flash-card" id="currentCard" aria-pressed="false" aria-label="Retourner la flashcard de ${esc(p.nomFr)}" onclick="this.classList.toggle('flipped');this.setAttribute('aria-pressed',this.classList.contains('flipped')?'true':'false')">
       <div class="card-face card-front">
         <span class="plant-family" style="font-size:0.8rem;">Devinez l'espèce</span>
         <h2 style="font-size: 3rem; text-align:center; margin: 20px 0;">${esc(p.nomFr)}</h2>
@@ -855,7 +863,7 @@ function renderFlashcard() {
         </div>
         ${p.mnemonic ? `<div style="margin-top:10px;padding:8px 12px;background:rgba(194,162,106,0.15);border-radius:8px;font-size:0.78rem;font-style:italic;color:var(--gold);text-align:center;max-width:100%;"><i class="fa-solid fa-lightbulb"></i> ${esc(p.mnemonic)}</div>` : ''}
       </div>
-    </div>
+    </button>
   `;
   const _fp = p;
   const _seq = ++_photoSeq.flash;
@@ -971,8 +979,17 @@ function closeDrawer() {
 window.switchFormTab = function switchFormTab(idx) {
   var panels = document.querySelectorAll('.form-tab-panel');
   var btns = document.querySelectorAll('.form-tab-btn');
-  panels.forEach(function(p,i){ p.classList.toggle('active', i===idx); });
-  btns.forEach(function(b,i){ b.classList.toggle('active', i===idx); });
+  panels.forEach(function(p,i){ var active=i===idx;p.classList.toggle('active',active);p.hidden=!active; });
+  btns.forEach(function(b,i){ var active=i===idx;b.classList.toggle('active',active);b.setAttribute('aria-selected',active?'true':'false');b.tabIndex=active?0:-1; });
+};
+window.formTabKeydown=function formTabKeydown(event,idx){
+  var keys=['ArrowLeft','ArrowRight','Home','End'];
+  if(keys.indexOf(event.key)<0)return;
+  event.preventDefault();
+  var count=document.querySelectorAll('.form-tab-btn').length;
+  var next=event.key==='Home'?0:event.key==='End'?count-1:(idx+(event.key==='ArrowRight'?1:-1)+count)%count;
+  window.switchFormTab(next);
+  var tab=document.getElementById('formTab'+next);if(tab)tab.focus();
 };
 
 function _gv(id) { var el = document.getElementById(id); return el ? el.value : ''; }
@@ -1889,16 +1906,17 @@ function updateQuizScore(){
 }
 function toggleQuizMode(){
   const willOpen=!quizOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     quizOn=true;
     document.body.classList.add('quiz-on');
     var b=document.getElementById('quizBtn'); if(b)b.classList.add('active');
-    var sec=document.getElementById('quizSection'); if(sec)sec.style.display='block';
+    var sec=document.getElementById('quizSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     var qs=document.getElementById('quizSubtitle'); if(qs&&plants.length)qs.textContent='Testez votre reconnaissance des '+plants.length+' espèces.';
     loadQuizScore(); populateQuizScope(); updateQuizErrBtn(); newQuestion();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 function setQuizMode(m){ quizMode=m; ['fr','fam','lat','photo'].forEach(function(x){var el=document.getElementById('qm-'+x); if(el)el.classList.toggle('on',x===m);}); newQuestion(); }
@@ -2018,15 +2036,16 @@ function bloomLabel(p){
 }
 function toggleCalMode(){
   const willOpen=!calOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     calOn=true;
     document.body.classList.add('cal-on');
     var b=document.getElementById('calBtn'); if(b)b.classList.add('active');
-    var sec=document.getElementById('calSection'); if(sec)sec.style.display='block';
+    var sec=document.getElementById('calSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     renderCalGrid(); renderCalList();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 function renderCalGrid(){
@@ -2100,16 +2119,30 @@ function buildPrint(){
 let dashOn=false;
 function toggleDashMode(){
   const willOpen=!dashOn;
+  var returnFocus=document.activeElement;
+  // Le tableau de bord est lancé depuis le menu responsive, dont les boutons
+  // sont retirés du DOM à la fermeture. Restituer le focus à son déclencheur
+  // persistant évite qu'il retombe sur <body> après Échap.
+  if(willOpen&&(!returnFocus||returnFocus===document.body||
+      (returnFocus.matches&&returnFocus.matches('[data-nav-action="dashboard"]')))){
+    returnFocus=document.getElementById('burgerBtn')||returnFocus;
+  }
   _closeAllPanels();
   if(willOpen){
     dashOn=true;
     document.body.classList.add('dash-on');
     var b=document.getElementById('dashBtn'); if(b)b.classList.add('active');
-    var sec=document.getElementById('dashSection'); if(sec)sec.style.display='block';
+    var sec=document.getElementById('dashSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     renderDash();
-    trapFocus(sec);
-  } else { try{lenis.start();}catch(e){} }
+    trapFocus(sec,returnFocus);
+  } else {
+    try{lenis.start();}catch(e){}
+    // Le menu mobile est reconstruit à chaque ouverture : son bouton interne
+    // n'existe plus ici. Replacer explicitement le focus après le keydown.
+    var dashTrigger=document.getElementById('burgerBtn')||document.getElementById('dashBtn');
+    if(dashTrigger)setTimeout(function(){try{dashTrigger.focus();}catch(e){}},0);
+  }
 }
 function renderDash(){
   const fams=new Set(plants.map(p=>p.famille)); 

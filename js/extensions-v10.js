@@ -127,7 +127,7 @@
       ['dashSection','dashBtn'],
       ['careSection','careBtn']
     ].forEach(function(pair){
-      var sec=$(pair[0]);if(sec)sec.style.display='none';
+      var sec=$(pair[0]);if(sec){sec.style.display='none';sec.setAttribute('aria-hidden','true');sec.setAttribute('inert','');}
       var btn=$(pair[1]);if(btn)btn.classList.remove('active');
     });
     try{flashMode=false;}catch(e){}
@@ -186,7 +186,9 @@
       '</div>';
     closePanels();
     back.classList.add('open');sheet.classList.add('open');
+    sheet.removeAttribute('inert');
     sheet.setAttribute('aria-hidden','false');
+    sheet.setAttribute('aria-labelledby','fusionSheetTitle');
     document.body.classList.add('fusion-sheet-on','no-scroll');
     setLenisStopped(true);
     if(typeof window.trapFocus==='function')try{window.trapFocus(sheet);}catch(e){}
@@ -196,7 +198,7 @@
     var wasOpen=!!(sheet&&sheet.classList.contains('open'));
     if(wasOpen&&typeof window.releaseFocusTrap==='function')try{window.releaseFocusTrap();}catch(e){}
     if(sheet)sheet.classList.remove('open');
-    if(sheet)sheet.setAttribute('aria-hidden','true');
+    if(sheet){sheet.setAttribute('aria-hidden','true');sheet.setAttribute('inert','');sheet.removeAttribute('aria-labelledby');}
     if(back)back.classList.remove('open');
     document.body.classList.remove('fusion-sheet-on');
     restoreScrollIfIdle();

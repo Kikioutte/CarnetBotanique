@@ -85,7 +85,7 @@
   </header>
 
 <!-- HERO D'ACCUEIL INTRODUCTIF -->
-<section class="hero" id="heroSection" style="background-image: url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=2000&auto=format&fit=crop');">
+<section class="hero" id="heroSection" aria-labelledby="heroTitle" style="background-image: url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=2000&auto=format&fit=crop');">
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-badge" id="heroBadge">Académie Royale de Botanique</span>
@@ -172,10 +172,10 @@
 </main>
 
 <!-- PANNEAU ET SYSTEME DE FLASHCARDS (APPRENTISSAGE) -->
-<div class="flashcard-overlay" id="flashcardSection" data-lenis-prevent>
+<div class="flashcard-overlay" id="flashcardSection" role="dialog" aria-modal="true" aria-labelledby="flashcardTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe flash-close" onclick="toggleFlashMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
-    <h2 style="font-size: 2.5rem; margin-bottom: 10px;">Gymnastique Mémorielle</h2>
+    <h2 id="flashcardTitle" style="font-size: 2.5rem; margin-bottom: 10px;">Gymnastique Mémorielle</h2>
     <p style="font-family: var(--primary-serif); font-style: italic;">Retenez les caractéristiques clés de vos herbes en retournant les cartes.</p>
   </div>
   <div class="flash-container" id="flashContainer">
@@ -202,6 +202,7 @@
       <legend>🔍 Recherche automatique</legend>
       <div class="autofill-row">
         <div class="autofill-suggest-wrap">
+          <label class="v8-sr" for="autoFillInput">Rechercher une plante à importer automatiquement</label>
           <input type="text" id="autoFillInput" class="form-control"
             placeholder="Nom français ou latin (ex: Lavande, Rosa canina…)"
             autocomplete="off"
@@ -215,7 +216,7 @@
       </div>
       <div id="autoFillStatus" class="autofill-status"></div>
       <div style="margin-top:10px;border-top:1px dashed rgba(194,162,106,0.3);padding-top:10px;">
-        <label for="geminiKeyInput" style="font-size:0.72rem;color:var(--gold);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">🤖 Enrichissement IA — clé Gemini (optionnelle)</label>
+        <label for="geminiKeyInput" style="font-size:0.72rem;color:var(--gold-text);font-family:var(--primary-sans);font-weight:600;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">🤖 Enrichissement IA — clé Gemini (optionnelle)</label>
         <div style="display:flex;gap:8px;align-items:center;">
           <input type="password" id="geminiKeyInput" class="form-control"
             placeholder="Clé gratuite sur aistudio.google.com"
@@ -241,15 +242,15 @@
     </fieldset>
 
     <!-- Onglets de navigation -->
-    <div class="form-tabs" role="tablist">
-      <button type="button" class="form-tab-btn active" onclick="switchFormTab(0)" role="tab">📋 Général</button>
-      <button type="button" class="form-tab-btn" onclick="switchFormTab(1)" role="tab">🌿 Botanique</button>
-      <button type="button" class="form-tab-btn" onclick="switchFormTab(2)" role="tab">🌱 Culture</button>
-      <button type="button" class="form-tab-btn" onclick="switchFormTab(3)" role="tab">✂️ Pro</button>
+    <div class="form-tabs" role="tablist" aria-label="Sections de la fiche botanique">
+      <button type="button" id="formTab0" class="form-tab-btn active" onclick="switchFormTab(0)" onkeydown="formTabKeydown(event,0)" role="tab" aria-selected="true" aria-controls="ftab-0">📋 Général</button>
+      <button type="button" id="formTab1" class="form-tab-btn" onclick="switchFormTab(1)" onkeydown="formTabKeydown(event,1)" role="tab" aria-selected="false" aria-controls="ftab-1" tabindex="-1">🌿 Botanique</button>
+      <button type="button" id="formTab2" class="form-tab-btn" onclick="switchFormTab(2)" onkeydown="formTabKeydown(event,2)" role="tab" aria-selected="false" aria-controls="ftab-2" tabindex="-1">🌱 Culture</button>
+      <button type="button" id="formTab3" class="form-tab-btn" onclick="switchFormTab(3)" onkeydown="formTabKeydown(event,3)" role="tab" aria-selected="false" aria-controls="ftab-3" tabindex="-1">✂️ Pro</button>
     </div>
 
     <!-- BLOC 1 : Informations générales -->
-    <div class="form-tab-panel active" id="ftab-0">
+    <div class="form-tab-panel active" id="ftab-0" role="tabpanel" aria-labelledby="formTab0">
       <fieldset class="form-fieldset">
         <legend>Informations Générales</legend>
         <div class="form-group">
@@ -297,7 +298,7 @@
     </div>
 
     <!-- BLOC 2 : Caractéristiques botaniques -->
-    <div class="form-tab-panel" id="ftab-1">
+    <div class="form-tab-panel" id="ftab-1" role="tabpanel" aria-labelledby="formTab1" hidden>
       <fieldset class="form-fieldset">
         <legend>Caractéristiques Botaniques</legend>
         <div class="form-row-2">
@@ -345,12 +346,13 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label" for="formToxPets" style="color:var(--terracotta)">🐾 Toxicité pour animaux</label>
+          <label class="form-label" for="formToxPets" style="color:var(--terracotta-text)">🐾 Toxicité pour animaux</label>
           <select id="formToxPets" class="form-control" style="margin-bottom:8px;">
             <option value="">— Non renseigné</option>
             <option value="safe">✅ Sans danger pour chiens/chats</option>
             <option value="toxic">☠️ Toxique pour chiens/chats</option>
           </select>
+          <label class="v8-sr" for="formToxDetail">Précisions sur la toxicité pour les animaux</label>
           <input type="text" id="formToxDetail" class="form-control" placeholder="Précisions : espèces concernées, symptômes...">
         </div>
         <div class="form-group">
@@ -378,7 +380,7 @@
     </div>
 
     <!-- BLOC 3 : Besoins de culture & substrat -->
-    <div class="form-tab-panel" id="ftab-2">
+    <div class="form-tab-panel" id="ftab-2" role="tabpanel" aria-labelledby="formTab2" hidden>
       <fieldset class="form-fieldset">
         <legend>Besoins de Culture &amp; Substrat</legend>
         <div class="form-row-2">
@@ -443,7 +445,7 @@
     </div>
 
     <!-- BLOC 4 : Mode Pro Fleuriste -->
-    <div class="form-tab-panel" id="ftab-3">
+    <div class="form-tab-panel" id="ftab-3" role="tabpanel" aria-labelledby="formTab3" hidden>
       <fieldset class="form-fieldset">
         <legend>✂️ Mode Pro — Fleuriste</legend>
         <div class="form-group">
@@ -494,11 +496,11 @@
 </div>
 
 <!-- BANDEAU TOAST -->
-<div id="toast">Fiche mise à jour avec succès</div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">Fiche mise à jour avec succès</div>
 
 <!-- FICHE EXPRESS MOBILE / TABLETTE -->
 <div class="fusion-sheet-backdrop" id="fusionSheetBackdrop"></div>
-<aside class="fusion-quick-sheet" id="fusionQuickSheet" aria-modal="true" aria-labelledby="fusionSheetTitle" role="dialog" data-lenis-prevent>
+<aside class="fusion-quick-sheet" id="fusionQuickSheet" aria-modal="true" aria-label="Fiche botanique express" aria-hidden="true" role="dialog" inert data-lenis-prevent>
   <div class="fusion-sheet-handle"></div>
   <button class="fusion-sheet-close" type="button" aria-label="Fermer la fiche express" onclick="window.fusionCloseSheet&&window.fusionCloseSheet()"><i class="fa-solid fa-xmark"></i></button>
   <div class="fusion-sheet-body" id="fusionSheetBody"></div>
@@ -528,10 +530,11 @@
 
 
 <!-- OVERLAY QUIZ / RÉVISION -->
-<div class="quiz-overlay" id="quizSection" data-lenis-prevent>
+<div class="quiz-overlay" id="quizSection" role="dialog" aria-modal="true" aria-labelledby="quizTitle" aria-hidden="true" inert data-lenis-prevent>
+  <button class="btn-luxe quiz-close" aria-label="Fermer le quiz" onclick="toggleQuizMode()"><i class="fa-solid fa-xmark" aria-hidden="true"></i> <span>Fermer</span></button>
   <div class="quiz-wrap">
     <div class="quiz-head">
-      <h2>Salle de Révision</h2>
+      <h2 id="quizTitle">Salle de Révision</h2>
       <p id="quizSubtitle">Testez votre reconnaissance de vos espèces.</p>
     </div>
     <div class="quiz-modes">
@@ -558,11 +561,11 @@
 </div>
 
 <!-- OVERLAY CALENDRIER DES FLORAISONS -->
-<div class="cal-overlay" id="calSection" data-lenis-prevent>
+<div class="cal-overlay" id="calSection" role="dialog" aria-modal="true" aria-labelledby="calTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe cal-close" onclick="toggleCalMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="cal-wrap">
     <div class="cal-head">
-      <h2>Calendrier des Floraisons</h2>
+      <h2 id="calTitle">Calendrier des Floraisons</h2>
       <p>Quand fleurissent vos espèces, mois par mois.</p>
     </div>
     <div class="cal-note" id="calNote"></div>
@@ -575,10 +578,10 @@
 <div id="printArea"></div>
 
 <!-- OVERLAY TABLEAU DE BORD -->
-<div class="dash-overlay" id="dashSection" data-lenis-prevent>
+<div class="dash-overlay" id="dashSection" role="dialog" aria-modal="true" aria-labelledby="dashTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe dash-close" onclick="toggleDashMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="dash-wrap">
-    <div class="dash-head"><h2>Tableau de Bord</h2><p>Votre herbier en chiffres.</p></div>
+    <div class="dash-head"><h2 id="dashTitle">Tableau de Bord</h2><p>Votre herbier en chiffres.</p></div>
     <div class="dash-stats" id="dashStats"></div>
     <div class="dash-sec"><h3>Répartition par catégorie</h3><div id="dashCats"></div></div>
     <div class="dash-sec"><h3>Maîtrise au quiz</h3><div class="dash-mastery" id="dashMastery"></div></div>
@@ -608,16 +611,16 @@
 </nav>
 
 <!-- OVERLAY SOINS & CONSERVATION -->
-<div class="care-overlay" id="careSection" data-lenis-prevent>
+<div class="care-overlay" id="careSection" role="dialog" aria-modal="true" aria-labelledby="careTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe care-close" onclick="toggleCareMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
   <div class="care-wrap">
-    <div class="care-head"><h2>Soins &amp; Conservation</h2><p>Gardez vos fleurs éclatantes plus longtemps.</p></div>
+    <div class="care-head"><h2 id="careTitle">Soins &amp; Conservation</h2><p>Gardez vos fleurs éclatantes plus longtemps.</p></div>
     <div id="careBody"></div>
   </div>
 </div>
 <!-- ===================== EXTENSIONS v7 ===================== -->
 <div id="v7-modal" class="v7-modal" role="dialog" aria-modal="true" aria-label="Boîte de dialogue"><div class="v7-modal-card"><button class="v7-modal-x" onclick="window.closeModal()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button><div id="v7-modal-body"></div></div></div>
-<div id="v7-cmpbar" class="v7-cmpbar"><span><i class="fa-solid fa-scale-balanced"></i> <b id="v7-cmpcount">0</b> <span>selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span>Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark"></i></button></div>
+<div id="v7-cmpbar" class="v7-cmpbar" aria-label="Comparaison d’espèces" aria-hidden="true" inert><span><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <b id="v7-cmpcount">0</b> <span>selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span>Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
 <script src="js/extensions-v7.js"></script>
 <!-- =================== FIN EXTENSIONS v7 =================== -->
 

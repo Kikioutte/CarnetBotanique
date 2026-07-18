@@ -1,7 +1,7 @@
 /* ═══════════ bloc «base» (ordre de cascade préservé) ═══════════ */
 /* CSS Reset & Variables d'inspiration Casadora Resort (Marocain & Naturel Chic) */
-.skip-link{position:absolute;left:8px;top:-48px;z-index:3000;background:#1a3a2a;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;transition:top .2s ease;}
-.skip-link:focus{top:8px;outline:2px solid #fff;}
+.skip-link{position:fixed;left:8px;top:-64px;z-index:5000;background:#1a3a2a;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;}
+.skip-link:focus,.skip-link:focus-visible{top:8px !important;outline:3px solid #fff;outline-offset:2px;}
 :root {
   --primary-serif: 'Cormorant Garamond', Georgia, serif;
   --primary-sans: 'Montserrat', sans-serif;
@@ -10,7 +10,7 @@
   --bg-sand: #FAF7F2;          /* Sable / Lin clair */
   --bg-sand-dark: #F2EBE1;     /* Lin plus foncé */
   --ink-deep: #1F2D24;         /* Vert forêt très profond (presque noir) */
-  --sage-green: #7D8E74;       /* Vert sauge mat */
+  --sage-green: #5E6E57;       /* Vert sauge accessible sur les fonds clairs */
   --terracotta: #C36A4B;       /* Terre cuite marocaine */
   --terracotta-dark: #9F4F33;  /* Terre cuite foncée */
   --gold: #C2A26A;             /* Or mat / Laiton */
@@ -180,13 +180,13 @@ header.scrolled {
 }
 
 .btn-luxe-accent {
-  background: var(--terracotta);
+  background: var(--terracotta-dark);
   color: var(--cream);
   border: none;
 }
 
 .btn-luxe-accent:hover {
-  background: var(--terracotta-dark);
+  background: #7F3F29;
 }
 
 /* PANNEAU INTRODUCTIF CHIC (Hero d'accueil) */
@@ -1311,8 +1311,8 @@ body.theme-dark input,body.theme-dark textarea,body.theme-dark select{background
 .v7-chip i{color:var(--gold);}
 .v7-chip-warn{background:rgba(195,106,75,.12);}
 .v7-chip-warn i{color:var(--terracotta);}
-.v7-chip-empty{cursor:pointer;border-style:dashed;color:var(--sage-green);}
-.v7-chip-empty:hover{border-color:var(--terracotta);color:var(--terracotta);}
+.v7-chip-empty{cursor:pointer;border-style:dashed;color:var(--ink-deep);}
+.v7-chip-empty:hover{border-color:var(--terracotta-text);color:var(--terracotta-text);}
 /* Boutons comparaison actifs */
 .btn-luxe.cmp-btn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
 /* Barre flottante comparaison */
@@ -1712,4 +1712,83 @@ body.theme-dark .mnav-close{background:rgba(43,58,49,.9)}
 @media(max-width:360px){
   .fusion-panel-row{gap:8px;padding:8px}
   .fusion-panel-row .pill{max-width:44%;white-space:normal;text-align:right}
+}
+
+/* ═══════════ Phase 3 — accessibilité WCAG ═══════════ */
+:root{
+  --gold-text:#8A5A16;
+  --terracotta-text:#9F4F33;
+  --danger-text:#9B2C2C;
+}
+body.theme-dark{
+  --sage-green:#A8CF9F;
+  --gold-text:#F0CF9A;
+  --terracotta-text:#EAA9A9;
+  --danger-text:#FFB4B4;
+}
+
+/* Les teintes décoratives d'origine restent utilisées pour les bordures et
+   ornements ; les petits textes emploient leurs variantes contrastées. */
+.brand-subtitle,
+.scroll-indicator,
+.plant-family,
+.tech-label,
+.autofill-zone legend,
+.fusion-kicker,
+.v7-tl-d,
+.v7-grade-info,
+.fusion-sheet-title span{color:var(--gold-text)}
+.hero-badge,
+.scrolly-overlay-badge,
+.fusion-panel-row .pill{color:var(--terracotta-text)}
+.fusion-module b{color:var(--ink-deep)}
+.v7-footer .v7-credit{opacity:1}
+.v7-chip-danger{color:var(--danger-text);border-color:var(--danger-text)}
+
+/* Le nom d'espèce reste un vrai titre, avec un bouton sémantique qui reprend
+   exactement la typographie existante. */
+.plant-name-fr .plant-name-trigger{
+  appearance:none;
+  display:inline;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  line-height:inherit;
+  letter-spacing:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.plant-name-fr .plant-name-trigger:hover{color:var(--terracotta-text)}
+
+/* Une flashcard interactive est désormais un bouton clavier sans modifier son
+   rendu recto-verso. */
+button.flash-card{
+  appearance:none;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  text-align:inherit;
+}
+
+/* Zone tactile minimale WCAG 2.5.8 pour le seul lien historiquement trop bas. */
+.footer-copy a{
+  display:inline-flex;
+  min-height:24px;
+  align-items:center;
+  color:#D7E0D3 !important;
+}
+
+:focus-visible,
+body.v8-kbd a:focus-visible,
+body.v8-kbd button:focus-visible,
+body.v8-kbd input:focus-visible,
+body.v8-kbd select:focus-visible,
+body.v8-kbd textarea:focus-visible,
+body.v8-kbd [tabindex]:focus-visible{
+  outline-color:var(--gold-text) !important;
 }

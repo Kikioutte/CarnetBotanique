@@ -12,7 +12,7 @@ function opt(v){return '<option value="'+esc2(v)+'">'+esc2(v)+'</option>';}
 
 /* ---------- Mode sombre ---------- */
 var theme=L('hdv_theme','light');
-function applyTheme(){document.body.classList.toggle('theme-dark',theme==='dark');var b=$('v7-theme');if(b)b.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>');var mb=$('mnavThemeBtn');if(mb)mb.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun" aria-hidden="true"></i> <span class="mnav-theme-label">Mode clair</span>':'<i class="fa-solid fa-moon" aria-hidden="true"></i> <span class="mnav-theme-label">Mode sombre</span>');}
+function applyTheme(){document.body.classList.toggle('theme-dark',theme==='dark');var b=$('v7-theme');if(b){b.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun" aria-hidden="true"></i>':'<i class="fa-solid fa-moon" aria-hidden="true"></i>');b.setAttribute('aria-label',theme==='dark'?'Activer le mode clair':'Activer le mode sombre');b.title=b.getAttribute('aria-label');}var mb=$('mnavThemeBtn');if(mb)mb.innerHTML=(theme==='dark'?'<i class="fa-solid fa-sun" aria-hidden="true"></i> <span class="mnav-theme-label">Mode clair</span>':'<i class="fa-solid fa-moon" aria-hidden="true"></i> <span class="mnav-theme-label">Mode sombre</span>');}
 window.toggleTheme=function(){theme=(theme==='dark'?'light':'dark');S('hdv_theme',theme);applyTheme();};
 
 /* ---------- Journal / zones / arrosage ---------- */
@@ -53,11 +53,11 @@ window.__enrichChips=function(p){
   if(_chip_eau)c.push('<span class="v7-chip"><i class="fa-solid fa-droplet"></i> '+esc2(_chip_eau)+'</span>');
   if(p.temperature)c.push('<span class="v7-chip"><i class="fa-solid fa-thermometer-half"></i> '+esc2(p.temperature)+'</span>');
   if(p.principes)c.push('<span class="v7-chip"><i class="fa-solid fa-flask"></i> '+esc2(p.principes)+'</span>');
-  if(plantIsToxic(p))c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">⚠️ Toxique animaux</span>');
-  if(p.invasive)c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">🌾 Invasive</span>');
+  if(plantIsToxic(p))c.push('<span class="v7-chip v7-chip-danger">⚠️ Toxique animaux</span>');
+  if(p.invasive)c.push('<span class="v7-chip v7-chip-danger">🌾 Invasive</span>');
   var z=(journal[p.id]&&journal[p.id].zone);
   if(z)c.push('<span class="v7-chip"><i class="fa-solid fa-location-dot"></i> '+esc2(z)+'</span>');
-  if(!c.length)c.push('<span class="v7-chip v7-chip-empty" onclick="openEditDrawer(\''+p.id+'\')"><i class="fa-solid fa-circle-plus"></i> Completer la fiche</span>');
+  if(!c.length)c.push('<button type="button" class="v7-chip v7-chip-empty" onclick="openEditDrawer(\''+p.id+'\')"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Completer la fiche</button>');
   return '<div class="v7-chips">'+c.join('')+'</div>';
 };
 function readFilters(){var f=function(id){var e=$(id);return e?e.value:'';};advFilters.fam=f('v7-f-fam');advFilters.type=f('v7-f-type');advFilters.tox=f('v7-f-tox');advFilters.inv=f('v7-f-inv');advFilters.zone=f('v7-f-zone');advSort=f('v7-sort')||'default';}
@@ -66,15 +66,15 @@ function buildToolbar(){
   var cat=$('plantCatalog');if(!cat||$('v7-toolbar'))return;
   var fams=uniq(plants.map(function(p){return p.famille;}));
   var types=uniq(plants.map(function(p){return p.type||''}));
-  var bar=document.createElement('div');bar.id='v7-toolbar';bar.className='v7-toolbar';
+  var bar=document.createElement('section');bar.id='v7-toolbar';bar.className='v7-toolbar';bar.setAttribute('aria-label','Filtres et tri du catalogue');
   bar.innerHTML=
    '<div class="v7-tb-group">'+
-   '<select id="v7-f-fam"><option value="">Toutes familles</option>'+fams.map(opt).join('')+'</select>'+
-   '<select id="v7-f-type"><option value="">Tous types</option>'+types.filter(Boolean).map(opt).join('')+'</select>'+
-   '<select id="v7-f-tox"><option value="">Animaux : toutes</option><option value="safe">Sans danger</option><option value="toxic">Toxiques</option></select>'+
-   '<select id="v7-f-inv"><option value="">Invasive : toutes</option><option value="invasive">Invasives</option><option value="noninvasive">Non invasives</option></select>'+
-   '<select id="v7-f-zone"><option value="">Toutes zones</option></select>'+
-   '<select id="v7-sort"><option value="default">Tri par defaut</option><option value="nom">Nom (A-Z)</option><option value="nom-desc">Nom (Z-A)</option><option value="fam">Famille</option></select>'+
+   '<select id="v7-f-fam" aria-label="Filtrer par famille"><option value="">Toutes familles</option>'+fams.map(opt).join('')+'</select>'+
+   '<select id="v7-f-type" aria-label="Filtrer par type"><option value="">Tous types</option>'+types.filter(Boolean).map(opt).join('')+'</select>'+
+   '<select id="v7-f-tox" aria-label="Filtrer par toxicité pour les animaux"><option value="">Animaux : toutes</option><option value="safe">Sans danger</option><option value="toxic">Toxiques</option></select>'+
+   '<select id="v7-f-inv" aria-label="Filtrer par caractère invasif"><option value="">Invasive : toutes</option><option value="invasive">Invasives</option><option value="noninvasive">Non invasives</option></select>'+
+   '<select id="v7-f-zone" aria-label="Filtrer par zone du jardin"><option value="">Toutes zones</option></select>'+
+   '<select id="v7-sort" aria-label="Trier les espèces"><option value="default">Tri par defaut</option><option value="nom">Nom (A-Z)</option><option value="nom-desc">Nom (Z-A)</option><option value="fam">Famille</option></select>'+
    '<button id="v7-reset" class="v7-tb-btn"><i class="fa-solid fa-rotate-left"></i> Reinitialiser</button>'+
    '</div>'+
    '<div class="v7-tb-group v7-tb-right">'+
@@ -116,7 +116,7 @@ window.closeModal=function(){
 var cmp=[];
 window.cmpToggle=function(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var i=cmp.indexOf(id);if(i>=0){cmp.splice(i,1);}else{if(cmp.length>=3){toast('3 especes maximum');return;}cmp.push(id);}updateCmpBar();reflectCmpButtons();};
 function reflectCmpButtons(){var bs=document.querySelectorAll('.cmp-btn');for(var i=0;i<bs.length;i++){var id=bs[i].getAttribute('data-cmp');bs[i].classList.toggle('active',cmp.indexOf(id)>=0);}}
-function updateCmpBar(){var bar=$('v7-cmpbar');if(!bar)return;if(!cmp.length){bar.classList.remove('show');return;}bar.classList.add('show');var c=$('v7-cmpcount');if(c)c.textContent=cmp.length;}
+function updateCmpBar(){var bar=$('v7-cmpbar');if(!bar)return;if(!cmp.length){bar.classList.remove('show');bar.setAttribute('aria-hidden','true');bar.setAttribute('inert','');return;}bar.removeAttribute('inert');bar.setAttribute('aria-hidden','false');bar.classList.add('show');var c=$('v7-cmpcount');if(c)c.textContent=cmp.length;}
 window.clearCompare=function(){cmp=[];updateCmpBar();reflectCmpButtons();};
 window.openCompare=function(){
   if(cmp.length<2){toast('Selectionnez au moins 2 especes');return;}
@@ -295,7 +295,7 @@ window.flashGrade=function(id,ok){var l=leit[id]||{box:0,due:0};if(ok){l.box=Mat
 function injectManifest(){}
 
 /* ---------- Footer + boutons header ---------- */
-function injectFooter(){if($('v7-footer'))return;var cat=$('plantCatalog');var f=document.createElement('footer');f.id='v7-footer';f.className='v7-footer';f.innerHTML='<div>L\'Herbier de Vie</div><div class="v7-credit">Illustrations : Wikimedia Commons / loremflickr · Donnees enrichies par la communaute</div>';if(cat&&cat.parentNode){cat.parentNode.appendChild(f);}else{document.body.appendChild(f);}}
+function injectFooter(){if($('v7-footer'))return;var cat=$('plantCatalog');var f=document.createElement('aside');f.id='v7-footer';f.className='v7-footer';f.setAttribute('aria-label','Crédits des illustrations et des données');f.innerHTML='<div>L\'Herbier de Vie</div><div class="v7-credit">Illustrations : Wikimedia Commons / loremflickr · Donnees enrichies par la communaute</div>';if(cat&&cat.parentNode){cat.parentNode.appendChild(f);}else{document.body.appendChild(f);}}
 function mkBtn(id,html,title,handler){var b=document.createElement('button');b.className='btn-luxe';b.id=id;b.title=title;b.setAttribute('aria-label',title);b.innerHTML=html;b.addEventListener('click',handler);return b;}
 function injectHeaderButtons(){var na=document.querySelector('.nav-actions');if(!na||$('v7-theme'))return;na.appendChild(mkBtn('v7-remind','<i class="fa-solid fa-bell"></i>',"Rappels d'arrosage",window.openReminders));na.appendChild(mkBtn('v7-theme','<i class="fa-solid fa-moon"></i>','Mode sombre',window.toggleTheme));}
 
