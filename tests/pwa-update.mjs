@@ -5,9 +5,10 @@
  * Deux parcours indépendants sont réellement exécutés :
  *   A. un client possédant déjà le code de mise à jour reçoit le toast, clique
  *      sur « Mettre à jour », puis recharge une seule fois ;
- *   B. un véritable ancien client sans toast installe le nouveau worker en
- *      attente, ferme son dernier onglet, puis reçoit la nouvelle version à la
- *      visite suivante.
+ *   B. un véritable ancien client installe le nouveau worker en attente ; la
+ *      nouvelle URL du bundle permet désormais d'afficher le toast même derrière
+ *      l'ancien worker, puis la fermeture du dernier onglet active naturellement
+ *      la nouvelle version à la visite suivante.
  *
  * Les deux parcours vérifient la suppression du cache v7, le nouveau shell,
  * l'absence de boucle et la conservation de localStorage. Le second vérifie
@@ -326,8 +327,8 @@ async function testLegacyRecovery(browser) {
     const waitingState = await waitForWaitingWorker(updatePage);
     const waitingKeys = waitingState.keys;
     check('B — nouveau worker installé et en attente', waitingState.waiting);
-    check('B — aucun toast possible dans ancien app.js',
-      await updatePage.evaluate(() => !document.getElementById('swUpdateBtn')));
+    check('B — la nouvelle URL du bundle rend le toast disponible',
+      await updatePage.evaluate(() => !!document.getElementById('swUpdateBtn')));
     check('B — ancien shell reste actif tant que l’onglet est ouvert',
       (await cssDeploy(updatePage)) === 'old', await cssDeploy(updatePage));
     check('B — les deux générations coexistent pendant l’attente',
