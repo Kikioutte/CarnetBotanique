@@ -25,14 +25,21 @@ jobs:
       - name: Tests bout-en-bout existants (73 tests)
         run: npm test
 
+      - name: Tests de mise à jour PWA (service worker)
+        run: npm run test:pwa
+
       # Baseline : mesure et consigne les défauts connus SANS casser la CI.
       # Le mode strict (npm run test:phase0:strict) sera activé progressivement
       # après les corrections des phases suivantes.
       - name: Phase 0 — baseline qualité
         run: npm run test:phase0
 
-      - name: Phase 0 — dérive de version du service worker (baseline)
-        run: npm run test:sw-version
+      # STRICT et bloquant depuis le correctif PWA : échoue si la VERSION du SW
+      # est en retard sur les extensions, ou si un fichier du shell a changé
+      # sans mise à jour de SHELL_HASH dans sw.js (sinon les visiteurs déjà
+      # équipés ne recevraient jamais la mise à jour).
+      - name: Service worker — version et empreinte du shell (strict)
+        run: npm run test:sw-version:strict
 
       # Best effort : les runners GitHub embarquent Google Chrome.
       - name: Lighthouse (desktop + mobile, best effort)
