@@ -2120,6 +2120,12 @@ let dashOn=false;
 function toggleDashMode(){
   const willOpen=!dashOn;
   var returnFocus=document.activeElement;
+  // Le tableau de bord est lancé depuis le menu responsive, dont les boutons
+  // sont retirés du DOM à la fermeture. Restituer le focus à son déclencheur
+  // persistant évite qu'il retombe sur <body> après Échap.
+  if(returnFocus&&returnFocus.matches&&returnFocus.matches('[data-nav-action="dashboard"]')){
+    returnFocus=document.getElementById('burgerBtn')||returnFocus;
+  }
   _closeAllPanels();
   if(willOpen){
     dashOn=true;
