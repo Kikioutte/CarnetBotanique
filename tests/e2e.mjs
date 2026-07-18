@@ -508,6 +508,7 @@ const browser = await chromium.launch(launchOpts);
     return document.getElementById('plantDrawer').classList.contains('open');
   });
   check('dock "Ajouter" ouvre le tiroir', add);
+  await page.waitForTimeout(550);
   const drawerPlacement = await page.evaluate(() => {
     const drawer = document.getElementById('plantDrawer');
     const rect = drawer.getBoundingClientRect();
@@ -568,6 +569,7 @@ const browser = await chromium.launch(launchOpts);
     return document.getElementById('fusionQuickSheet').classList.contains('open');
   });
   check('fiche express s\'ouvre depuis le catalogue', sheetOpen);
+  await page.waitForTimeout(420);
   const sheetPlacement = await page.evaluate(() => {
     const sheet = document.getElementById('fusionQuickSheet');
     const rect = sheet.getBoundingClientRect();

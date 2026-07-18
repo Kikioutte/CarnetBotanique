@@ -1079,8 +1079,8 @@ function mkSubstratBar(substrat) {
 // Tags d'alerte v5 (toxicité animaux, invasif) intégrés au design luxe
 function mkV5Tags(p) {
   var tags = [];
-  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe"><i class="fa-solid fa-shield-dog" aria-hidden="true"></i> Sans danger animaux</span>');
-  else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox"><i class="fa-solid fa-skull-crossbones" aria-hidden="true"></i> Toxique animaux</span>');
+  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe"><i class="fa-solid fa-heart" aria-hidden="true"></i> Sans danger animaux</span>');
+  else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Toxique animaux</span>');
   if (p.invasive) tags.push('<span class="v5-tag tag-inv"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Invasive / Épillets</span>');
   if (p.inGarden) tags.push('<span class="v5-tag tag-garden"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Au jardin</span>');
   return tags.length ? '<div class="v5-tags">'+tags.join('')+'</div>' : '';
