@@ -664,7 +664,10 @@ const browser = await chromium.launch(launchOpts);
     const drawer = document.getElementById('plantDrawer');
     if (!drawer || !drawer.classList.contains('open')) return false;
     const r = drawer.getBoundingClientRect();
-    return r.left < window.innerWidth && r.right > 0;
+    // Attendre la fin de la translation : « visible de 1 px » ne suffit pas
+    // pour vérifier le premier plan pendant l'animation d'entrée.
+    return r.left < window.innerWidth && r.right > 0 &&
+      Math.abs(window.innerWidth - r.right) <= 1;
   }, null, { timeout: 3000 });
   const sheetEditLayer = await page.evaluate(() => {
     const sheet = document.getElementById('fusionQuickSheet');
