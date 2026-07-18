@@ -467,7 +467,11 @@ const browser = await chromium.launch(launchOpts);
   }));
   check('page servie hors-ligne par le SW', r.controlled && r.sections > 0, r);
   const swShell = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
-  check('SW shell precache extensions-v10', /SHELL\s*=\s*\[[\s\S]*js\/extensions-v10\.js/.test(swShell), 'js/extensions-v10.js absent du precache');
+  check(
+    'SW shell precache le bundle de production',
+    /SHELL\s*=\s*\[[\s\S]*dist\/app\.min\.js/.test(swShell),
+    'dist/app.min.js absent du precache',
+  );
   await ctx.setOffline(false);
   await ctx.close();
 }
