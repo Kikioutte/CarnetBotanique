@@ -14,7 +14,10 @@
   function uniqSorted(arr){var s={},o=[];arr.forEach(function(x){if(x&&!s[x]){s[x]=1;o.push(x);}});o.sort(function(a,b){return String(a).localeCompare(b);});return o;}
 
   /* ============ GROUPE 1 : Performance ============ */
-  window._catPageSize=30;
+  // Vitrine initiale volontairement limitée : 20 fiches suffisent pour le
+  // premier écran et réduisent fortement le coût DOM avant le LCP. Les autres
+  // espèces restent accessibles par « Afficher plus », la recherche et les filtres.
+  window._catPageSize=20;
   window.__catPage=function(list){window._catTotal=list.length;var sz=window._catPageSize;if(!window._loadMore)window._catLimit=sz;if(window._catLimit==null)window._catLimit=sz;if(window._catLimit>list.length)window._catLimit=list.length;var out=list.slice(0,window._catLimit);window._catShown=out.length;return out;};
   function afterCatalog(){
     var cat=$('plantCatalog');if(!cat)return;
@@ -25,7 +28,7 @@
       var rest=window._catTotal-window._catShown;
       var btn=ce('button','btn-luxe','<i class="fa-solid fa-circle-down"></i> '+'Charger plus'+' ('+rest+')');
       btn.id='v8-loadmore';
-      btn.onclick=function(){window._loadMore=true;window._catLimit=(window._catLimit||30)+window._catPageSize;if(typeof window.renderCatalog==='function')window.renderCatalog();window._loadMore=false;};
+      btn.onclick=function(){window._loadMore=true;window._catLimit=(window._catLimit||20)+window._catPageSize;if(typeof window.renderCatalog==='function')window.renderCatalog();window._loadMore=false;};
       wrap.appendChild(btn);
       wrap.appendChild(ce('div','v8-count-note',window._catShown+' / '+window._catTotal+' especes affichees'));
       cat.parentNode.insertBefore(wrap,cat.nextSibling);

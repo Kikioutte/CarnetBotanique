@@ -65,6 +65,10 @@ jobs:
       - name: Phase 4 — budgets de performance Lighthouse
         run: npm run test:phase4
 
+      # Phase 5 : la couche premium reste cohérente, accessible et frugale.
+      - name: Phase 5 — contrat de finition Liquid Glass
+        run: npm run test:phase5
+
       - name: Publier les rapports et captures
         if: always()
         uses: actions/upload-artifact@v4
