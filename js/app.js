@@ -2279,7 +2279,7 @@ function openDetailFromHash(){
 function initLiquidGlass(){
   if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches ||
       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  var selector = '.hero-content,.fusion-hub-shell,.fusion-module,.fusion-panel,.fusion-stat,.v7-toolbar,.scrolly-content,.side-drawer,.v7-modal-card,.fusion-quick-sheet';
+  var selector = '.hero-content,.fusion-hub-shell,.fusion-module,.fusion-panel,.fusion-stat,.v7-toolbar,.side-drawer,.v7-modal-card,.fusion-quick-sheet';
   var pending = null, frame = 0, previous = null;
 
   document.addEventListener('pointermove', function(event){

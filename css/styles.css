@@ -1837,7 +1837,6 @@ body{
 .fusion-panel,
 .fusion-stat,
 .v7-toolbar,
-.scrolly-content,
 .side-drawer,
 .v7-modal-card,
 .fusion-quick-sheet{
@@ -1852,7 +1851,6 @@ body{
 .fusion-panel::before,
 .fusion-stat::before,
 .v7-toolbar::before,
-.scrolly-content::before,
 .side-drawer::before,
 .v7-modal-card::before,
 .fusion-quick-sheet::before{
@@ -1872,7 +1870,6 @@ body{
 .fusion-panel > *,
 .fusion-stat > *,
 .v7-toolbar > *,
-.scrolly-content > *,
 .side-drawer > *,
 .v7-modal-card > :not(.v7-modal-x),
 .fusion-quick-sheet > :not(.fusion-sheet-close){
@@ -2068,8 +2065,6 @@ header#mainHeader .search-input:focus{
   border:1px solid var(--liquid-stroke);
   border-radius:28px;
   background:linear-gradient(145deg,rgba(255,255,255,.68),rgba(250,247,242,.42));
-  -webkit-backdrop-filter:blur(22px) saturate(150%);
-  backdrop-filter:blur(22px) saturate(150%);
   box-shadow:var(--liquid-inner),var(--liquid-shadow);
   scrollbar-gutter:stable;
 }
@@ -2208,12 +2203,16 @@ body.theme-dark .fusion-panel-row{background:rgba(35,49,41,.72)}
   .scrolly-content{padding:20px 18px;border-radius:22px}
   .side-drawer{border-radius:0}
   .form-tabs{position:sticky;top:0;z-index:3;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .fusion-module,.fusion-stat,.fusion-panel,.scrolly-content{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+  }
 }
 
 @media(prefers-reduced-motion:reduce){
   .fusion-module,.fusion-stat,.fusion-panel,.hero-content,.scrolly-content{transition:none !important}
   .fusion-module:hover{transform:none}
   .hero-content::before,.fusion-hub-shell::before,.fusion-module::before,.fusion-panel::before,
-  .fusion-stat::before,.v7-toolbar::before,.scrolly-content::before,.side-drawer::before,
+  .fusion-stat::before,.v7-toolbar::before,.side-drawer::before,
   .v7-modal-card::before,.fusion-quick-sheet::before{display:none}
 }

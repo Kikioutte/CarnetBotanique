@@ -13,7 +13,10 @@ l’identité botanique, la lisibilité, l’accessibilité ni les performances.
 - mêmes surfaces pour le header, le hub, les fiches, les menus et les modales ;
 - pictogrammes de la bibliothèque locale à la place des emoji utilitaires ;
 - mouvement réservé aux souris fines et désactivé avec `prefers-reduced-motion` ;
-- règles mobiles dédiées pour éviter les effets coûteux ou encombrants.
+- règles mobiles dédiées pour éviter les effets coûteux ou encombrants ;
+- fiches catalogue en verre statique, sans filtre ni reflet par carte, afin de
+  préserver le budget de composition sur une collection de plusieurs centaines
+  d’espèces.
 
 ## Contrat bloquant
 
