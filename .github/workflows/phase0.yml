@@ -1,0 +1,58 @@
+name: Phase 0 — Baseline qualité
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  phase0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Installer Chromium (Playwright)
+        run: npx playwright install --with-deps chromium
+
+      - name: Tests bout-en-bout existants (73 tests)
+        run: npm test
+
+      # Baseline : mesure et consigne les défauts connus SANS casser la CI.
+      # Le mode strict (npm run test:phase0:strict) sera activé progressivement
+      # après les corrections des phases suivantes.
+      - name: Phase 0 — baseline qualité
+        run: npm run test:phase0
+
+      - name: Phase 0 — dérive de version du service worker (baseline)
+        run: npm run test:sw-version
+
+      # Best effort : les runners GitHub embarquent Google Chrome.
+      - name: Lighthouse (desktop + mobile, best effort)
+        continue-on-error: true
+        run: |
+          python3 -m http.server 8892 &
+          sleep 2
+          npx --yes lighthouse@12 http://localhost:8892/ --preset=desktop \
+            --output=json --output=html \
+            --output-path=test-results/phase0/lighthouse-desktop \
+            --chrome-flags="--headless=new --no-sandbox" --quiet
+          npx --yes lighthouse@12 http://localhost:8892/ \
+            --output=json --output=html \
+            --output-path=test-results/phase0/lighthouse-mobile \
+            --chrome-flags="--headless=new --no-sandbox" --quiet
+
+      - name: Publier les rapports et captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-baseline
+          path: test-results/phase0/
+          if-no-files-found: error
