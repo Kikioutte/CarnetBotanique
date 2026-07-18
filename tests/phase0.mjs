@@ -276,7 +276,9 @@ const MODALS = [
   { id: 'flashcardSection', trigger: '#flashBtn' },
   { id: 'quizSection', trigger: '#quizBtn' },
   { id: 'calSection', trigger: '#calBtn' },
-  { id: 'dashSection', trigger: '#dashBtn' },
+  // Depuis la Phase 2, le tableau de bord est dans le menu principal : le
+  // parcours clavier réel doit restituer le focus au bouton qui ouvre ce menu.
+  { id: 'dashSection', trigger: '#burgerBtn', menuAction: 'dashboard' },
   { id: 'careSection', trigger: '#careBtn' },
 ];
 const modals = [];
@@ -286,11 +288,13 @@ for (const mod of MODALS) {
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
   await page.waitForTimeout(1500);
 
-  // Déclenchement programmatique (focus + click) : certains boutons du header
-  // sont hors viewport (défaut déjà consigné par l'étape responsive), un clic
-  // souris Playwright serait donc impossible alors que l'utilisateur clavier
-  // peut, lui, atteindre le bouton.
-  await page.evaluate((sel) => { const b = document.querySelector(sel); b.focus(); b.click(); }, mod.trigger);
+  // Déclenchement par le parcours réellement proposé dans l'interface.
+  if (mod.menuAction) {
+    await page.click('#burgerBtn');
+    await page.click(`[data-nav-action="${mod.menuAction}"]`);
+  } else {
+    await page.click(mod.trigger);
+  }
   await page.waitForTimeout(600);
 
   const state = await page.evaluate((id) => {

@@ -39,7 +39,7 @@
   window.__fuzzyMatch=function(p,q){q=norm(q).trim();if(!q)return false;var hay=norm((p.nomFr||'')+' '+(p.nomLat||'')+' '+(p.famille||'')+' '+(p.region||''));var toks=q.split(/\s+/);for(var i=0;i<toks.length;i++){if(!fuzzyTok(toks[i],hay))return false;}return true;};
   function highlightSearch(){
     var si=$('searchInput');var q=si?si.value.toLowerCase().trim():'';
-    var els=document.querySelectorAll('#plantCatalog .plant-name-fr, #plantCatalog .plant-name-lat, #plantCatalog .plant-family');
+    var els=document.querySelectorAll('#plantCatalog .plant-name-trigger, #plantCatalog .plant-name-lat, #plantCatalog .plant-family');
     els.forEach(function(el){
       if(el.getAttribute('data-v8o')==null)el.setAttribute('data-v8o',el.textContent);
       var orig=el.getAttribute('data-v8o');
