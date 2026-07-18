@@ -11,7 +11,8 @@ const app = read('js/app.js');
 
 const checks = [
   ['tokens Liquid Glass centralisés', /--liquid-surface:/, css],
-  ['surface hero translucide', /\.hero-content\s*\{[\s\S]*?backdrop-filter:blur\(/, css],
+  ['surface hero translucide', /\.hero-content\s*\{[\s\S]*?background:linear-gradient\(/, css],
+  ['LCP hero sans filtre de composition', /\.hero-content\s*\{[\s\S]*?backdrop-filter:none/, css],
   ['navigation flottante bornée au viewport', /header#mainHeader\s*\{[\s\S]*?max-width:calc\(100vw - 24px\)/, css],
   ['contraste de la carte accent préservé', /\.fusion-module\.accent b\s*\{color:var\(--cream\)\}/, css],
   ['reflets désactivés si animations réduites', /@media\(prefers-reduced-motion:reduce\)[\s\S]*?\.hero-content::before[\s\S]*?display:none/, css],

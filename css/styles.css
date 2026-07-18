@@ -1888,8 +1888,8 @@ header#mainHeader{
   border-radius:22px;
   background:linear-gradient(120deg,rgba(255,255,255,.72),rgba(244,239,231,.48));
   box-shadow:var(--liquid-inner),0 18px 48px -30px rgba(31,45,36,.58);
-  -webkit-backdrop-filter:blur(30px) saturate(175%);
-  backdrop-filter:blur(30px) saturate(175%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  backdrop-filter:blur(18px) saturate(160%);
 }
 header#mainHeader.scrolled{
   top:8px;
@@ -1955,8 +1955,10 @@ header#mainHeader .search-input:focus{
   border:1px solid var(--liquid-stroke);
   border-radius:38px;
   background:linear-gradient(145deg,rgba(255,255,255,.58),rgba(250,247,242,.28));
-  -webkit-backdrop-filter:blur(22px) saturate(150%);
-  backdrop-filter:blur(22px) saturate(150%);
+  /* Le h1 est le LCP : la profondeur vient du gradient, du reflet et des
+     bordures, sans filtre de composition bloquant son premier rendu. */
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
   box-shadow:var(--liquid-inner),0 38px 90px -52px rgba(31,45,36,.5);
 }
 .hero-badge{margin-bottom:14px}
@@ -2188,8 +2190,8 @@ body.theme-dark .fusion-panel-row{background:rgba(35,49,41,.72)}
     width:100%;
     padding:30px 20px 28px;
     border-radius:28px;
-    -webkit-backdrop-filter:blur(18px) saturate(145%);
-    backdrop-filter:blur(18px) saturate(145%);
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
   }
   .hero-title{font-size:clamp(2.65rem,14vw,4rem)}
   .hero-text{font-size:1rem}
