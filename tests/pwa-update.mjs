@@ -209,6 +209,22 @@ function observePage(page, pageErrors) {
   // Ne pas employer page.route() : Playwright bloque alors register()/update().
 }
 
+async function waitForWaitingWorker(page, timeout = 45000) {
+  const deadline = Date.now() + timeout;
+  let state = null;
+  while (Date.now() < deadline) {
+    state = await page.evaluate(async () => {
+      const registration = await navigator.serviceWorker.getRegistration();
+      return { waiting: !!(registration && registration.waiting), keys: await caches.keys() };
+    });
+    if (state.waiting && state.keys.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell'))) {
+      return state;
+    }
+    await page.waitForTimeout(200);
+  }
+  throw new Error('Le nouveau worker n’est pas resté en attente : ' + JSON.stringify(state));
+}
+
 async function testUpdateButton(browser) {
   console.log('▶ parcours A — mise à jour explicite avec bouton');
   deploy = 'old-current';
@@ -302,22 +318,23 @@ async function testLegacyRecovery(browser) {
     await seedUserData(page);
 
     deploy = 'new';
-    await page.reload({ waitUntil: 'load', timeout: 60000 });
-    await page.waitForFunction(async () => {
-      const registration = await navigator.serviceWorker.getRegistration();
-      return !!(registration && registration.waiting);
-    }, { timeout: 45000 });
-    const waitingKeys = await cacheKeys(page);
-    check('B — nouveau worker installé et en attente',
-      await page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration())?.waiting));
+    // Une nouvelle visite déclenche la vérification native du script SW. Le
+    // premier onglet reste ouvert : le worker v10 doit donc réellement attendre.
+    const updatePage = await ctx.newPage();
+    observePage(updatePage, pageErrors);
+    await updatePage.goto(origin + '/', { waitUntil: 'load', timeout: 60000 });
+    const waitingState = await waitForWaitingWorker(updatePage);
+    const waitingKeys = waitingState.keys;
+    check('B — nouveau worker installé et en attente', waitingState.waiting);
     check('B — aucun toast possible dans ancien app.js',
-      await page.evaluate(() => !document.getElementById('swUpdateBtn')));
+      await updatePage.evaluate(() => !document.getElementById('swUpdateBtn')));
     check('B — ancien shell reste actif tant que l’onglet est ouvert',
-      (await cssDeploy(page)) === 'old', await cssDeploy(page));
+      (await cssDeploy(updatePage)) === 'old', await cssDeploy(updatePage));
     check('B — les deux générations coexistent pendant l’attente',
       waitingKeys.includes('hdv-v7-shell') &&
       waitingKeys.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')), waitingKeys);
 
+    await updatePage.close();
     await page.close();
     await new Promise(resolve => setTimeout(resolve, 1500));
 
