@@ -18,7 +18,7 @@
 'use strict';
 
 const VERSION = 'hdv-v10';
-const SHELL_HASH = '98a670855969'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
+const SHELL_HASH = '22b7897e5d5c'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
 const CACHE_PREFIX = 'hdv-';
 const SHELL_CACHE = VERSION + '-' + SHELL_HASH + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
@@ -27,13 +27,9 @@ const RUNTIME_MAX_ENTRIES = 260;
 const SHELL = [
   './',
   'index.html',
-  'css/styles.css',
-  'css/icons.css',
-  'js/app.js',
-  'js/extensions-v7.js',
-  'js/extensions-v8.js',
-  'js/extensions-v9.js',
-  'js/extensions-v10.js',
+  'dist/styles.min.css',
+  'dist/icons.min.css',
+  'dist/app.min.js',
   'plants.json',
   'especes.html',
   'manifest.webmanifest',

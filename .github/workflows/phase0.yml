@@ -19,6 +19,9 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
+      - name: Construire les assets de production
+        run: npm run build:assets
+
       - name: Installer Chromium (Playwright)
         run: npx playwright install --with-deps chromium
 
@@ -45,11 +48,10 @@ jobs:
       - name: Service worker — version et empreinte du shell (strict)
         run: npm run test:sw-version:strict
 
-      # Best effort : les runners GitHub embarquent Google Chrome.
-      - name: Lighthouse (desktop + mobile, best effort)
-        continue-on-error: true
+      # Phase 4 : mesure sur un serveur statique compressé, comme en production.
+      - name: Lighthouse (desktop + mobile)
         run: |
-          python3 -m http.server 8892 &
+          node scripts/serve-production.mjs 8892 &
           sleep 2
           npx --yes lighthouse@12 http://localhost:8892/ --preset=desktop \
             --output=json --output=html \
@@ -59,6 +61,9 @@ jobs:
             --output=json --output=html \
             --output-path=test-results/phase0/lighthouse-mobile \
             --chrome-flags="--headless=new --no-sandbox" --quiet
+
+      - name: Phase 4 — budgets de performance Lighthouse
+        run: npm run test:phase4
 
       - name: Publier les rapports et captures
         if: always()

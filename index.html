@@ -31,15 +31,18 @@
 <link rel="preconnect" href="https://upload.wikimedia.org">
 <link rel="dns-prefetch" href="https://commons.wikimedia.org">
 <link rel="dns-prefetch" href="https://fr.wikipedia.org">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-<!-- Icônes : sous-ensemble Font Awesome auto-hébergé (css/icons.css) — plus de dépendance CDN ni de webfonts -->
-<link rel="stylesheet" href="css/icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
+<!-- Les icônes sont décoratives : leur feuille minifiée arrive sans bloquer le premier rendu. -->
+<link rel="stylesheet" href="dist/icons.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="dist/icons.min.css"></noscript>
 
 <!-- Préchargement de l'image hero pour améliorer le LCP -->
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=2000&auto=format&fit=crop" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop" imagesrcset="https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=640&auto=format&fit=crop 640w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=960&auto=format&fit=crop 960w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop 1200w" imagesizes="100vw" fetchpriority="high">
 <!-- GSAP & Lenis : déplacés en bas de page pour ne plus bloquer le rendu initial -->
 
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="dist/styles.min.css">
+<script src="dist/app.min.js" defer></script>
 
 <!-- ===================================================================
      V6 — LIQUID GLASS APPLE (bloc 100% additif : aucune règle v5 retirée,
@@ -85,7 +88,7 @@
   </header>
 
 <!-- HERO D'ACCUEIL INTRODUCTIF -->
-<section class="hero" id="heroSection" aria-labelledby="heroTitle" style="background-image: url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=2000&auto=format&fit=crop');">
+<section class="hero" id="heroSection" aria-labelledby="heroTitle">
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-badge" id="heroBadge">Académie Royale de Botanique</span>
@@ -522,13 +525,6 @@
   <div class="footer-copy">© 2026 Académie de Botanique Royale. Tous droits réservés. · <a href="especes.html" style="color:rgba(250,247,242,0.6);">Index des espèces</a></div>
 </footer>
 
-<!-- GSAP & Lenis (déplacés ici : ne bloquent plus le rendu, chargés avant le code qui les utilise) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
-<script src="js/app.js"></script>
-
-
 <!-- OVERLAY QUIZ / RÉVISION -->
 <div class="quiz-overlay" id="quizSection" role="dialog" aria-modal="true" aria-labelledby="quizTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe quiz-close" aria-label="Fermer le quiz" onclick="toggleQuizMode()"><i class="fa-solid fa-xmark" aria-hidden="true"></i> <span>Fermer</span></button>
@@ -621,14 +617,9 @@
 <!-- ===================== EXTENSIONS v7 ===================== -->
 <div id="v7-modal" class="v7-modal" role="dialog" aria-modal="true" aria-label="Boîte de dialogue"><div class="v7-modal-card"><button class="v7-modal-x" onclick="window.closeModal()" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button><div id="v7-modal-body"></div></div></div>
 <div id="v7-cmpbar" class="v7-cmpbar" aria-label="Comparaison d’espèces" aria-hidden="true" inert><span><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <b id="v7-cmpcount">0</b> <span>selectionnees</span></span><button class="btn-luxe" onclick="window.openCompare()"><span>Comparer</span></button><button class="btn-luxe" onclick="window.clearCompare()" aria-label="Vider la comparaison"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
-<script src="js/extensions-v7.js"></script>
 <!-- =================== FIN EXTENSIONS v7 =================== -->
 
 <!-- =================== v8 : ameliorations avancees =================== -->
 <div id="v8-live" class="v8-sr" aria-live="polite" role="status"></div>
-<script src="js/extensions-v8.js"></script>
-
-<script src="js/extensions-v9.js"></script>
-<script src="js/extensions-v10.js"></script>
 </body>
 </html>
