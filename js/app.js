@@ -758,6 +758,7 @@ function renderCare(){
 
 function toggleCareMode(){
   var willOpen=!careOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     careOn=true;
@@ -766,7 +767,7 @@ function toggleCareMode(){
     var sec=document.getElementById('careSection'); if(sec){ _setOverlayState(sec,true); sec.style.display='block'; }
     try{lenis.stop();}catch(e){}
     renderCare();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 
@@ -783,10 +784,10 @@ function _setOverlayState(overlay,open){
 function _focusablesIn(el){
   return el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
 }
-function trapFocus(overlay){
+function trapFocus(overlay,returnFocus){
   if(!overlay) return;
   releaseFocusTrap();
-  _trapState={overlay:overlay,prev:document.activeElement,hidden:[]};
+  _trapState={overlay:overlay,prev:returnFocus||document.activeElement,hidden:[]};
   Array.prototype.forEach.call(document.body.children,function(el){
     if(el===overlay||el.contains(overlay)||el.tagName==='SCRIPT'||el.tagName==='STYLE')return;
     // Éléments transitoires susceptibles de s'afficher PAR-DESSUS l'overlay piégé
@@ -823,6 +824,7 @@ function _closeAllPanels(){
 }
 function toggleFlashMode(){
   const willOpen=!flashMode;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     flashMode=true;
@@ -831,7 +833,7 @@ function toggleFlashMode(){
     var sec=document.getElementById('flashcardSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     currentFlashIndex=0; renderFlashcard();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 
@@ -1904,6 +1906,7 @@ function updateQuizScore(){
 }
 function toggleQuizMode(){
   const willOpen=!quizOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     quizOn=true;
@@ -1913,7 +1916,7 @@ function toggleQuizMode(){
     try{lenis.stop();}catch(e){}
     var qs=document.getElementById('quizSubtitle'); if(qs&&plants.length)qs.textContent='Testez votre reconnaissance des '+plants.length+' espèces.';
     loadQuizScore(); populateQuizScope(); updateQuizErrBtn(); newQuestion();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 function setQuizMode(m){ quizMode=m; ['fr','fam','lat','photo'].forEach(function(x){var el=document.getElementById('qm-'+x); if(el)el.classList.toggle('on',x===m);}); newQuestion(); }
@@ -2033,6 +2036,7 @@ function bloomLabel(p){
 }
 function toggleCalMode(){
   const willOpen=!calOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     calOn=true;
@@ -2041,7 +2045,7 @@ function toggleCalMode(){
     var sec=document.getElementById('calSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     renderCalGrid(); renderCalList();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 function renderCalGrid(){
@@ -2115,6 +2119,7 @@ function buildPrint(){
 let dashOn=false;
 function toggleDashMode(){
   const willOpen=!dashOn;
+  var returnFocus=document.activeElement;
   _closeAllPanels();
   if(willOpen){
     dashOn=true;
@@ -2123,7 +2128,7 @@ function toggleDashMode(){
     var sec=document.getElementById('dashSection'); if(sec){_setOverlayState(sec,true);sec.style.display='block';}
     try{lenis.stop();}catch(e){}
     renderDash();
-    trapFocus(sec);
+    trapFocus(sec,returnFocus);
   } else { try{lenis.start();}catch(e){} }
 }
 function renderDash(){

@@ -20,7 +20,8 @@
     var cat=$('plantCatalog');if(!cat)return;
     var old=document.querySelector('.v8-loadmore-wrap');if(old)old.remove();
     if(window._catShown!=null&&window._catTotal!=null&&window._catShown<window._catTotal){
-      var wrap=ce('div','v8-loadmore-wrap');
+      var wrap=ce('section','v8-loadmore-wrap');
+      wrap.setAttribute('aria-label','Pagination du catalogue');
       var rest=window._catTotal-window._catShown;
       var btn=ce('button','btn-luxe','<i class="fa-solid fa-circle-down"></i> '+'Charger plus'+' ('+rest+')');
       btn.id='v8-loadmore';

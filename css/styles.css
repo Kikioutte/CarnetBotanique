@@ -1311,8 +1311,8 @@ body.theme-dark input,body.theme-dark textarea,body.theme-dark select{background
 .v7-chip i{color:var(--gold);}
 .v7-chip-warn{background:rgba(195,106,75,.12);}
 .v7-chip-warn i{color:var(--terracotta);}
-.v7-chip-empty{cursor:pointer;border-style:dashed;color:var(--sage-green);}
-.v7-chip-empty:hover{border-color:var(--terracotta);color:var(--terracotta);}
+.v7-chip-empty{cursor:pointer;border-style:dashed;color:var(--ink-deep);}
+.v7-chip-empty:hover{border-color:var(--terracotta-text);color:var(--terracotta-text);}
 /* Boutons comparaison actifs */
 .btn-luxe.cmp-btn.active{background:var(--gold);color:#fff;border-color:var(--gold);}
 /* Barre flottante comparaison */

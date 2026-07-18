@@ -57,7 +57,7 @@ window.__enrichChips=function(p){
   if(p.invasive)c.push('<span class="v7-chip" style="color:#d32f2f;border-color:#d32f2f">🌾 Invasive</span>');
   var z=(journal[p.id]&&journal[p.id].zone);
   if(z)c.push('<span class="v7-chip"><i class="fa-solid fa-location-dot"></i> '+esc2(z)+'</span>');
-  if(!c.length)c.push('<span class="v7-chip v7-chip-empty" onclick="openEditDrawer(\''+p.id+'\')"><i class="fa-solid fa-circle-plus"></i> Completer la fiche</span>');
+  if(!c.length)c.push('<button type="button" class="v7-chip v7-chip-empty" onclick="openEditDrawer(\''+p.id+'\')"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Completer la fiche</button>');
   return '<div class="v7-chips">'+c.join('')+'</div>';
 };
 function readFilters(){var f=function(id){var e=$(id);return e?e.value:'';};advFilters.fam=f('v7-f-fam');advFilters.type=f('v7-f-type');advFilters.tox=f('v7-f-tox');advFilters.inv=f('v7-f-inv');advFilters.zone=f('v7-f-zone');advSort=f('v7-sort')||'default';}
@@ -116,7 +116,7 @@ window.closeModal=function(){
 var cmp=[];
 window.cmpToggle=function(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var i=cmp.indexOf(id);if(i>=0){cmp.splice(i,1);}else{if(cmp.length>=3){toast('3 especes maximum');return;}cmp.push(id);}updateCmpBar();reflectCmpButtons();};
 function reflectCmpButtons(){var bs=document.querySelectorAll('.cmp-btn');for(var i=0;i<bs.length;i++){var id=bs[i].getAttribute('data-cmp');bs[i].classList.toggle('active',cmp.indexOf(id)>=0);}}
-function updateCmpBar(){var bar=$('v7-cmpbar');if(!bar)return;if(!cmp.length){bar.classList.remove('show');return;}bar.classList.add('show');var c=$('v7-cmpcount');if(c)c.textContent=cmp.length;}
+function updateCmpBar(){var bar=$('v7-cmpbar');if(!bar)return;if(!cmp.length){bar.classList.remove('show');bar.setAttribute('aria-hidden','true');bar.setAttribute('inert','');return;}bar.removeAttribute('inert');bar.setAttribute('aria-hidden','false');bar.classList.add('show');var c=$('v7-cmpcount');if(c)c.textContent=cmp.length;}
 window.clearCompare=function(){cmp=[];updateCmpBar();reflectCmpButtons();};
 window.openCompare=function(){
   if(cmp.length<2){toast('Selectionnez au moins 2 especes');return;}
