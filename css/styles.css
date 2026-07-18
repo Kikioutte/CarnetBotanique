@@ -1699,3 +1699,17 @@ body.theme-dark .mnav-btn{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 16px -10px rgba(0,0,0,.5);
 }
 body.theme-dark .mnav-close{background:rgba(43,58,49,.9)}
+
+/* À 320 px, le contenu long des cartes de suivi ne doit pas imposer sa largeur
+   min-content à la grille et déborder de quelques pixels. */
+.fusion-panel,
+.fusion-panel-list,
+.fusion-panel-row,
+.fusion-panel-row > span:first-child{min-width:0}
+.fusion-panel-row{width:100%;box-sizing:border-box}
+.fusion-panel-row b,
+.fusion-panel-row small{overflow-wrap:anywhere}
+@media(max-width:360px){
+  .fusion-panel-row{gap:8px;padding:8px}
+  .fusion-panel-row .pill{max-width:44%;white-space:normal;text-align:right}
+}

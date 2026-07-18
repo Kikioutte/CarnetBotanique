@@ -2260,12 +2260,14 @@ function openMobileNav(){
   trapFocus(m);
 }
 function closeMobileNav(){
-  releaseFocusTrap();
   var m=document.getElementById('mobileNav');
   if(m){ m.classList.remove('open'); m.setAttribute('aria-hidden','true'); m.setAttribute('inert',''); }
   var b=document.getElementById('burgerBtn');
   if(b){ b.setAttribute('aria-expanded','false'); b.setAttribute('aria-label','Ouvrir le menu principal'); }
   document.body.classList.remove('no-scroll');
+  /* Le bouton déclencheur doit être de nouveau visible avant que le piège
+     restitue le focus ; sinon Chromium refuse de focaliser l'élément caché. */
+  releaseFocusTrap();
   try { lenis.start(); } catch(e) {}
 }
 function toggleMobileNav(){
