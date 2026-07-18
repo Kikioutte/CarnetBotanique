@@ -2388,6 +2388,12 @@ body.flash-on .flash-actions{animation-delay:70ms}
   box-shadow:var(--liquid-inner),0 12px 26px -22px rgba(31,45,36,.56);
   transition:transform var(--motion-fast) var(--ease-press),background var(--motion-fast),box-shadow var(--motion-fast),color var(--motion-fast);
 }
+.flash-close,.quiz-close,.cal-close,.dash-close,.care-close{
+  position:absolute;
+  top:18px;
+  right:22px;
+  z-index:6;
+}
 .flash-close:hover,.quiz-close:hover,.cal-close:hover,.dash-close:hover,.care-close:hover,
 .close-drawer:hover,.v7-modal-x:hover,.fusion-sheet-close:hover,.mnav-close:hover{
   color:#fff;
