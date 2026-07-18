@@ -1718,11 +1718,13 @@ body.theme-dark .mnav-close{background:rgba(43,58,49,.9)}
 :root{
   --gold-text:#8A5A16;
   --terracotta-text:#9F4F33;
+  --danger-text:#9B2C2C;
 }
 body.theme-dark{
   --sage-green:#A8CF9F;
   --gold-text:#F0CF9A;
   --terracotta-text:#EAA9A9;
+  --danger-text:#FFB4B4;
 }
 
 /* Les teintes décoratives d'origine restent utilisées pour les bordures et
@@ -1741,6 +1743,7 @@ body.theme-dark{
 .fusion-panel-row .pill{color:var(--terracotta-text)}
 .fusion-module b{color:var(--ink-deep)}
 .v7-footer .v7-credit{opacity:1}
+.v7-chip-danger{color:var(--danger-text);border-color:var(--danger-text)}
 
 /* Le nom d'espèce reste un vrai titre, avec un bouton sémantique qui reprend
    exactement la typographie existante. */

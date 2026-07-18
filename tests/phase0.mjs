@@ -179,12 +179,15 @@ const a11y = {};
     const el = document.activeElement;
     const r = el.getBoundingClientRect();
     const st = getComputedStyle(el);
+    const focusVisible =
+      (st.outlineStyle !== 'none' && parseFloat(st.outlineWidth) > 0) || st.boxShadow !== 'none';
     return {
       tag: el.tagName.toLowerCase(), class: el.className || null,
       text: (el.textContent || '').trim().slice(0, 60),
       rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) },
       inViewport: r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth && r.width > 0 && r.height > 0,
       visible: st.display !== 'none' && st.visibility !== 'hidden' && st.opacity !== '0',
+      focusVisible,
     };
   });
   check('clavier', 'premier Tab : focus sur « Aller au contenu »', first.text.includes('Aller au contenu'), first);
