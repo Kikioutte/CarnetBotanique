@@ -17,8 +17,9 @@ l’identité botanique, la lisibilité, l’accessibilité ni les performances.
 - fiches catalogue en verre statique, sans filtre ni reflet par carte, afin de
   préserver le budget de composition sur une collection de plusieurs centaines
   d’espèces ;
-- rendu des fiches hors écran différé avec `content-visibility`, tout en gardant
-  leur hauteur intrinsèque pour préserver le défilement et les ancres.
+- première page ramenée à 20 fiches : la collection complète reste disponible
+  par « Afficher plus », la recherche et les filtres, avec un DOM initial plus
+  léger.
 
 ## Contrat bloquant
 

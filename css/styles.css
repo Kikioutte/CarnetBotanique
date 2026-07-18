@@ -2052,12 +2052,7 @@ header#mainHeader .search-input:focus{
   background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,253,251,.46));
   box-shadow:var(--liquid-inner);
 }
-.scrolly-section{
-  width:100%;height:auto;min-height:100dvh;
-  padding:clamp(86px,9vh,112px) clamp(24px,5vw,72px) 34px;
-  content-visibility:auto;
-  contain-intrinsic-size:auto 100dvh;
-}
+.scrolly-section{width:100%;height:auto;min-height:100dvh;padding:clamp(86px,9vh,112px) clamp(24px,5vw,72px) 34px}
 .scrolly-grid{height:auto;min-height:calc(100dvh - 128px);gap:clamp(28px,4vw,58px)}
 .scrolly-media{
   height:min(72dvh,720px);

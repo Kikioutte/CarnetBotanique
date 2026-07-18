@@ -8,17 +8,18 @@ const read = file => fs.readFileSync(path.join(ROOT, file), 'utf8');
 const css = read('css/styles.css');
 const index = read('index.html');
 const app = read('js/app.js');
+const extensionsV8 = read('js/extensions-v8.js');
 
 const checks = [
   ['tokens Liquid Glass centralisés', /--liquid-surface:/, css],
   ['surface hero translucide', /\.hero-content\s*\{[\s\S]*?background:linear-gradient\(/, css],
   ['LCP hero sans filtre de composition', /\.hero-content\s*\{[\s\S]*?backdrop-filter:none/, css],
-  ['catalogue hors écran différé', /\.scrolly-section\s*\{[\s\S]*?content-visibility:auto/, css],
   ['navigation flottante bornée au viewport', /header#mainHeader\s*\{[\s\S]*?max-width:calc\(100vw - 24px\)/, css],
   ['contraste de la carte accent préservé', /\.fusion-module\.accent b\s*\{color:var\(--cream\)\}/, css],
   ['reflets désactivés si animations réduites', /@media\(prefers-reduced-motion:reduce\)[\s\S]*?\.hero-content::before[\s\S]*?display:none/, css],
   ['reflet pointeur limité aux souris fines', /function initLiquidGlass\(\)[\s\S]*?\(hover:hover\) and \(pointer:fine\)/, app],
   ['reflet cadencé par requestAnimationFrame', /function initLiquidGlass\(\)[\s\S]*?requestAnimationFrame/, app],
+  ['premier rendu limité à 20 fiches', /window\._catPageSize=20/, extensionsV8],
   ['bouton de fermeture de la fiche express exclu du flux', /\.fusion-quick-sheet > :not\(\.fusion-sheet-close\)/, css],
   ['icônes réelles dans les onglets du formulaire', /id="formTab0"[^>]*>[\s\S]*?fa-book/, index],
   ['aucun emoji utilitaire dans les quatre onglets', !/[📋🌿🌱✂️]\s*(Général|Botanique|Culture|Pro)/.test(index), true],
