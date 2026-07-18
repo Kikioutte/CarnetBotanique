@@ -13,10 +13,8 @@ let deleteTargetId = null;
 // objet "no-op" compatible (stop/start/scrollTo/raf) pour que l'application
 // continue de fonctionner sans erreur console et avec le scroll natif.
 let lenis;
-try {
-  if (typeof Lenis === 'undefined') throw new Error('Lenis indisponible');
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) throw new Error('Animations reduites demandees');
-  lenis = new Lenis({
+function createLenis(){
+  return new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     direction: 'vertical',
@@ -27,6 +25,11 @@ try {
     touchMultiplier: 2,
     infinite: false,
   });
+}
+try {
+  if (typeof Lenis === 'undefined') throw new Error('Lenis indisponible');
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) throw new Error('Animations reduites demandees');
+  lenis = createLenis();
 } catch (e) {
   // Fallback : scroll natif + API factice pour ne jamais casser les appels existants.
   lenis = {
@@ -50,6 +53,37 @@ function raf(time) {
   requestAnimationFrame(raf);
 }
 requestAnimationFrame(raf);
+
+// Les bibliothèques d'animation sont purement décoratives. Elles ne doivent pas
+// retarder le premier affichage mobile : on ne les charge que sur un ordinateur
+// à pointeur fin, après la première interaction (ou après une longue inactivité).
+function scheduleMotionEnhancements(){
+  if(!window.matchMedia||
+      !window.matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)').matches||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var started=false;
+  var events=['pointerdown','keydown','wheel'];
+  function loadScript(src){
+    return new Promise(function(resolve,reject){
+      var s=document.createElement('script');s.src=src;s.async=true;
+      s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+    });
+  }
+  function start(){
+    if(started)return;started=true;
+    events.forEach(function(name){window.removeEventListener(name,start);});
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js')
+      .then(function(){return loadScript('https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js');})
+      .then(function(){return loadScript('https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js');})
+      .then(function(){
+        try{lenis=createLenis();}catch(e){}
+        try{initGSAPAnimations();}catch(e){}
+      }).catch(function(){/* Le défilement natif reste pleinement fonctionnel. */});
+  }
+  events.forEach(function(name){window.addEventListener(name,start,{once:true,passive:true});});
+  setTimeout(start,8000);
+}
+window.addEventListener('load',scheduleMotionEnhancements,{once:true});
 
 // --- INITIALISATION ---
 window.onload = function() {
@@ -204,7 +238,8 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function plantIsToxic(p){
   return !!p && (p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique'));
 }
-const HERO_FALLBACK="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop";
+const HERO_FALLBACK="https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop";
+const HERO_FALLBACK_SRCSET="https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=480&auto=format&fit=crop 480w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop 800w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop 1200w";
 // Jetons anti-course : #flashPhoto/#quizPhoto/#pdPhoto sont recréés à chaque rendu avec
 // le même id ; seule la requête photo la plus récente a le droit d'écrire dedans, sinon
 // une réponse lente d'une carte précédente s'affiche sur la carte actuellement visible.
@@ -389,7 +424,7 @@ function renderCatalog() {
       <section class="scrolly-section" id="section-${p.id}" data-w1="${esc(p.w1||p.nomLat)}" data-w2="${esc(p.w2||p.nomLat)}">
         <div class="scrolly-grid">
           <div class="scrolly-media" id="media-${p.id}">
-            <img alt="${esc(p.nomFr)}" class="scrolly-img" loading="lazy" decoding="async" width="1200" height="900" src="${HERO_FALLBACK}" onerror="handleSectionImgError(this)">
+            <img alt="${esc(p.nomFr)}" class="scrolly-img" loading="lazy" decoding="async" width="1200" height="900" src="${HERO_FALLBACK}" srcset="${HERO_FALLBACK_SRCSET}" sizes="(max-width: 768px) 92vw, (max-width: 1024px) 88vw, 640px" onerror="handleSectionImgError(this)">
             ${isTox ? `<div class="scrolly-overlay-badge"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(p.toxDetail||p.tox_detail||'Toxique animaux')}</div>` : ''}
             <div class="water-indicator-floating"><i class="fa-solid fa-scissors"></i> ${esc(p.type||'')}</div>
             <div class="media-zoom-cue"><i class="fa-solid fa-magnifying-glass-plus"></i></div>

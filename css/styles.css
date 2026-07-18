@@ -1792,3 +1792,16 @@ body.v8-kbd textarea:focus-visible,
 body.v8-kbd [tabindex]:focus-visible{
   outline-color:var(--gold-text) !important;
 }
+
+/* ═══════════ Phase 4 — image d'accueil responsive ═══════════
+   La même photo et le même cadrage sont conservés ; seul le nombre de pixels
+   téléchargés est adapté à l'écran. */
+.hero{
+  background-image:url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop');
+}
+@media(max-width:960px){
+  .hero{background-image:url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=960&auto=format&fit=crop')}
+}
+@media(max-width:640px){
+  .hero{background-image:url('https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=640&auto=format&fit=crop')}
+}
