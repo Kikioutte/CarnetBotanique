@@ -16,7 +16,9 @@ l’identité botanique, la lisibilité, l’accessibilité ni les performances.
 - règles mobiles dédiées pour éviter les effets coûteux ou encombrants ;
 - fiches catalogue en verre statique, sans filtre ni reflet par carte, afin de
   préserver le budget de composition sur une collection de plusieurs centaines
-  d’espèces.
+  d’espèces ;
+- rendu des fiches hors écran différé avec `content-visibility`, tout en gardant
+  leur hauteur intrinsèque pour préserver le défilement et les ancres.
 
 ## Contrat bloquant
 
