@@ -34,6 +34,11 @@ jobs:
       - name: Phase 0 — baseline qualité
         run: npm run test:phase0
 
+      # Contrat strict ajouté en Phase 2 : les sept largeurs doivent conserver
+      # une navigation complète, visible, utilisable et sans débordement.
+      - name: Phase 2 — navigation responsive (strict)
+        run: npm run test:phase2
+
       # STRICT et bloquant depuis le correctif PWA : échoue si la VERSION du SW
       # est en retard sur les extensions, ou si un fichier du shell a changé
       # sans mise à jour de SHELL_HASH dans sw.js (sinon les visiteurs déjà
@@ -61,5 +66,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: phase0-baseline
-          path: test-results/phase0/
+          path: |
+            test-results/phase0/
+            test-results/phase2/
           if-no-files-found: error
