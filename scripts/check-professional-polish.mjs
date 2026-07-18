@@ -17,6 +17,7 @@ const checks = [
   ['reflets désactivés si animations réduites', /@media\(prefers-reduced-motion:reduce\)[\s\S]*?\.hero-content::before[\s\S]*?display:none/, css],
   ['reflet pointeur limité aux souris fines', /function initLiquidGlass\(\)[\s\S]*?\(hover:hover\) and \(pointer:fine\)/, app],
   ['reflet cadencé par requestAnimationFrame', /function initLiquidGlass\(\)[\s\S]*?requestAnimationFrame/, app],
+  ['bouton de fermeture de la fiche express exclu du flux', /\.fusion-quick-sheet > :not\(\.fusion-sheet-close\)/, css],
   ['icônes réelles dans les onglets du formulaire', /id="formTab0"[^>]*>[\s\S]*?fa-book/, index],
   ['aucun emoji utilitaire dans les quatre onglets', !/[📋🌿🌱✂️]\s*(Général|Botanique|Culture|Pro)/.test(index), true],
 ];
