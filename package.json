@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "test": "node tests/e2e.mjs",
+    "test:pwa": "node tests/pwa-update.mjs",
     "test:phase0": "node tests/phase0.mjs",
     "test:phase0:strict": "node tests/phase0.mjs --strict",
     "test:sw-version": "node scripts/check-sw-version.mjs",
     "test:sw-version:strict": "node scripts/check-sw-version.mjs --strict",
-    "test:all": "npm test && npm run test:phase0 && npm run test:sw-version",
+    "test:all": "npm test && npm run test:pwa && npm run test:phase0 && npm run test:sw-version:strict",
     "build:seo": "node scripts/build-seo.mjs"
   },
   "devDependencies": {

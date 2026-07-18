@@ -2292,10 +2292,60 @@ function toggleMobileNav(){
   /* Échap sur la bulle de recherche PC : géré par le handler unique d'initV6Enhancements() */
 })();
 
-// --- PWA : enregistrement du service worker (hors-ligne complet) ---
+// --- PWA : enregistrement du service worker (hors-ligne complet + mises à jour fiables) ---
 // Ne s'active qu'en http(s) — ouvert en file:// le site fonctionne comme avant, sans SW.
+// Quand un nouveau worker est installé alors qu'une version précédente contrôle déjà la page,
+// on propose « Mettre à jour » ; le clic envoie SKIP_WAITING au worker en attente, et le
+// changement de contrôleur déclenche UN seul rechargement (jamais à la première installation,
+// jamais en boucle).
+function showSwUpdateToast(worker) {
+  const toast = document.getElementById('toast');
+  if (!toast) { worker.postMessage({ type: 'SKIP_WAITING' }); return; }
+  toast.textContent = '';
+  toast.appendChild(document.createTextNode('Une nouvelle version de Carnet Botanique est disponible. '));
+  const btn = document.createElement('button');
+  btn.id = 'swUpdateBtn';
+  btn.textContent = 'Mettre à jour';
+  btn.setAttribute('aria-label', 'Mettre à jour Carnet Botanique et recharger la page');
+  btn.style.cssText = 'margin-left:12px;background:var(--gold);border:none;color:#1F2D24;font-family:inherit;font-size:inherit;letter-spacing:inherit;text-transform:inherit;padding:4px 14px;border-radius:3px;cursor:pointer;font-weight:600;';
+  btn.onclick = function () {
+    btn.disabled = true;
+    btn.textContent = 'Mise à jour…';
+    worker.postMessage({ type: 'SKIP_WAITING' });
+  };
+  toast.appendChild(btn);
+  toast.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 15000);
+}
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW non enregistré', e); });
+    const hadController = !!navigator.serviceWorker.controller;
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      // Premier install (aucun contrôleur avant) : pas de rechargement.
+      // Mise à jour : un seul rechargement, le drapeau refreshing coupe toute boucle.
+      if (refreshing || !hadController) return;
+      refreshing = true;
+      location.reload();
+    });
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      function propose(worker) {
+        if (worker && navigator.serviceWorker.controller) showSwUpdateToast(worker);
+      }
+      propose(reg.waiting); // un worker attendait déjà depuis une visite précédente
+      reg.addEventListener('updatefound', function () {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', function () {
+          if (nw.state === 'installed') propose(nw);
+        });
+      });
+      // Vérification explicite : les navigateurs ne re-vérifient pas toujours sw.js
+      // à chaque navigation ; sans cela un visiteur en ligne pourrait ne jamais voir
+      // la mise à jour. Au chargement puis toutes les heures.
+      reg.update().catch(function () {});
+      setInterval(function () { reg.update().catch(function () {}); }, 60 * 60 * 1000);
+    }).catch(function (e) { console.warn('SW non enregistré', e); });
   });
 }
