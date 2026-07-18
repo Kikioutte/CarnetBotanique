@@ -1,6 +1,6 @@
 /* ═══════════ bloc «base» (ordre de cascade préservé) ═══════════ */
 /* CSS Reset & Variables d'inspiration Casadora Resort (Marocain & Naturel Chic) */
-.skip-link{position:fixed;left:8px;top:-64px;z-index:5000;background:#1a3a2a;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;transition:top .2s ease;}
+.skip-link{position:fixed;left:8px;top:-64px;z-index:5000;background:#1a3a2a;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;}
 .skip-link:focus,.skip-link:focus-visible{top:8px !important;outline:3px solid #fff;outline-offset:2px;}
 :root {
   --primary-serif: 'Cormorant Garamond', Georgia, serif;
