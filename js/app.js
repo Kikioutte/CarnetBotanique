@@ -2136,7 +2136,13 @@ function toggleDashMode(){
     try{lenis.stop();}catch(e){}
     renderDash();
     trapFocus(sec,returnFocus);
-  } else { try{lenis.start();}catch(e){} }
+  } else {
+    try{lenis.start();}catch(e){}
+    // Le menu mobile est reconstruit à chaque ouverture : son bouton interne
+    // n'existe plus ici. Replacer explicitement le focus après le keydown.
+    var dashTrigger=document.getElementById('burgerBtn')||document.getElementById('dashBtn');
+    if(dashTrigger)setTimeout(function(){try{dashTrigger.focus();}catch(e){}},0);
+  }
 }
 function renderDash(){
   const fams=new Set(plants.map(p=>p.famille)); 
