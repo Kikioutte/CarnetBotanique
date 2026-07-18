@@ -82,15 +82,22 @@ self.addEventListener('fetch', function (e) {
   // écrasait l'entrée 'index.html' avec n'importe quelle page, ex. especes.html).
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req).then(function (res) {
-        const copy = res.clone();
-        caches.open(SHELL_CACHE).then(function (c) { c.put(req, copy); });
-        return res;
-      }).catch(function () {
-        return caches.match(req, { ignoreSearch: true }).then(function (hit) {
+      (async function () {
+        try {
+          const res = await fetch(req);
+          // Une erreur HTTP ne doit jamais remplacer une page hors-ligne valide.
+          // L'écriture est attendue dans respondWith : le worker ne peut pas être
+          // interrompu avant la fin du cache.put().
+          if (res.ok) {
+            const cache = await caches.open(SHELL_CACHE);
+            await cache.put(req, res.clone());
+          }
+          return res;
+        } catch (err) {
+          const hit = await caches.match(req, { ignoreSearch: true });
           return hit || caches.match('index.html', { ignoreSearch: true });
-        });
-      })
+        }
+      }())
     );
     return;
   }

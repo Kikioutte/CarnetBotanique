@@ -2,15 +2,16 @@
 /**
  * Tests PWA — fiabilité des mises à jour du service worker.
  *
- * Simule le scénario réel qui a causé l'incident « ancienne interface servie » :
- *   1. première visite avec l'ANCIEN service worker (VERSION hdv-v7, cache-first,
- *      skipWaiting automatique) et un shell marqué « ancien » ;
- *   2. déploiement de la nouvelle version (sw.js actuel + shell marqué « nouveau ») ;
- *   3. détection de la mise à jour et affichage du message + bouton « Mettre à jour » ;
- *   4. clic → activation → rechargement unique (pas de boucle) ;
- *   5. la nouvelle version est réellement servie ;
- *   6. l'ancien cache hdv-v7-* a disparu, les données utilisateur sont intactes ;
- *   7. le mode hors-ligne fonctionne toujours après la mise à jour.
+ * Deux parcours indépendants sont réellement exécutés :
+ *   A. un client possédant déjà le code de mise à jour reçoit le toast, clique
+ *      sur « Mettre à jour », puis recharge une seule fois ;
+ *   B. un véritable ancien client sans toast installe le nouveau worker en
+ *      attente, ferme son dernier onglet, puis reçoit la nouvelle version à la
+ *      visite suivante.
+ *
+ * Les deux parcours vérifient la suppression du cache v7, le nouveau shell,
+ * l'absence de boucle et la conservation de localStorage. Le second vérifie
+ * aussi qu'une photo stockée dans IndexedDB reste intacte.
  *
  * Usage : npm run test:pwa
  */
@@ -20,7 +21,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PORT = 8893;
 
 let chromium;
 try { ({ chromium } = await import('playwright')); }
@@ -31,7 +31,7 @@ const launchOpts = { args: ['--no-sandbox'] };
 if (fs.existsSync(localChromium)) launchOpts.executablePath = localChromium;
 else if (fs.existsSync(windowsEdge)) launchOpts.executablePath = windowsEdge;
 
-// ── Ancien service worker (comportement de la version hdv-v7 incriminée) ───
+// Ancien service worker hdv-v7 incriminé.
 const OLD_SW = `
 'use strict';
 const VERSION = 'hdv-v7';
@@ -69,125 +69,308 @@ self.addEventListener('fetch', function (e) {
 });
 `;
 
-// ── Serveur : bascule ancien déploiement → nouveau déploiement ─────────────
-const MIME = { '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
-let deploy = 'old'; // 'old' | 'new'
+// Enregistrement réellement présent dans l'ancien app.js : aucun updatefound,
+// aucun toast et aucun message SKIP_WAITING.
+const OLD_APP_JS = `
+if ('serviceWorker' in navigator &&
+    (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function (e) {
+      console.warn('SW non enregistré', e);
+    });
+  });
+}
+`;
+
+const OLD_INDEX = `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Ancien Carnet Botanique</title>
+<link rel="stylesheet" href="css/styles.css"></head>
+<body><main id="legacyApp">Ancienne version</main><script src="js/app.js"></script></body></html>`;
+
+const MIME = {
+  '.json': 'application/json', '.js': 'text/javascript', '.css': 'text/css',
+  '.html': 'text/html; charset=utf-8', '.png': 'image/png', '.svg': 'image/svg+xml',
+  '.webmanifest': 'application/manifest+json'
+};
+
+// old-current : ancien SW + app actuelle (parcours avec bouton)
+// old-authentic : ancien SW + ancien app.js sans toast (rattrapage naturel)
+// new : déploiement actuel complet
+let deploy = 'old-current';
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split('?')[0].split('#')[0]);
-  if (urlPath === '/sw.js' && deploy === 'old') {
+  const oldDeploy = deploy !== 'new';
+  if (urlPath === '/sw.js' && oldDeploy) {
     res.writeHead(200, { 'Content-Type': 'text/javascript', 'Cache-Control': 'no-store' });
     res.end(OLD_SW);
     return;
   }
-  const f = path.join(ROOT, urlPath === '/' ? 'index.html' : urlPath);
-  if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
-  let body = fs.readFileSync(f);
-  // Marqueur de déploiement dans le CSS : prouve quelle génération du shell est servie
-  if (urlPath === '/css/styles.css') body = Buffer.concat([body, Buffer.from(`\n/*DEPLOY:${deploy}*/\n`)]);
-  res.writeHead(200, { 'Content-Type': MIME[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
+  if (deploy === 'old-authentic' && (urlPath === '/' || urlPath === '/index.html')) {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(OLD_INDEX);
+    return;
+  }
+  if (deploy === 'old-authentic' && urlPath === '/js/app.js') {
+    res.writeHead(200, { 'Content-Type': 'text/javascript', 'Cache-Control': 'no-store' });
+    res.end(OLD_APP_JS);
+    return;
+  }
+  // Les anciens bundles ne sont pas utiles au scénario minimal, mais doivent
+  // exister dans le cache v7 comme sur une ancienne installation.
+  if (deploy === 'old-authentic' && /^\/js\/extensions-v\d+\.js$/.test(urlPath)) {
+    res.writeHead(200, { 'Content-Type': 'text/javascript', 'Cache-Control': 'no-store' });
+    res.end('/* ancien bundle sans mécanisme de mise à jour */');
+    return;
+  }
+  const file = path.join(ROOT, urlPath === '/' ? 'index.html' : urlPath);
+  if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
+    res.writeHead(404); res.end(); return;
+  }
+  let body = fs.readFileSync(file);
+  if (urlPath === '/css/styles.css') {
+    const marker = deploy === 'new' ? 'new' : 'old';
+    body = Buffer.concat([body, Buffer.from(`\n/*DEPLOY:${marker}*/\n`)]);
+  }
+  res.writeHead(200, {
+    'Content-Type': MIME[path.extname(file)] || 'application/octet-stream',
+    'Cache-Control': 'no-store'
+  });
   res.end(body);
 });
-await new Promise(r => server.listen(PORT, r));
 
-let failures = 0, passed = 0;
+await new Promise((resolve, reject) => {
+  server.once('error', reject);
+  server.listen(0, '127.0.0.1', resolve);
+});
+const address = server.address();
+const port = typeof address === 'object' && address ? address.port : 0;
+const origin = `http://127.0.0.1:${port}`;
+
+let failures = 0;
+let passed = 0;
 function check(name, cond, extra) {
   if (cond) { passed++; console.log('  ✓ ' + name); }
-  else { failures++; console.error('  ✗ ' + name + (extra !== undefined ? ' — ' + JSON.stringify(extra) : '')); }
+  else {
+    failures++;
+    console.error('  ✗ ' + name + (extra !== undefined ? ' — ' + JSON.stringify(extra) : ''));
+  }
 }
 
-const browser = await chromium.launch(launchOpts);
-const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
-const page = await ctx.newPage();
-const pageErrors = [];
-page.on('pageerror', e => pageErrors.push(e.message));
-// IMPORTANT : pas de page.route() ici — l'interception Playwright fait pendre la
-// vérification du script du service worker (register()/update() ne se résolvent
-// jamais). Comme pour le test PWA de tests/e2e.mjs, le réseau reste naturel ;
-// les ressources externes échouent d'elles-mêmes sans casser le scénario.
-page.setDefaultTimeout(45000);
-let navCount = 0;
-page.on('framenavigated', f => { if (f === page.mainFrame()) navCount++; });
-
-const cssDeploy = () => page.evaluate(() =>
+const cssDeploy = page => page.evaluate(() =>
   fetch('css/styles.css').then(r => r.text()).then(t => (t.match(/DEPLOY:(\w+)/) || [])[1] || 'aucun'));
-const cacheKeys = () => page.evaluate(() => caches.keys());
+const cacheKeys = page => page.evaluate(() => caches.keys());
 
-// ── 1. Première visite : ancien SW hdv-v7 installé et aux commandes ────────
-console.log('▶ ancienne version (hdv-v7) installée');
-await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load', timeout: 60000 });
-await page.evaluate(() => navigator.serviceWorker.ready);
-await page.waitForFunction(() => !!navigator.serviceWorker.controller, { timeout: 15000 });
-await page.waitForTimeout(800);
-const navsAfterFirstVisit = navCount;
-check('SW enregistré et page contrôlée', await page.evaluate(() => !!navigator.serviceWorker.controller));
-check('cache hdv-v7-shell présent', (await cacheKeys()).includes('hdv-v7-shell'), await cacheKeys());
-check('shell ancien servi (cache-first)', (await cssDeploy()) === 'old', await cssDeploy());
-check('première installation : aucun rechargement automatique', navsAfterFirstVisit === 1, navsAfterFirstVisit);
-// Données utilisateur à préserver pendant la mise à jour
-await page.evaluate(() => {
-  localStorage.setItem('herbier_quiz_v1', JSON.stringify({ ok: 7, no: 3 }));
-  localStorage.setItem('pwa-test-marker', 'conserve');
-});
+async function seedUserData(page) {
+  await page.evaluate(async () => {
+    localStorage.setItem('herbier_quiz_v1', JSON.stringify({ ok: 7, no: 3 }));
+    localStorage.setItem('pwa-test-marker', 'conserve');
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('hdv', 1);
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains('photos')) request.result.createObjectStore('photos');
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction('photos', 'readwrite');
+      transaction.objectStore('photos').put(['data:image/png;base64,cGhvdG8='], 'pwa-test-photo');
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error);
+    });
+    db.close();
+  });
+}
 
-// ── 2. Déploiement de la nouvelle version, revisite en ligne ───────────────
-console.log('▶ déploiement de la nouvelle version');
-deploy = 'new';
-navCount = 0;
-await page.reload({ waitUntil: 'load', timeout: 60000 });
-// L'ancien cache sert toujours l'ancien shell : c'est le bug d'origine, le
-// visiteur doit maintenant se voir PROPOSER la nouvelle version.
-check('avant mise à jour : ancien shell encore servi', (await cssDeploy()) === 'old', await cssDeploy());
-await page.waitForSelector('#swUpdateBtn', { timeout: 45000 });
-const toastText = await page.evaluate(() => document.getElementById('toast').textContent);
-check('message « Une nouvelle version de Carnet Botanique est disponible »',
-  toastText.includes('Une nouvelle version de Carnet Botanique est disponible'), toastText);
-check('bouton « Mettre à jour » proposé', toastText.includes('Mettre à jour'));
-const keysBeforeUpdate = await cacheKeys();
-check('nouveau shell pré-caché en attente à côté de l\'ancien',
-  keysBeforeUpdate.includes('hdv-v7-shell') && keysBeforeUpdate.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')),
-  keysBeforeUpdate);
-check('pas de rechargement spontané avant le clic', navCount === 1, navCount);
+async function readUserData(page) {
+  return page.evaluate(async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open('hdv', 1);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const photo = await new Promise((resolve, reject) => {
+      const request = db.transaction('photos', 'readonly').objectStore('photos').get('pwa-test-photo');
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    db.close();
+    return {
+      quiz: localStorage.getItem('herbier_quiz_v1'),
+      marker: localStorage.getItem('pwa-test-marker'),
+      photo
+    };
+  });
+}
 
-// ── 3. Clic « Mettre à jour » → activation → UN rechargement ───────────────
-console.log('▶ mise à jour demandée par l\'utilisateur');
-await page.evaluate(() => { window.__avantClic = true; });
-await page.click('#swUpdateBtn');
-await page.waitForFunction(() => window.__avantClic === undefined, { timeout: 15000 }); // la page a rechargé
-await page.waitForFunction(() => document.readyState === 'complete' && !!navigator.serviceWorker.controller, { timeout: 10000 });
-await page.waitForTimeout(1500);
-check('nouveau shell servi après mise à jour', (await cssDeploy()) === 'new', await cssDeploy());
-const keysAfterUpdate = await cacheKeys();
-check('ancien cache hdv-v7-shell supprimé', !keysAfterUpdate.some(k => k.startsWith('hdv-v7')), keysAfterUpdate);
-check('seuls les caches de la version active restent',
-  keysAfterUpdate.every(k => !k.startsWith('hdv-') || k.startsWith('hdv-v10-')), keysAfterUpdate);
-const userData = await page.evaluate(() => ({
-  quiz: localStorage.getItem('herbier_quiz_v1'),
-  marker: localStorage.getItem('pwa-test-marker'),
-}));
-check('données utilisateur conservées (localStorage)',
-  userData.marker === 'conserve' && JSON.parse(userData.quiz || '{}').ok === 7, userData);
-check('application rendue après mise à jour',
-  await page.evaluate(() => document.querySelectorAll('.scrolly-section').length > 0));
+function observePage(page, pageErrors) {
+  page.setDefaultTimeout(45000);
+  page.on('pageerror', error => pageErrors.push(error.message));
+  // Ne pas employer page.route() : Playwright bloque alors register()/update().
+}
 
-// Anti-boucle : on observe 3 s, aucun rechargement supplémentaire ne doit survenir
-const navsApresMaj = navCount;
-await page.waitForTimeout(3000);
-check('un seul rechargement, aucune boucle', navCount === navsApresMaj && navsApresMaj === 2,
-  { rechargements: navCount });
+async function testUpdateButton(browser) {
+  console.log('▶ parcours A — mise à jour explicite avec bouton');
+  deploy = 'old-current';
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+  const pageErrors = [];
+  let navCount = 0;
+  try {
+    const page = await ctx.newPage();
+    observePage(page, pageErrors);
+    page.on('framenavigated', frame => { if (frame === page.mainFrame()) navCount++; });
 
-// ── 4. Hors-ligne après mise à jour ────────────────────────────────────────
-console.log('▶ hors-ligne après mise à jour');
-await ctx.setOffline(true);
-await page.reload({ waitUntil: 'load' });
-await page.waitForTimeout(1500);
-check('page servie hors-ligne par le nouveau SW', await page.evaluate(() =>
-  !!navigator.serviceWorker.controller && document.querySelectorAll('.scrolly-section').length > 0));
-check('shell servi hors-ligne = nouvelle version', (await cssDeploy()) === 'new', await cssDeploy());
-await ctx.setOffline(false);
+    await page.goto(origin + '/', { waitUntil: 'load', timeout: 60000 });
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await page.waitForFunction(() => !!navigator.serviceWorker.controller, { timeout: 15000 });
+    await page.waitForTimeout(800);
+    const navsAfterFirstVisit = navCount;
+    check('A — SW enregistré et page contrôlée', await page.evaluate(() => !!navigator.serviceWorker.controller));
+    check('A — cache hdv-v7-shell présent', (await cacheKeys(page)).includes('hdv-v7-shell'), await cacheKeys(page));
+    check('A — shell ancien servi', (await cssDeploy(page)) === 'old', await cssDeploy(page));
+    check('A — aucun rechargement à la première installation', navsAfterFirstVisit === 1, navsAfterFirstVisit);
+    await seedUserData(page);
 
-check('aucune erreur JavaScript', pageErrors.length === 0, pageErrors);
+    deploy = 'new';
+    navCount = 0;
+    await page.reload({ waitUntil: 'load', timeout: 60000 });
+    check('A — ancien shell encore servi avant acceptation', (await cssDeploy(page)) === 'old', await cssDeploy(page));
+    await page.waitForSelector('#swUpdateBtn', { timeout: 45000 });
+    const toastText = await page.evaluate(() => document.getElementById('toast').textContent);
+    check('A — message de nouvelle version affiché',
+      toastText.includes('Une nouvelle version de Carnet Botanique est disponible'), toastText);
+    check('A — bouton « Mettre à jour » proposé', toastText.includes('Mettre à jour'));
+    const keysBeforeUpdate = await cacheKeys(page);
+    check('A — ancien et nouveau shells coexistent avant activation',
+      keysBeforeUpdate.includes('hdv-v7-shell') &&
+      keysBeforeUpdate.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')), keysBeforeUpdate);
+    check('A — aucun rechargement spontané avant le clic', navCount === 1, navCount);
 
-await browser.close();
-server.close();
+    await page.evaluate(() => { window.__avantClic = true; });
+    await page.click('#swUpdateBtn');
+    await page.waitForFunction(() => window.__avantClic === undefined, { timeout: 15000 });
+    await page.waitForFunction(() => document.readyState === 'complete' && !!navigator.serviceWorker.controller);
+    await page.waitForTimeout(1500);
+    check('A — nouveau shell servi après mise à jour', (await cssDeploy(page)) === 'new', await cssDeploy(page));
+    const keysAfterUpdate = await cacheKeys(page);
+    check('A — cache hdv-v7 supprimé', !keysAfterUpdate.some(k => k.startsWith('hdv-v7')), keysAfterUpdate);
+    check('A — seuls les caches actifs restent',
+      keysAfterUpdate.every(k => !k.startsWith('hdv-') || k.startsWith('hdv-v10-')), keysAfterUpdate);
+    const userData = await readUserData(page);
+    check('A — localStorage conservé',
+      userData.marker === 'conserve' && JSON.parse(userData.quiz || '{}').ok === 7, userData);
+    check('A — photo IndexedDB conservée',
+      Array.isArray(userData.photo) && userData.photo[0] === 'data:image/png;base64,cGhvdG8=', userData.photo);
+    check('A — application rendue',
+      await page.evaluate(() => document.querySelectorAll('.scrolly-section').length > 0));
+
+    const navsAfterUpdate = navCount;
+    await page.waitForTimeout(3000);
+    check('A — un seul rechargement, aucune boucle', navCount === navsAfterUpdate && navsAfterUpdate === 2,
+      { navigations: navCount });
+
+    await ctx.setOffline(true);
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(1200);
+    check('A — page disponible hors-ligne', await page.evaluate(() =>
+      !!navigator.serviceWorker.controller && document.querySelectorAll('.scrolly-section').length > 0));
+    check('A — shell hors-ligne à jour', (await cssDeploy(page)) === 'new', await cssDeploy(page));
+    await ctx.setOffline(false);
+    check('A — aucune erreur JavaScript', pageErrors.length === 0, pageErrors);
+  } finally {
+    await ctx.setOffline(false).catch(() => {});
+    await ctx.close();
+  }
+}
+
+async function testLegacyRecovery(browser) {
+  console.log('▶ parcours B — ancien app.js sans toast, fermeture puis nouvelle visite');
+  deploy = 'old-authentic';
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+  const pageErrors = [];
+  try {
+    let page = await ctx.newPage();
+    observePage(page, pageErrors);
+    await page.goto(origin + '/', { waitUntil: 'load', timeout: 60000 });
+    await page.evaluate(() => navigator.serviceWorker.ready);
+    await page.waitForFunction(() => !!navigator.serviceWorker.controller, { timeout: 15000 });
+    await page.waitForTimeout(800);
+    check('B — ancien client réellement sans bouton de mise à jour',
+      await page.evaluate(() => !document.getElementById('swUpdateBtn')));
+    check('B — cache hdv-v7-shell présent', (await cacheKeys(page)).includes('hdv-v7-shell'), await cacheKeys(page));
+    check('B — ancien shell servi', (await cssDeploy(page)) === 'old', await cssDeploy(page));
+    await seedUserData(page);
+
+    deploy = 'new';
+    await page.reload({ waitUntil: 'load', timeout: 60000 });
+    await page.waitForFunction(async () => {
+      const registration = await navigator.serviceWorker.getRegistration();
+      return !!(registration && registration.waiting);
+    }, { timeout: 45000 });
+    const waitingKeys = await cacheKeys(page);
+    check('B — nouveau worker installé et en attente',
+      await page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration())?.waiting));
+    check('B — aucun toast possible dans ancien app.js',
+      await page.evaluate(() => !document.getElementById('swUpdateBtn')));
+    check('B — ancien shell reste actif tant que l’onglet est ouvert',
+      (await cssDeploy(page)) === 'old', await cssDeploy(page));
+    check('B — les deux générations coexistent pendant l’attente',
+      waitingKeys.includes('hdv-v7-shell') &&
+      waitingKeys.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')), waitingKeys);
+
+    await page.close();
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    page = await ctx.newPage();
+    observePage(page, pageErrors);
+    let navCount = 0;
+    page.on('framenavigated', frame => { if (frame === page.mainFrame()) navCount++; });
+    await page.goto(origin + '/', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForFunction(async () => {
+      const keys = await caches.keys();
+      return !keys.some(k => k.startsWith('hdv-v7'));
+    }, { timeout: 15000 });
+    check('B — nouveau shell servi à la visite suivante', (await cssDeploy(page)) === 'new', await cssDeploy(page));
+    const activeKeys = await cacheKeys(page);
+    check('B — ancien cache supprimé sans clic', !activeKeys.some(k => k.startsWith('hdv-v7')), activeKeys);
+    check('B — uniquement les caches v10 restent',
+      activeKeys.every(k => !k.startsWith('hdv-') || k.startsWith('hdv-v10-')), activeKeys);
+    const userData = await readUserData(page);
+    check('B — localStorage conservé sans clic',
+      userData.marker === 'conserve' && JSON.parse(userData.quiz || '{}').ok === 7, userData);
+    check('B — photo IndexedDB conservée sans clic',
+      Array.isArray(userData.photo) && userData.photo[0] === 'data:image/png;base64,cGhvdG8=', userData.photo);
+    check('B — application actuelle rendue',
+      await page.evaluate(() => document.querySelectorAll('.scrolly-section').length > 0));
+
+    const navsAfterOpen = navCount;
+    await page.waitForTimeout(3000);
+    check('B — aucune boucle à la visite suivante', navCount === navsAfterOpen && navsAfterOpen === 1,
+      { navigations: navCount });
+
+    await ctx.setOffline(true);
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForTimeout(1200);
+    check('B — nouvelle version disponible hors-ligne',
+      (await cssDeploy(page)) === 'new' && await page.evaluate(() =>
+        !!navigator.serviceWorker.controller && document.querySelectorAll('.scrolly-section').length > 0));
+    await ctx.setOffline(false);
+    check('B — aucune erreur JavaScript', pageErrors.length === 0, pageErrors);
+  } finally {
+    await ctx.setOffline(false).catch(() => {});
+    await ctx.close();
+  }
+}
+
+let browser;
+try {
+  browser = await chromium.launch(launchOpts);
+  await testUpdateButton(browser);
+  await testLegacyRecovery(browser);
+} finally {
+  if (browser) await browser.close();
+  await new Promise(resolve => server.close(resolve));
+}
+
 console.log(`\n${passed} réussis, ${failures} échecs`);
-process.exit(failures ? 1 : 0);
+if (failures) process.exitCode = 1;
