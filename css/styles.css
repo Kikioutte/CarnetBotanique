@@ -2218,3 +2218,257 @@ body.theme-dark .fusion-panel-row{background:rgba(35,49,41,.72)}
   .fusion-stat::before,.v7-toolbar::before,.side-drawer::before,
   .v7-modal-card::before,.fusion-quick-sheet::before{display:none}
 }
+
+/* ═══════════ Phase 6 — écrans secondaires et micro-interactions ═══════════
+   Les transitions sont brèves, informatives et identiques sur tous les outils.
+   Les panneaux fonctionnels restent réellement ancrés au viewport. */
+:root{
+  --motion-instant:140ms;
+  --motion-fast:190ms;
+  --motion-medium:320ms;
+  --motion-slow:460ms;
+  --ease-interface:cubic-bezier(.22,1,.36,1);
+  --ease-press:cubic-bezier(.2,.8,.2,1);
+  --focus-ring:0 0 0 4px rgba(194,162,106,.20),0 0 0 1px rgba(92,61,17,.62);
+}
+
+/* Phase 5 avait donné position:relative aux surfaces réfléchissantes. Sur les
+   deux panneaux fonctionnels ci-dessous, cela annulait leur position fixe. */
+.side-drawer{
+  position:fixed;
+  top:0;
+  bottom:0;
+  height:100dvh;
+  transition:right var(--motion-slow) var(--ease-interface),visibility var(--motion-instant);
+}
+.fusion-quick-sheet{
+  position:fixed;
+  transition:transform var(--motion-medium) var(--ease-interface);
+}
+
+/* Réponse tactile sobre : Apple privilégie l'enfoncement et la lumière, pas
+   les ondulations décoratives. */
+:where(button,.btn-luxe,.mnav-btn,.fusion-module,.cal-month,.cal-item,.care-task){
+  -webkit-tap-highlight-color:transparent;
+}
+:where(button,.btn-luxe,.mnav-btn,.fusion-module,.cal-month,.cal-item,.care-task):active{
+  transform:scale(.975);
+  transition-duration:var(--motion-instant);
+}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{
+  outline:none;
+  box-shadow:var(--focus-ring) !important;
+}
+.form-control:focus-visible,
+.quiz-scope-row select:focus-visible{
+  border-color:rgba(138,90,22,.58);
+  background:rgba(255,255,255,.78);
+}
+
+/* Entrée commune des cinq espaces plein écran. */
+body.flash-on .flashcard-overlay,
+body.quiz-on .quiz-overlay,
+body.cal-on .cal-overlay,
+body.dash-on .dash-overlay,
+body.care-on .care-overlay{
+  animation:phase6BackdropIn var(--motion-medium) var(--ease-interface) both;
+}
+body.flash-on .flash-head,
+body.flash-on .flash-container,
+body.flash-on .flash-actions,
+body.quiz-on .quiz-wrap,
+body.cal-on .cal-wrap,
+body.dash-on .dash-wrap,
+body.care-on .care-wrap{
+  animation:phase6SurfaceIn var(--motion-slow) var(--ease-interface) both;
+}
+body.flash-on .flash-container{animation-delay:35ms}
+body.flash-on .flash-actions{animation-delay:70ms}
+@keyframes phase6BackdropIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes phase6SurfaceIn{
+  from{opacity:0;transform:translateY(18px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Titres et actions secondaires : même rythme, même largeur de lecture. */
+.flash-head{
+  max-width:660px;
+  margin:0 auto 24px;
+  text-align:center;
+}
+.flash-actions{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:24px;
+}
+.flash-actions .btn-luxe{margin:0 !important}
+.quiz-head,.cal-head,.dash-head,.care-head{margin-bottom:20px}
+.quiz-head h2,.cal-head h2,.dash-head h2,.care-head h2,
+.flash-head h2{
+  font-size:clamp(2rem,4vw,2.8rem) !important;
+  line-height:1.05;
+  text-wrap:balance;
+}
+.quiz-head p,.cal-head p,.dash-head p,.care-head p,.flash-head p{
+  margin-top:8px;
+  line-height:1.5;
+}
+
+/* Une surface Liquid Glass commune remplace les cartes disparates. */
+.quiz-card,.dash-stat,.dash-mastery,.cal-month,.cal-item,
+.care-tip,.care-card,.card-face,.modal-box{
+  border-color:rgba(255,255,255,.66);
+  background:linear-gradient(145deg,rgba(255,255,255,.76),rgba(250,247,242,.48));
+  box-shadow:var(--liquid-inner),0 20px 44px -32px rgba(31,45,36,.48);
+}
+.quiz-card,.dash-mastery,.care-card,.modal-box{border-radius:20px}
+.dash-stat,.cal-month,.cal-item,.care-tip{border-radius:16px}
+.quiz-card{padding:38px 30px 30px}
+.quiz-count{
+  margin-bottom:10px;
+  color:var(--sage-green);
+  font-family:var(--primary-sans);
+  font-size:.68rem;
+  font-weight:650;
+  letter-spacing:1.7px;
+  text-transform:uppercase;
+}
+
+.quiz-modes{
+  gap:6px;
+  width:max-content;
+  max-width:100%;
+  margin:0 auto 16px;
+  padding:4px;
+  border:1px solid rgba(255,255,255,.68);
+  border-radius:16px;
+  background:rgba(255,255,255,.30);
+  box-shadow:var(--liquid-inner);
+}
+.quiz-modes button{
+  min-height:42px;
+  padding:9px 15px;
+  border:0;
+  border-radius:12px;
+  transition:transform var(--motion-fast) var(--ease-press),background var(--motion-fast),color var(--motion-fast),box-shadow var(--motion-fast);
+}
+.quiz-modes button.on{
+  background:linear-gradient(145deg,#3f624a,var(--ink-deep));
+  box-shadow:var(--liquid-inner),0 12px 24px -18px rgba(31,45,36,.72);
+}
+.quiz-scope-row select{
+  min-height:42px;
+  padding:8px 34px 8px 12px;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:12px;
+  color:var(--ink-deep);
+  background:rgba(255,255,255,.62);
+  font:500 .8rem var(--primary-sans);
+}
+.quiz-opt{
+  min-height:54px;
+  border-radius:14px;
+  transition:transform var(--motion-fast) var(--ease-press),background var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast);
+}
+.quiz-opt:hover{box-shadow:var(--liquid-inner),0 14px 28px -24px rgba(31,45,36,.5)}
+
+/* Commandes de fermeture : une seule géométrie et une cible de 44 px. */
+.flash-close,.quiz-close,.cal-close,.dash-close,.care-close,
+.close-drawer,.v7-modal-x,.fusion-sheet-close,.mnav-close{
+  min-width:44px;
+  min-height:44px;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(250,247,242,.50));
+  color:var(--ink-deep);
+  box-shadow:var(--liquid-inner),0 12px 26px -22px rgba(31,45,36,.56);
+  transition:transform var(--motion-fast) var(--ease-press),background var(--motion-fast),box-shadow var(--motion-fast),color var(--motion-fast);
+}
+.flash-close:hover,.quiz-close:hover,.cal-close:hover,.dash-close:hover,.care-close:hover,
+.close-drawer:hover,.v7-modal-x:hover,.fusion-sheet-close:hover,.mnav-close:hover{
+  color:#fff;
+  background:linear-gradient(145deg,#cf7655,var(--terracotta-dark));
+  box-shadow:var(--liquid-inner),0 16px 30px -20px rgba(159,79,51,.64);
+}
+
+.drawer-header{
+  min-height:86px;
+  padding:22px 26px 16px;
+  border-bottom-color:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(18px) saturate(150%);
+  backdrop-filter:blur(18px) saturate(150%);
+}
+.drawer-title{font-size:clamp(1.65rem,3vw,2rem);line-height:1.1}
+#plantForm{padding:22px 26px max(30px,env(safe-area-inset-bottom))}
+.form-tab-panel.active{animation:phase6TabIn var(--motion-medium) var(--ease-interface) both}
+@keyframes phase6TabIn{
+  from{opacity:0;transform:translateX(8px)}
+  to{opacity:1;transform:translateX(0)}
+}
+.form-fieldset legend{display:flex;align-items:center;gap:7px}
+.autofill-status:not(:empty){
+  margin-top:10px;
+  padding:9px 11px;
+  border-radius:10px;
+  background:rgba(125,142,116,.10);
+}
+
+.fusion-sheet-backdrop{transition:opacity var(--motion-medium) var(--ease-interface)}
+.fusion-sheet-handle{width:38px;background:rgba(31,45,36,.22)}
+.fusion-sheet-body{padding:10px 24px max(28px,env(safe-area-inset-bottom))}
+.fusion-sheet-item{
+  border-color:rgba(255,255,255,.62);
+  background:rgba(255,255,255,.42);
+  box-shadow:var(--liquid-inner);
+}
+.fusion-sheet-actions{padding-top:4px}
+.fusion-sheet-actions .btn-luxe{min-height:42px}
+
+.dash-stat,.cal-month,.cal-item,.care-task{
+  transition:transform var(--motion-fast) var(--ease-press),border-color var(--motion-fast),box-shadow var(--motion-fast),background var(--motion-fast);
+}
+@media(hover:hover) and (pointer:fine){
+  .dash-stat:hover,.cal-month:hover,.cal-item:hover,.care-task:hover{
+    transform:translateY(-2px);
+    border-color:rgba(194,162,106,.48);
+    box-shadow:var(--liquid-inner),0 22px 40px -28px rgba(31,45,36,.48);
+  }
+}
+
+body.theme-dark .quiz-card,body.theme-dark .dash-stat,body.theme-dark .dash-mastery,
+body.theme-dark .cal-month,body.theme-dark .cal-item,body.theme-dark .care-tip,
+body.theme-dark .care-card,body.theme-dark .card-face,body.theme-dark .modal-box,
+body.theme-dark .flash-close,body.theme-dark .quiz-close,body.theme-dark .cal-close,
+body.theme-dark .dash-close,body.theme-dark .care-close,body.theme-dark .close-drawer,
+body.theme-dark .v7-modal-x,body.theme-dark .fusion-sheet-close,body.theme-dark .mnav-close{
+  background:linear-gradient(145deg,rgba(58,78,65,.90),rgba(25,35,29,.76));
+  border-color:rgba(255,255,255,.14);
+}
+
+@media(max-width:760px){
+  .flashcard-overlay,.quiz-overlay,.cal-overlay,.dash-overlay,.care-overlay{padding-top:24px}
+  .flash-close,.quiz-close,.cal-close,.dash-close,.care-close{top:12px;right:12px}
+  .flash-head,.quiz-head,.cal-head,.dash-head,.care-head{padding:46px 6px 0}
+  .flash-actions{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:4;padding:8px;border-radius:18px;background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .quiz-modes{width:100%}
+  .quiz-modes button{flex:1;padding:8px 6px;letter-spacing:.7px}
+  .quiz-card{padding:28px 18px 22px}
+  .quiz-foot{align-items:stretch}
+  .quiz-score{justify-content:space-between;flex:1}
+  .drawer-header{padding:18px 16px 14px}
+  #plantForm{padding:16px 16px max(26px,env(safe-area-inset-bottom))}
+  .fusion-sheet-body{padding-left:16px;padding-right:16px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.flash-on .flashcard-overlay,body.quiz-on .quiz-overlay,body.cal-on .cal-overlay,
+  body.dash-on .dash-overlay,body.care-on .care-overlay,
+  body.flash-on .flash-head,body.flash-on .flash-container,body.flash-on .flash-actions,
+  body.quiz-on .quiz-wrap,body.cal-on .cal-wrap,body.dash-on .dash-wrap,body.care-on .care-wrap,
+  .form-tab-panel.active{animation:none !important}
+  :where(button,.btn-luxe,.mnav-btn,.fusion-module,.cal-month,.cal-item,.care-task):active{transform:none}
+}

@@ -177,14 +177,14 @@
 <!-- PANNEAU ET SYSTEME DE FLASHCARDS (APPRENTISSAGE) -->
 <div class="flashcard-overlay" id="flashcardSection" role="dialog" aria-modal="true" aria-labelledby="flashcardTitle" aria-hidden="true" inert data-lenis-prevent>
   <button class="btn-luxe flash-close" onclick="toggleFlashMode()"><i class="fa-solid fa-xmark"></i> <span>Fermer</span></button>
-  <div style="text-align: center; max-width: 600px; margin: 0 auto 30px;">
+  <div class="flash-head">
     <h2 id="flashcardTitle" style="font-size: 2.5rem; margin-bottom: 10px;">Gymnastique Mémorielle</h2>
     <p style="font-family: var(--primary-serif); font-style: italic;">Retenez les caractéristiques clés de vos herbes en retournant les cartes.</p>
   </div>
   <div class="flash-container" id="flashContainer">
     <!-- Contenu flashcard généré par JS -->
   </div>
-  <div style="text-align: center; margin-top: 30px;">
+  <div class="flash-actions">
     <button class="btn-luxe" onclick="prevFlashcard()" style="display:inline-flex;"><i class="fa-solid fa-arrow-left"></i> <span>Précédent</span></button>
     <button class="btn-luxe btn-luxe-accent" onclick="nextFlashcard()" style="display:inline-flex; margin-left: 15px;"><span>Suivant</span> <i class="fa-solid fa-arrow-right"></i></button>
   </div>
@@ -450,7 +450,7 @@
     <!-- BLOC 4 : Mode Pro Fleuriste -->
     <div class="form-tab-panel" id="ftab-3" role="tabpanel" aria-labelledby="formTab3" hidden>
       <fieldset class="form-fieldset">
-        <legend>✂️ Mode Pro — Fleuriste</legend>
+        <legend><i class="fa-solid fa-scissors" aria-hidden="true"></i> Mode Pro — Fleuriste</legend>
         <div class="form-group">
           <label class="form-label" for="formPrepa">Préparation avant vase</label>
           <textarea id="formPrepa" class="form-control" rows="2" placeholder="Recoupe en biseau, reconditionner..."></textarea>

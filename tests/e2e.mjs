@@ -508,6 +508,22 @@ const browser = await chromium.launch(launchOpts);
     return document.getElementById('plantDrawer').classList.contains('open');
   });
   check('dock "Ajouter" ouvre le tiroir', add);
+  const drawerPlacement = await page.evaluate(() => {
+    const drawer = document.getElementById('plantDrawer');
+    const rect = drawer.getBoundingClientRect();
+    return {
+      position: getComputedStyle(drawer).position,
+      top: Math.round(rect.top),
+      rightGap: Math.round(innerWidth - rect.right),
+      heightGap: Math.round(innerHeight - rect.height),
+    };
+  });
+  check(
+    'tiroir d\'ajout : ancré au viewport',
+    drawerPlacement.position === 'fixed' && Math.abs(drawerPlacement.top) <= 1 &&
+      Math.abs(drawerPlacement.rightGap) <= 1 && Math.abs(drawerPlacement.heightGap) <= 1,
+    drawerPlacement,
+  );
   const addSubmit = await page.evaluate(() => {
     const before = plants.length;
     const stamp = 'QA mobile ' + Date.now();
@@ -552,6 +568,22 @@ const browser = await chromium.launch(launchOpts);
     return document.getElementById('fusionQuickSheet').classList.contains('open');
   });
   check('fiche express s\'ouvre depuis le catalogue', sheetOpen);
+  const sheetPlacement = await page.evaluate(() => {
+    const sheet = document.getElementById('fusionQuickSheet');
+    const rect = sheet.getBoundingClientRect();
+    return {
+      position: getComputedStyle(sheet).position,
+      bottomGap: Math.round(innerHeight - rect.bottom),
+      leftGap: Math.round(rect.left),
+      rightGap: Math.round(innerWidth - rect.right),
+    };
+  });
+  check(
+    'fiche express : ancrée en bas du viewport',
+    sheetPlacement.position === 'fixed' && Math.abs(sheetPlacement.bottomGap) <= 1 &&
+      Math.abs(sheetPlacement.leftGap - sheetPlacement.rightGap) <= 1,
+    sheetPlacement,
+  );
   await page.keyboard.press('Escape');
   const sheetClosed = await page.evaluate(() => !document.getElementById('fusionQuickSheet').classList.contains('open'));
   check('fiche express se ferme à l\'Échap', sheetClosed);

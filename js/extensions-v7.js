@@ -53,8 +53,8 @@ window.__enrichChips=function(p){
   if(_chip_eau)c.push('<span class="v7-chip"><i class="fa-solid fa-droplet"></i> '+esc2(_chip_eau)+'</span>');
   if(p.temperature)c.push('<span class="v7-chip"><i class="fa-solid fa-thermometer-half"></i> '+esc2(p.temperature)+'</span>');
   if(p.principes)c.push('<span class="v7-chip"><i class="fa-solid fa-flask"></i> '+esc2(p.principes)+'</span>');
-  if(plantIsToxic(p))c.push('<span class="v7-chip v7-chip-danger">⚠️ Toxique animaux</span>');
-  if(p.invasive)c.push('<span class="v7-chip v7-chip-danger">🌾 Invasive</span>');
+  if(plantIsToxic(p))c.push('<span class="v7-chip v7-chip-danger"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Toxique animaux</span>');
+  if(p.invasive)c.push('<span class="v7-chip v7-chip-danger"><i class="fa-solid fa-wheat-awn" aria-hidden="true"></i> Invasive</span>');
   var z=(journal[p.id]&&journal[p.id].zone);
   if(z)c.push('<span class="v7-chip"><i class="fa-solid fa-location-dot"></i> '+esc2(z)+'</span>');
   if(!c.length)c.push('<button type="button" class="v7-chip v7-chip-empty" onclick="openEditDrawer(\''+p.id+'\')"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i> Completer la fiche</button>');
