@@ -895,7 +895,7 @@ function renderFlashcard() {
         <div style="font-size:0.74rem; text-transform:uppercase; letter-spacing:1px; display:flex; flex-direction:column; gap:5px; text-align:center;">
           <div><i class="fa-solid fa-location-dot" style="color:var(--gold);"></i> ${esc(p.region||'')}</div>
           ${p.visu1 ? `<div><i class="fa-solid fa-leaf" style="color:var(--sage-green);"></i> ${esc(p.visu1)}</div>` : ''}
-          ${p.fl_texte ? `<div>🌸 ${esc(p.fl_texte)}</div>` : ''}
+          ${p.fl_texte ? `<div><i class="fa-solid fa-seedling" aria-hidden="true"></i> ${esc(p.fl_texte)}</div>` : ''}
         </div>
         ${p.mnemonic ? `<div style="margin-top:10px;padding:8px 12px;background:rgba(194,162,106,0.15);border-radius:8px;font-size:0.78rem;font-style:italic;color:var(--gold);text-align:center;max-width:100%;"><i class="fa-solid fa-lightbulb"></i> ${esc(p.mnemonic)}</div>` : ''}
       </div>
@@ -1079,10 +1079,10 @@ function mkSubstratBar(substrat) {
 // Tags d'alerte v5 (toxicité animaux, invasif) intégrés au design luxe
 function mkV5Tags(p) {
   var tags = [];
-  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe">🐾 Sans danger animaux</span>');
-  else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox">☠️ Toxique animaux</span>');
-  if (p.invasive) tags.push('<span class="v5-tag tag-inv">⚠️ Invasive / Épillets</span>');
-  if (p.inGarden) tags.push('<span class="v5-tag tag-garden">🌱 Au jardin</span>');
+  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe"><i class="fa-solid fa-heart" aria-hidden="true"></i> Sans danger animaux</span>');
+  else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Toxique animaux</span>');
+  if (p.invasive) tags.push('<span class="v5-tag tag-inv"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Invasive / Épillets</span>');
+  if (p.inGarden) tags.push('<span class="v5-tag tag-garden"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Au jardin</span>');
   return tags.length ? '<div class="v5-tags">'+tags.join('')+'</div>' : '';
 }
 
@@ -1279,7 +1279,7 @@ async function autoFillFromWiki(forcedTitle) {
   term = term.trim();
   if (!term) { setAutoFillStatus('Entrez un nom de plante', ''); return; }
   closeWikiDropdown();
-  setAutoFillStatus('🔍 Recherche Wikipedia…', '');
+  setAutoFillStatus('Recherche Wikipedia…', '');
 
   // Fetch avec timeout 8s — évite le gel sur iOS Safari
   function _ft(url, opts) {
@@ -1295,7 +1295,7 @@ async function autoFillFromWiki(forcedTitle) {
     var srData = await srRes.json();
     var title = (srData[1] && srData[1][0]) || term;
 
-    setAutoFillStatus('📖 Lecture Wikipedia…', '');
+    setAutoFillStatus('Lecture Wikipedia…', '');
 
     // 2. Résumé + wikitext + pageprops en PARALLÈLE
     var wikiBase = 'https://fr.wikipedia.org/w/api.php';
@@ -1339,7 +1339,7 @@ async function autoFillFromWiki(forcedTitle) {
     }
 
     if (wdId) {
-      setAutoFillStatus('🧬 Lecture Wikidata…', '');
+      setAutoFillStatus('Lecture Wikidata…', '');
       try {
         var cl = await _wdClaims(wdId);
         if (cl) {
@@ -1547,7 +1547,7 @@ async function autoFillFromWiki(forcedTitle) {
     if (img) { _sv('formImgUrl', img.replace(/\/\d+px-/, '/800px-')); filled.push('Image'); }
 
     if (!filled.length) {
-      setAutoFillStatus('⚠️ Plante trouvée mais peu de données disponibles.', '');
+      setAutoFillStatus('Plante trouvée, mais peu de données sont disponibles.', '');
     } else {
       setAutoFillStatus('✓ ' + filled.length + ' champs importés : ' + filled.join(', '), 'ok');
     }
@@ -1560,7 +1560,7 @@ async function autoFillFromWiki(forcedTitle) {
     // applyAIEnrichment() ne remplit ensuite que ce qui est encore vide.
     var _gKey = localStorage.getItem('herbier_gemini_key');
     if (_gKey) {
-      setAutoFillStatus('🤖 Enrichissement IA en cours…', '');
+      setAutoFillStatus('Enrichissement IA en cours…', '');
       try {
         var _gPrompt = 'Tu es un expert botaniste et fleuriste professionnel. Voici une plante :\n'
           + '- Nom usuel : ' + _gv('formNomFr') + '\n'
@@ -1978,8 +1978,7 @@ function newQuestion(){
   else if(quizMode==='photo'){ correct=p.nomFr; pool2=allNames.filter(f=>f&&f!==correct); eyebrow='Quelle espèce ?'; photo=true; }
   else { correct=p.nomFr; pool2=allNames.filter(f=>f&&f!==correct); eyebrow='Quel nom français ?'; qHTML='<i>'+esc(p.nomLat)+'</i>'; sub=esc(p.famille); }
   const opts=_qshuffle([correct].concat(_qsample(pool2,3)));
-  let html='<button class="btn-luxe quiz-close" onclick="toggleQuizMode()"><i class="fa-solid fa-xmark"></i> Fermer</button>';
-  html+='<div class="quiz-count">Question '+quizAsked+'</div>';
+  let html='<div class="quiz-count">Question '+quizAsked+'</div>';
   if(photo){ html+='<div class="quiz-photo" id="quizPhoto"><i class="fa-solid fa-leaf"></i></div>'; }
   html+='<div class="quiz-eyebrow">'+eyebrow+'</div>';
   if(qHTML){ html+='<div class="quiz-q">'+qHTML+'</div>'; }

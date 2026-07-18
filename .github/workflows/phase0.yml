@@ -69,6 +69,10 @@ jobs:
       - name: Phase 5 — contrat de finition Liquid Glass
         run: npm run test:phase5
 
+      # Phase 6 : écrans secondaires ancrés et micro-interactions accessibles.
+      - name: Phase 6 — contrat écrans secondaires
+        run: npm run test:phase6
+
       - name: Publier les rapports et captures
         if: always()
         uses: actions/upload-artifact@v4
