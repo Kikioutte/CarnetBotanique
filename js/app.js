@@ -85,6 +85,47 @@ function scheduleMotionEnhancements(){
 }
 window.addEventListener('load',scheduleMotionEnhancements,{once:true});
 
+// Phase 7 — image d'ambiance du hero hors chemin critique.
+// Le premier écran est peint avec le dégradé local de .hero (styles.css) : le
+// LCP ne dépend plus d'images.unsplash.com. La même photo qu'avant est ensuite
+// appliquée sur la couche .hero::before :
+//   - immédiatement si elle est déjà dans le cache du service worker
+//     (visites suivantes : accès local, aucune requête réseau) ;
+//   - sinon à la première interaction (le LCP est figé au premier input,
+//     la photo ne peut donc plus jamais dégrader ni faire varier la mesure).
+// En cas d'échec réseau, le dégradé reste en place, sans erreur bloquante.
+function initHeroPhoto(){
+  var hero=document.getElementById('heroSection');
+  if(!hero||!hero.classList)return;
+  var w=window.innerWidth||1200;
+  var url=(w<=640)
+    ?'https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=640&auto=format&fit=crop'
+    :(w<=960)
+      ?'https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=960&auto=format&fit=crop'
+      :'https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop';
+  var applied=false;
+  var events=['pointerdown','pointermove','keydown','wheel','touchstart','scroll'];
+  function apply(){
+    if(applied)return;applied=true;
+    events.forEach(function(n){window.removeEventListener(n,apply);});
+    var img=new Image();
+    img.onload=function(){
+      try{
+        hero.style.setProperty('--hero-photo',"url('"+url+"')");
+        hero.classList.add('hero-photo-on');
+      }catch(e){}
+    };
+    img.src=url;
+  }
+  try{
+    if(window.caches&&caches.match){
+      caches.match(url).then(function(hit){if(hit)apply();}).catch(function(){});
+    }
+  }catch(e){}
+  events.forEach(function(n){window.addEventListener(n,apply,{once:true,passive:true});});
+}
+try{initHeroPhoto();}catch(e){}
+
 // --- INITIALISATION ---
 window.onload = function() {
   // v6 : chaque étape est isolée — une erreur ponctuelle n'interrompt plus tout le démarrage.
@@ -927,16 +968,22 @@ function updateModeUI() {
   document.body.classList.toggle('mode-learn', appMode!=='garden');
   var l=document.getElementById('modeLearn'), g=document.getElementById('modeGarden');
   if(l)l.classList.toggle('on', appMode!=='garden'); if(g)g.classList.toggle('on', appMode==='garden');
+  // Phase 7 : n'écrire dans le hero que si le contenu change vraiment. Au
+  // démarrage en mode Apprentissage, titre et badge sont déjà ceux du HTML
+  // statique — les réécrire à l'identique forçait un repeint du titre (élément
+  // LCP) après le chargement des données et retardait la mesure.
+  function setHTML(el,html){ if(el&&el.innerHTML!==html)el.innerHTML=html; }
+  function setText(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
   if (appMode==='garden') {
-    if(heroBadge)heroBadge.textContent='Votre Domaine Privé';
-    if(heroTitle)heroTitle.innerHTML='Mon Jardin <i>personnel</i>';
-    if(heroText)heroText.textContent='Les espèces que vous avez adoptées, à cultiver et à suivre.';
+    setText(heroBadge,'Votre Domaine Privé');
+    setHTML(heroTitle,'Mon Jardin <i>personnel</i>');
+    setText(heroText,'Les espèces que vous avez adoptées, à cultiver et à suivre.');
   } else {
-    if(heroBadge)heroBadge.textContent='Académie Royale de Botanique';
-    if(heroTitle)heroTitle.innerHTML='Le carnet botanique <i>vivant</i>';
-    if(heroText)heroText.textContent=plants.length
+    setText(heroBadge,'Académie Royale de Botanique');
+    setHTML(heroTitle,'Le carnet botanique <i>vivant</i>');
+    setText(heroText,plants.length
       ?('Découvrez, apprenez et révisez les '+plants.length+' espèces avec élégance.')
-      :'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.';
+      :'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.');
   }
 }
 function setMode(m){

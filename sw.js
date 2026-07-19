@@ -18,12 +18,15 @@
 'use strict';
 
 const VERSION = 'hdv-v10';
-const SHELL_HASH = '6818d398807b'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
+const SHELL_HASH = 'ae5577b36125'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
 const CACHE_PREFIX = 'hdv-';
 const SHELL_CACHE = VERSION + '-' + SHELL_HASH + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const RUNTIME_MAX_ENTRIES = 260;
 
+// Phase 7 — les polices auto-hébergées (fonts/*.woff2) font partie du SHELL :
+// la typographie complète fonctionne hors-ligne dès l'installation, sans
+// dépendre de fonts.gstatic.com.
 const SHELL = [
   './',
   'index.html',
@@ -34,7 +37,13 @@ const SHELL = [
   'especes.html',
   'manifest.webmanifest',
   'icons/icon-192.png',
-  'icons/icon-512.png'
+  'icons/icon-512.png',
+  'fonts/cormorant-garamond-latin.woff2',
+  'fonts/cormorant-garamond-latin-ext.woff2',
+  'fonts/cormorant-garamond-italic-latin.woff2',
+  'fonts/cormorant-garamond-italic-latin-ext.woff2',
+  'fonts/montserrat-latin.woff2',
+  'fonts/montserrat-latin-ext.woff2'
 ];
 
 self.addEventListener('install', function (e) {
