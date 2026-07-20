@@ -2257,6 +2257,92 @@ body.theme-dark .fusion-panel-row{background:rgba(35,49,41,.72)}
   .v7-modal-card::before,.fusion-quick-sheet::before{display:none}
 }
 
+/* ===================================================================
+   PHASE 8 — ÉTATS PRODUIT, FORMULAIRES SÛRS ET ACTIONS RÉVERSIBLES
+   =================================================================== */
+.catalog-state{
+  width:min(720px,calc(100% - 32px));
+  min-height:340px;
+  margin:42px auto 70px;
+  padding:clamp(34px,6vw,64px) clamp(22px,5vw,54px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:28px;
+  color:var(--ink-deep);
+  background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(250,247,242,.52));
+  box-shadow:var(--liquid-inner),var(--shadow-premium);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  backdrop-filter:blur(22px) saturate(145%);
+}
+.catalog-state h3{font-family:var(--primary-serif);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:500;line-height:1.08}
+.catalog-state p{max-width:540px;color:var(--sage-green);font-family:var(--primary-serif);font-size:1.02rem;font-style:italic;line-height:1.6}
+.catalog-state-icon{display:grid;place-items:center;width:58px;height:58px;margin-bottom:4px;border-radius:20px;background:rgba(194,162,106,.16);color:var(--terracotta-dark);font-size:1.35rem}
+.catalog-state-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:12px}
+.catalog-state-spinner{width:42px;height:42px;margin-bottom:6px;border:3px solid rgba(125,142,116,.20);border-top-color:var(--terracotta-dark);border-radius:50%;animation:phase8Spin .85s linear infinite}
+@keyframes phase8Spin{to{transform:rotate(360deg)}}
+
+.form-feedback{
+  margin:0 0 16px;
+  padding:11px 13px;
+  border:1px solid rgba(125,142,116,.30);
+  border-radius:12px;
+  background:rgba(125,142,116,.10);
+  color:var(--ink-deep);
+  font-size:.82rem;
+  line-height:1.45;
+}
+.form-feedback.is-error{border-color:rgba(159,79,51,.38);background:rgba(159,79,51,.10);color:var(--terracotta-dark)}
+.form-feedback.is-success{border-color:rgba(67,108,78,.32);background:rgba(67,108,78,.10)}
+.form-feedback.is-progress{color:var(--sage-green)}
+.form-feedback[hidden],.drawer-discard-guard[hidden]{display:none !important}
+
+.drawer-discard-guard{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(31,45,36,.32);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+  backdrop-filter:blur(18px) saturate(130%);
+}
+.drawer-discard-card{
+  width:min(420px,100%);
+  padding:30px 26px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.72);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,247,242,.88));
+  box-shadow:var(--liquid-inner),0 30px 80px rgba(31,45,36,.24);
+}
+.drawer-discard-icon{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 14px;border-radius:18px;background:rgba(194,162,106,.16);color:var(--terracotta-dark)}
+.drawer-discard-card h4{font-family:var(--primary-serif);font-size:1.75rem;font-weight:500;line-height:1.15}
+.drawer-discard-card p{margin:10px auto 20px;color:var(--sage-green);font-family:var(--primary-serif);font-style:italic;line-height:1.55}
+.drawer-discard-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.btn-danger{border-color:transparent !important;background:linear-gradient(145deg,#B65E40,#8E422D) !important;color:#fff !important;box-shadow:var(--liquid-inner),0 14px 28px -20px rgba(112,43,24,.72) !important}
+.btn-danger:hover{background:linear-gradient(145deg,#C96D4D,#9F4F33) !important}
+
+body.theme-dark .catalog-state,body.theme-dark .drawer-discard-card{
+  background:linear-gradient(145deg,rgba(58,78,65,.94),rgba(25,35,29,.88));
+  border-color:rgba(255,255,255,.14);
+}
+body.theme-dark .catalog-state p,body.theme-dark .drawer-discard-card p{color:#D7E0D3}
+body.theme-dark .form-feedback{color:#F5F1E9}
+
+@media(max-width:760px){
+  .catalog-state{width:calc(100% - 28px);min-height:300px;margin:28px auto 108px;border-radius:24px}
+  .catalog-state-actions,.drawer-discard-actions{width:100%;flex-direction:column}
+  .catalog-state-actions .btn-luxe,.drawer-discard-actions .btn-luxe{width:100%;justify-content:center}
+  .drawer-discard-guard{padding:16px}
+}
+@media(prefers-reduced-motion:reduce){.catalog-state-spinner{animation:none;border-color:var(--terracotta-dark)}}
+
 /* ═══════════ Phase 6 — écrans secondaires et micro-interactions ═══════════
    Les transitions sont brèves, informatives et identiques sur tous les outils.
    Les panneaux fonctionnels restent réellement ancrés au viewport. */
