@@ -107,7 +107,7 @@ try {
   console.log('▶ Phase 8 — formulaire sans perte de données');
   await page.evaluate(() => openDrawer('add'));
   await page.fill('#formNomFr', 'Brouillon Phase 8');
-  await page.evaluate(() => closeDrawer());
+  await page.evaluate(() => requestCloseDrawer());
   const guard = await page.evaluate(() => ({
     visible: !document.getElementById('drawerDiscardGuard').hidden,
     drawer: document.getElementById('plantDrawer').classList.contains('open'),

@@ -441,7 +441,7 @@ function renderCatalog() {
   if (catalogLoadState === 'error') {
     catalog.innerHTML = catalogStateHTML('error', 'Impossible de charger l’herbier',
       'La collection de départ n’est pas encore disponible sur cet appareil. Vérifiez votre connexion puis réessayez.',
-      '<button type="button" class="btn-luxe btn-luxe-accent" onclick="retryCatalogLoad()"><i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Réessayer</button>');
+      '<button type="button" class="btn-luxe btn-luxe-accent" onclick="retryCatalogLoad()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Réessayer</button>');
     return;
   }
   const searchVal = document.getElementById('searchInput').value.toLowerCase();
@@ -1128,8 +1128,8 @@ function openDrawer(type, plantId = null) {
   trapFocus(drawer);
 }
 
-function closeDrawer(force) {
-  if (!force && drawerHasUnsavedChanges()) {
+function requestCloseDrawer() {
+  if (drawerHasUnsavedChanges()) {
     var guard = document.getElementById('drawerDiscardGuard');
     if (guard) {
       guard.hidden = false;
@@ -1138,6 +1138,13 @@ function closeDrawer(force) {
     }
     return false;
   }
+  return closeDrawer();
+}
+
+// Fermeture technique, conservée sans garde pour les parcours internes qui ont
+// déjà enregistré/annulé leur action. Les sorties utilisateur passent par
+// requestCloseDrawer() afin de protéger les brouillons.
+function closeDrawer() {
   releaseFocusTrap();
   const drawer = document.getElementById('plantDrawer');
   drawer.classList.remove('open');
@@ -1156,7 +1163,7 @@ window.dismissDrawerDiscard = function dismissDrawerDiscard() {
 };
 window.discardDrawerChanges = function discardDrawerChanges() {
   captureDrawerBaseline();
-  closeDrawer(true);
+  closeDrawer();
 };
 
 window.addEventListener('beforeunload', function (event) {
@@ -1988,7 +1995,7 @@ function handleFormSubmit(e) {
 
   captureDrawerBaseline();
   setFormFeedback('Fiche enregistrée.', 'success');
-  closeDrawer(true);
+  closeDrawer();
   renderCatalog();
   showToast(successMessage);
   _formSubmitting = false;
@@ -2535,7 +2542,7 @@ function initV6Enhancements(){
     if (drawer && drawer.classList.contains('open')) {
       var discardGuard = document.getElementById('drawerDiscardGuard');
       if (discardGuard && !discardGuard.hidden) { try{dismissDrawerDiscard();}catch(_){ } return; }
-      try{closeDrawer();}catch(_){ } return;
+      try{requestCloseDrawer();}catch(_){ } return;
     }
     var mnav = document.getElementById('mobileNav');
     if (mnav && mnav.classList.contains('open')) { try{closeMobileNav();}catch(_){ } return; }
