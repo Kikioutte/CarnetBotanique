@@ -741,7 +741,7 @@ const browser = await chromium.launch(launchOpts);
   });
   check('1er échec → tente le 2e candidat', r.step1.src === 'https://bad2.example/y.jpg' && r.step1.idx === 1, r);
   check('2e échec → tente le 3e candidat', r.step2.src === 'https://good.example/z.jpg' && r.step2.idx === 2, r);
-  check('candidats épuisés → repli sur la photo générique', /images\.unsplash\.com/.test(r.step3.src), r);
+  check('candidats épuisés → repli sur la photo générique locale', /\/img\/hero-botanique-960\.webp(?:\?|$)/.test(r.step3.src), r);
 
   await ctx.close();
 }
