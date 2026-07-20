@@ -17,12 +17,12 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="L'Herbier de Vie — Carnet de Botanique Premium">
 <meta property="og:description" content="Carnet de botanique premium : plus de 300 plantes, fiches détaillées, flashcards, quiz, calendrier de floraison et conseils de soin.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop">
+<meta property="og:image" content="img/hero-social-1200.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="L'Herbier de Vie — Carnet de Botanique Premium">
 <meta name="twitter:description" content="Carnet de botanique premium : plus de 300 plantes, fiches détaillées, flashcards, quiz, calendrier de floraison et conseils de soin.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop">
+<meta name="twitter:image" content="img/hero-social-1200.jpg">
 
 <!-- Polices de luxe & Icônes — Phase 7 : polices auto-hébergées (woff2 dans /fonts,
      @font-face dans styles.min.css, font-display:swap). Plus aucune origine externe
@@ -38,8 +38,9 @@
 <link rel="stylesheet" href="dist/icons.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="dist/icons.min.css"></noscript>
 
-<!-- Phase 7 : l'image d'ambiance du hero n'est plus préchargée — elle est hors
-     chemin critique (voir initHeroPhoto dans js/app.js) et le LCP est le titre. -->
+<!-- Phase 7 : la photo du hero est désormais locale, responsive et prioritaire.
+     Le navigateur choisit un AVIF ou un WebP adapté au viewport sans dépendre
+     d'un CDN tiers pour le premier affichage. -->
 <!-- GSAP & Lenis : déplacés en bas de page pour ne plus bloquer le rendu initial -->
 
 <link rel="stylesheet" href="dist/styles.min.css">
@@ -90,6 +91,15 @@
 
 <!-- HERO D'ACCUEIL INTRODUCTIF -->
 <section class="hero" id="heroSection" aria-labelledby="heroTitle">
+  <picture class="hero-media" aria-hidden="true">
+    <source media="(max-width: 640px)" type="image/avif" srcset="img/hero-botanique-640.avif">
+    <source media="(max-width: 640px)" type="image/webp" srcset="img/hero-botanique-640.webp">
+    <source media="(max-width: 960px)" type="image/avif" srcset="img/hero-botanique-960.avif">
+    <source media="(max-width: 960px)" type="image/webp" srcset="img/hero-botanique-960.webp">
+    <source type="image/avif" srcset="img/hero-botanique-1440.avif">
+    <img src="img/hero-botanique-1440.webp" alt="" width="1440" height="990"
+         loading="eager" fetchpriority="high" decoding="async">
+  </picture>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-badge" id="heroBadge">Académie Royale de Botanique</span>

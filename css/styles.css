@@ -204,9 +204,9 @@ header.scrolled {
 }
 
 /* PANNEAU INTRODUCTIF CHIC (Hero d'accueil)
-   Phase 7 : le fond critique est un dégradé local aux tons de la palette —
-   aucun octet réseau n'est nécessaire pour peindre le premier écran. La
-   photographie d'ambiance arrive ensuite sur la couche .hero::before. */
+   Phase 7 : le dégradé local reste le fond de secours pendant le décodage,
+   tandis que la photographie responsive est servie localement par
+   .hero-media dès le premier affichage. */
 .hero {
   width: 100vw;
   height: 100vh;
@@ -227,24 +227,19 @@ header.scrolled {
   padding: 0 20px;
 }
 
-/* Couche photographique différée : la même photo d'ambiance qu'avant est
-   appliquée ici (variable --hero-photo posée par initHeroPhoto) puis fondue.
-   Elle n'appartient plus au chemin critique : ni preload, ni background
-   bloquant — le LCP reste le titre, peint immédiatement. */
-.hero::before {
-  content: "";
+/* Image réelle plutôt qu'un chargement déclenché par interaction : le premier
+   visiteur voit immédiatement l'identité botanique, sans saut visuel. */
+.hero-media,
+.hero-media img {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background-image: var(--hero-photo, none);
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: opacity 0.9s ease;
-  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.hero.hero-photo-on::before { opacity: 1; }
-@media (prefers-reduced-motion: reduce) {
-  .hero::before { transition: none; }
+.hero-media { z-index: 0; }
+.hero-media img {
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero-overlay {
@@ -1844,12 +1839,10 @@ body.v8-kbd [tabindex]:focus-visible{
   outline-color:var(--gold-text) !important;
 }
 
-/* ═══════════ Phase 7 — image d'accueil hors chemin critique ═══════════
-   La photo d'ambiance n'est plus déclarée ici : le premier écran est peint
-   avec le dégradé local de .hero (aucune requête externe), puis initHeroPhoto
-   (js/app.js) applique la même photo qu'avant sur .hero::before — dans la
-   taille adaptée à l'écran (640/960/1200) — dès qu'elle est disponible dans
-   le cache du service worker, sinon à la première interaction. */
+/* ═══════════ Phase 7 — image d'accueil locale et responsive ═══════════
+   Le <picture> du hero sélectionne une composition AVIF/WebP dédiée aux
+   viewports 640, 960 ou 1440 px. Aucun déclenchement par interaction et
+   aucune origine tierce ne participent au premier affichage. */
 
 /* ═══════════ Phase 5 — finition Apple Liquid Glass ═══════════
    La transparence sert la hiérarchie : les surfaces principales restent

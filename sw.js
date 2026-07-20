@@ -18,15 +18,15 @@
 'use strict';
 
 const VERSION = 'hdv-v10';
-const SHELL_HASH = 'ae5577b36125'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
+const SHELL_HASH = 'd6bb89d5902c'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
 const CACHE_PREFIX = 'hdv-';
 const SHELL_CACHE = VERSION + '-' + SHELL_HASH + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';
 const RUNTIME_MAX_ENTRIES = 260;
 
-// Phase 7 — les polices auto-hébergées (fonts/*.woff2) font partie du SHELL :
-// la typographie complète fonctionne hors-ligne dès l'installation, sans
-// dépendre de fonts.gstatic.com.
+// Phase 7 — les polices et déclinaisons responsive du hero font partie du
+// SHELL : le premier écran complet fonctionne hors-ligne dès l'installation,
+// sans dépendre de Google Fonts ni d'Unsplash.
 const SHELL = [
   './',
   'index.html',
@@ -43,7 +43,13 @@ const SHELL = [
   'fonts/cormorant-garamond-italic-latin.woff2',
   'fonts/cormorant-garamond-italic-latin-ext.woff2',
   'fonts/montserrat-latin.woff2',
-  'fonts/montserrat-latin-ext.woff2'
+  'fonts/montserrat-latin-ext.woff2',
+  'img/hero-botanique-640.avif',
+  'img/hero-botanique-640.webp',
+  'img/hero-botanique-960.avif',
+  'img/hero-botanique-960.webp',
+  'img/hero-botanique-1440.avif',
+  'img/hero-botanique-1440.webp'
 ];
 
 self.addEventListener('install', function (e) {

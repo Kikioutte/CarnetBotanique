@@ -85,47 +85,6 @@ function scheduleMotionEnhancements(){
 }
 window.addEventListener('load',scheduleMotionEnhancements,{once:true});
 
-// Phase 7 — image d'ambiance du hero hors chemin critique.
-// Le premier écran est peint avec le dégradé local de .hero (styles.css) : le
-// LCP ne dépend plus d'images.unsplash.com. La même photo qu'avant est ensuite
-// appliquée sur la couche .hero::before :
-//   - immédiatement si elle est déjà dans le cache du service worker
-//     (visites suivantes : accès local, aucune requête réseau) ;
-//   - sinon à la première interaction (le LCP est figé au premier input,
-//     la photo ne peut donc plus jamais dégrader ni faire varier la mesure).
-// En cas d'échec réseau, le dégradé reste en place, sans erreur bloquante.
-function initHeroPhoto(){
-  var hero=document.getElementById('heroSection');
-  if(!hero||!hero.classList)return;
-  var w=window.innerWidth||1200;
-  var url=(w<=640)
-    ?'https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=640&auto=format&fit=crop'
-    :(w<=960)
-      ?'https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=960&auto=format&fit=crop'
-      :'https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop';
-  var applied=false;
-  var events=['pointerdown','pointermove','keydown','wheel','touchstart','scroll'];
-  function apply(){
-    if(applied)return;applied=true;
-    events.forEach(function(n){window.removeEventListener(n,apply);});
-    var img=new Image();
-    img.onload=function(){
-      try{
-        hero.style.setProperty('--hero-photo',"url('"+url+"')");
-        hero.classList.add('hero-photo-on');
-      }catch(e){}
-    };
-    img.src=url;
-  }
-  try{
-    if(window.caches&&caches.match){
-      caches.match(url).then(function(hit){if(hit)apply();}).catch(function(){});
-    }
-  }catch(e){}
-  events.forEach(function(n){window.addEventListener(n,apply,{once:true,passive:true});});
-}
-try{initHeroPhoto();}catch(e){}
-
 // --- INITIALISATION ---
 window.onload = function() {
   // v6 : chaque étape est isolée — une erreur ponctuelle n'interrompt plus tout le démarrage.
@@ -280,8 +239,8 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function plantIsToxic(p){
   return !!p && (p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique'));
 }
-const HERO_FALLBACK="https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop";
-const HERO_FALLBACK_SRCSET="https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=480&auto=format&fit=crop 480w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop 800w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop 1200w";
+const HERO_FALLBACK="img/hero-botanique-960.webp";
+const HERO_FALLBACK_SRCSET="img/hero-botanique-640.webp 640w, img/hero-botanique-960.webp 960w, img/hero-botanique-1440.webp 1440w";
 // Jetons anti-course : #flashPhoto/#quizPhoto/#pdPhoto sont recréés à chaque rendu avec
 // le même id ; seule la requête photo la plus récente a le droit d'écrire dedans, sinon
 // une réponse lente d'une carte précédente s'affiche sur la carte actuellement visible.

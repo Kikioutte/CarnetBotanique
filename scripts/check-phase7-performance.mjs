@@ -17,16 +17,16 @@
  *    - polices auto-hébergées : @font-face locaux avec font-display:swap,
  *      fichiers woff2 présents sur le disque et pré-cachés par le service
  *      worker (typographie hors-ligne) ;
- *    - image du hero hors chemin critique : dégradé local + initHeroPhoto.
+ *    - image du hero locale, responsive, chargée dès le premier affichage ;
+ *    - licences OFL présentes pour les polices redistribuées.
  *
  * 2. RAPPORTS LIGHTHOUSE (si les rapports de la CI sont présents) :
  *    - performance ≥ 95 sur mobile ET desktop (au-dessus du plancher
  *      Phase 4 qui reste à 90 sur mobile) ;
  *    - accessibilité, bonnes pratiques, SEO ≥ 95 ;
  *    - CLS ≤ 0.1 ;
- *    - AUCUNE requête http(s) externe pendant la trace de chargement — c'est
- *      la garantie anti-« échec intermittent » : le score ne peut plus
- *      dépendre d'un serveur tiers.
+ *    - image locale du hero réellement observée dès le chargement ;
+ *    - aucune requête Unsplash et aucun document/style/script/police externe.
  *
  * Usage :
  *   node scripts/check-phase7-performance.mjs                     → structurel + rapports si présents
@@ -94,14 +94,43 @@ if (notPrecached.length) {
   ko(`polices absentes du précache SHELL de sw.js : ${notPrecached.join(', ')}`);
 } else ok('toutes les polices sont dans le précache du service worker');
 
-// 4. Image du hero hors chemin critique.
+// 4. Image du hero réellement locale et visible au premier affichage.
 if (/\.hero\s*\{[^}]*url\(\s*["']?https?:/is.test(styles)) {
   ko('.hero déclare une image de fond réseau dans le CSS critique');
 } else ok('.hero : fond critique local (dégradé), pas d’image réseau');
 const appJs = read('js/app.js');
-if (!/initHeroPhoto/.test(appJs) || !/hero-photo-on/.test(appJs)) {
-  ko('initHeroPhoto absent de js/app.js — la photo du hero doit rester différée hors chemin critique');
-} else ok('initHeroPhoto présent : photo du hero différée (cache SW ou première interaction)');
+if (/images\.unsplash\.com/i.test(index + styles + appJs)) {
+  ko('une URL Unsplash reste dans le HTML, le CSS ou le JavaScript applicatif');
+} else ok('aucune URL Unsplash dans le code exécuté par l’application');
+
+const picture = index.match(/<picture\s+class=["']hero-media["'][\s\S]*?<\/picture>/i)?.[0] || '';
+if (!picture) {
+  ko('picture.hero-media absent : le hero doit utiliser une image responsive locale');
+} else ok('picture.hero-media présent dès le HTML initial');
+if (!/type=["']image\/avif["']/.test(picture) || !/type=["']image\/webp["']/.test(picture)) {
+  ko('le hero doit proposer AVIF et WebP');
+} else ok('hero : variantes AVIF et WebP déclarées');
+if (!/loading=["']eager["']/.test(picture) || !/fetchpriority=["']high["']/.test(picture) ||
+    !/width=["']\d+["']/.test(picture) || !/height=["']\d+["']/.test(picture)) {
+  ko('l’image du hero doit être eager, prioritaire et dimensionnée explicitement');
+} else ok('hero : chargement immédiat, priorité haute et dimensions explicites');
+
+const heroFiles = [...new Set([...picture.matchAll(/(?:src|srcset)=["']([^"']+\.(?:avif|webp))["']/g)].map(m => m[1]))];
+if (heroFiles.length < 6) {
+  ko(`variantes locales du hero insuffisantes (${heroFiles.length}, attendu : 6)`);
+} else ok(`hero : ${heroFiles.length} variantes responsive locales`);
+const missingHero = heroFiles.filter(f => !fs.existsSync(path.join(ROOT, f)));
+if (missingHero.length) ko(`images du hero manquantes : ${missingHero.join(', ')}`);
+else ok('toutes les images responsive du hero existent');
+const unCachedHero = heroFiles.filter(f => !sw.includes(`'${f}'`));
+if (unCachedHero.length) ko(`images du hero absentes du précache : ${unCachedHero.join(', ')}`);
+else ok('toutes les images du hero sont disponibles hors-ligne');
+
+for (const license of ['fonts/LICENSE-Montserrat-OFL.txt', 'fonts/LICENSE-Cormorant-Garamond-OFL.txt']) {
+  if (!fs.existsSync(path.join(ROOT, license)) || !/SIL OPEN FONT LICENSE Version 1\.1/.test(read(license))) {
+    ko(`licence de police absente ou invalide : ${license}`);
+  } else ok(`licence présente : ${license}`);
+}
 
 // 5. Rapports Lighthouse (produits par la CI juste avant ce contrôle).
 const REPORTS = {
@@ -133,12 +162,20 @@ for (const [device, file] of Object.entries(REPORTS)) {
   ['first-contentful-paint', 'largest-contentful-paint', 'total-blocking-time', 'speed-index']
     .forEach(id => console.log(`  · ${id}: ${report.audits[id]?.displayValue || 'n/a'}`));
 
-  // Garantie de stabilité : aucun document, style, script ou police externe
-  // pendant la trace — le rendu ne peut dépendre d'aucun serveur tiers. Les
-  // images externes différées (cartes Wikimedia sous la ligne de flottaison,
-  // photo du hero après interaction) restent permises : elles n'appartiennent
-  // pas au chemin critique et n'influencent pas la mesure.
+  // Garantie de stabilité : le hero local est réellement chargé pendant la
+  // trace, aucune requête Unsplash n'est reportée après interaction, et aucun
+  // document, style, script ou police ne dépend d'une origine tierce. Les
+  // photos Wikimedia du catalogue restent paresseuses sous la ligne de flottaison.
   const requests = report.audits['network-requests']?.details?.items || [];
+  const localHeroRequest = requests.some(r =>
+    /\/img\/hero-botanique-(640|960|1440)\.(avif|webp)(?:\?|$)/.test(r.url));
+  if (!localHeroRequest) {
+    ko(`${device} : aucune image locale du hero observée au premier chargement`);
+  } else ok(`${device} : image locale du hero chargée dès le premier affichage`);
+  const unsplashRequests = requests.filter(r => /images\.unsplash\.com/i.test(r.url));
+  if (unsplashRequests.length) {
+    ko(`${device} : requête Unsplash détectée pendant le chargement initial`);
+  } else ok(`${device} : aucune requête Unsplash au premier chargement`);
   const CRITICAL_TYPES = new Set(['Document', 'Stylesheet', 'Script', 'Font']);
   const external = requests.filter(r =>
     /^https?:\/\//.test(r.url) &&

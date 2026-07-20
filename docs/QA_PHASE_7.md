@@ -25,21 +25,21 @@ externes** :
    et des erreurs console (donc un score « bonnes pratiques » dégradé à 96)
    dès que l'origine était lente ou inaccessible.
 
-Vérification complémentaire en navigateur réel (PerformanceObserver) : après
-correction, la page n'émet **qu'une seule entrée LCP** — le titre `<h1>` peint
-au premier rendu (~200 ms sur serveur local). Un repaint parasite du titre a
-aussi été éliminé (voir `updateModeUI`).
+Un repaint parasite du titre a également été éliminé dans `updateModeUI`.
+La photographie n'est toutefois pas cachée à Lighthouse : elle est servie
+localement dès le HTML initial et participe à la même expérience que celle
+réellement vue par le premier visiteur.
 
 ## Corrections apportées
 
 | Correction | Fichiers |
 |---|---|
-| Polices auto-hébergées : 6 fichiers woff2 **variables** (Cormorant Garamond wght 300–700 + italique, Montserrat wght 100–900, sous-ensembles latin + latin-ext, mêmes `unicode-range` que Google Fonts, `font-display:swap`). Les fichiers servis par Google Fonts pour 300/400/500/600 étaient octet-à-octet identiques (polices variables) : un seul fichier par famille couvre toutes les graisses, soit ~99 Ko de polices sur le premier écran au lieu de ~200 Ko — c'est ce qui a fait passer le LCP mobile simulé de ~2,6 s à ~1,7 s. | `fonts/*.woff2`, `@font-face` en tête de `css/styles.css` |
+| Polices auto-hébergées : 6 fichiers woff2 **variables** (Cormorant Garamond wght 300–700 + italique, Montserrat wght 100–900, sous-ensembles latin + latin-ext, mêmes `unicode-range` que Google Fonts, `font-display:swap`). Les licences SIL OFL 1.1 des deux familles sont versionnées avec les fichiers. | `fonts/*.woff2`, `fonts/LICENSE-*-OFL.txt`, `@font-face` en tête de `css/styles.css` |
 | Suppression des liens externes du `<head>` : stylesheet Google Fonts, preconnect fonts.*, preload Unsplash | `index.html` |
-| Hero : fond critique = dégradé local aux tons de la palette (peint sans aucune requête) ; la même photo qu'avant est appliquée sur la couche `.hero::before` par `initHeroPhoto()` — immédiatement si elle est déjà dans le cache du service worker (visites suivantes), sinon à la première interaction. Le LCP étant figé au premier input, la photo ne peut plus jamais influencer la mesure. Échec réseau → le dégradé reste, sans erreur. | `css/styles.css`, `js/app.js`, `index.html` |
+| Hero : la photo d'origine est versionnée en AVIF/WebP dans trois compositions responsive (640, 960 et 1440 px). Un `<picture>` prioritaire la charge dès le premier affichage ; le dégradé local reste le fond de secours pendant le décodage. Aucune interaction utilisateur n'est nécessaire et aucune requête Unsplash n'est exécutée. | `img/hero-botanique-*`, `img/README.md`, `css/styles.css`, `index.html` |
 | Variante mode sombre du dégradé du hero | `css/styles.css` |
 | `updateModeUI()` ne réécrit plus le titre/badge du hero quand le contenu est identique (le repaint créait une entrée LCP tardive après le chargement des données) | `js/app.js` |
-| Polices ajoutées au précache `SHELL` du service worker (typographie complète hors-ligne dès l'installation) + `SHELL_HASH` régénérée | `sw.js` |
+| Polices et six variantes du hero ajoutées au précache `SHELL` du service worker (premier écran complet hors-ligne dès l'installation) + `SHELL_HASH` régénérée | `sw.js` |
 | Types MIME `woff2` et `avif` sur le serveur de mesure | `scripts/serve-production.mjs` |
 | Contrat anti-régression Phase 7 (voir ci-dessous) | `scripts/check-phase7-performance.mjs`, `package.json`, `.github/workflows/phase0.yml` |
 
@@ -54,16 +54,16 @@ Aucun test n'a été désactivé.
 - **Contrôles structurels** (déterministes, exécutés partout — aucun risque
   de CI instable) : aucun stylesheet/script/preload externe dans
   `index.html` ; aucune `url(http…)` dans le CSS critique ; `@font-face`
-  locaux complets avec `font-display:swap`, fichiers présents et pré-cachés
-  par le service worker ; hero sans image réseau critique + `initHeroPhoto`
-  présent.
+  locaux complets avec `font-display:swap`, licences OFL présentes, fichiers
+  présents et pré-cachés par le service worker ; `<picture>` responsive local,
+  chargé immédiatement et sans URL Unsplash dans le code applicatif.
 - **Contrôles Lighthouse** (dès que les rapports existent ; obligatoires en
   CI via `npm run test:phase7:ci`) : performance ≥ 95 mobile **et** desktop,
   accessibilité ≥ 95, bonnes pratiques ≥ 95, SEO ≥ 95, CLS ≤ 0.1, et aucune
   ressource critique (document, style, script, police) servie par une origine
-  externe pendant la trace. Les images différées (cartes Wikimedia sous la
-  ligne de flottaison, photo du hero après interaction) restent permises :
-  elles n'influencent pas la mesure.
+  externe pendant la trace. Le rapport doit aussi prouver que la photographie
+  locale du hero a bien été requêtée au premier affichage et qu'aucune requête
+  Unsplash n'a été masquée après une interaction.
 
 Intégration : `test:phase7` fait partie de `npm run test:all` ; le workflow
 `phase0.yml` exécute `test:phase7:ci` juste après la génération des rapports
@@ -93,13 +93,13 @@ Les rapports (`.report.html` / `.report.json`) sont publiés en artefact de CI
   d'IndexedDB n'a été modifiée ; le service worker ne supprime toujours que
   ses caches techniques `hdv-*` (tests `npm run test:pwa` verts : conservation
   de localStorage et des photos IndexedDB pendant la mise à jour).
-- **Hors-ligne** : le shell + les polices sont pré-cachés ; la photo du hero
-  reste disponible hors-ligne dès qu'elle a été vue une fois (cache runtime).
+- **Hors-ligne** : le shell, les polices et les variantes responsive du hero
+  sont pré-cachés dès l'installation.
 - **Mise à jour PWA** : `SHELL_HASH` régénérée → les visiteurs équipés
   reçoivent la nouvelle version (contrôle `test:sw-version:strict` vert).
 - **Identité visuelle** : mêmes familles/graisses typographiques (fichiers
-  Google Fonts identiques, servis localement) ; même photo de hero, fondue en
-  douceur ; dégradé d'attente aux tons exacts de la palette (clair et sombre) ;
+  Google Fonts identiques, servis localement) ; même photo du hero visible dès
+  le premier affichage ; dégradé de secours aux tons exacts de la palette ;
   Liquid Glass intact (contrats phase 5 et 6 verts) ; animations desktop
   (GSAP/Lenis) inchangées ; `prefers-reduced-motion` respecté (fondu
   désactivé).
@@ -108,16 +108,6 @@ Les rapports (`.report.html` / `.report.json`) sont publiés en artefact de CI
 
 ## Risques et limites connus
 
-- La photo du hero apparaît désormais **après la première interaction** lors
-  de la toute première visite (dégradé élégant en attendant ; visites
-  suivantes : photo immédiate via le cache du service worker). C'est le
-  compromis qui déconnecte totalement la mesure du CDN Unsplash. Pour la
-  rendre 100 % locale (photo visible dès le premier rendu), télécharger la
-  photo (`https://images.unsplash.com/photo-1545241047-6083a3684587`) en
-  640/960/1200 px (idéalement AVIF/WebP), la déposer dans `img/`, pointer
-  `initHeroPhoto()` vers ces fichiers et les ajouter au `SHELL` de `sw.js`
-  (puis `node scripts/check-sw-version.mjs --fix`). Le contrat Phase 7
-  n'exige aucun changement pour cela.
 - Les photos des fiches du catalogue restent servies par Wikimedia (sous la
   ligne de flottaison, chargement paresseux) : elles n'influencent pas les
   scores mais nécessitent toujours le réseau à la première consultation.
