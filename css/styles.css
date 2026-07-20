@@ -2364,7 +2364,7 @@ body.theme-dark .form-feedback{color:#F5F1E9}
   border:1px solid rgba(255,255,255,.72);
   border-radius:24px;
   background:linear-gradient(135deg,rgba(49,75,57,.96),rgba(30,49,37,.94));
-  color:var(--cream);
+  color:#FFFDFB;
   box-shadow:var(--liquid-inner),0 26px 52px -34px rgba(31,45,36,.86);
 }
 .p9-briefing::after{
@@ -2388,7 +2388,8 @@ body.theme-dark .form-feedback{color:#F5F1E9}
 .p9-metric span{margin-top:7px;color:rgba(250,247,242,.66);font-family:var(--primary-sans);font-size:.62rem;font-weight:600;letter-spacing:.8px;text-align:center;text-transform:uppercase}
 .p9-metric.is-alert{border-color:rgba(232,201,143,.42);background:rgba(194,162,106,.17)}
 .p9-briefing-actions{position:relative;z-index:1;grid-column:1/-1;display:flex;flex-wrap:wrap;gap:9px;padding-top:2px}
-.p9-briefing .btn-luxe{min-height:44px;color:var(--cream);border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.10)}
+.p9-briefing h2,.p9-metric b{color:#FFFDFB}
+.p9-briefing .btn-luxe{min-height:44px;color:#FFFDFB;border-color:rgba(255,255,255,.24);background:rgba(255,255,255,.10)}
 .p9-briefing .btn-luxe:hover{background:rgba(255,255,255,.18)}
 .p9-briefing .btn-luxe-accent{background:linear-gradient(145deg,#CF7655,#9F4F33)}
 /* La barre de comparaison mobile reste entièrement absente tant qu'aucune
@@ -2507,6 +2508,43 @@ body.theme-dark .p9-timeline-item p{color:var(--ink-deep)}
   .p9-timeline-meta{align-items:flex-start;flex-direction:column;gap:2px}
 }
 @media(prefers-reduced-motion:reduce){.p9-progress span,.p9-choice{transition:none}}
+
+/* ===================================================================
+   PHASE 10 — SORTIE PRODUCTION
+   Peinture différée du catalogue, notifications non bloquantes et zones
+   d'ancrage compatibles avec le dock mobile.
+   =================================================================== */
+/* Les fiches éloignées du viewport restent dans le DOM et dans l'arbre
+   d'accessibilité, mais leur mise en page/peinture attend l'approche du scroll. */
+.scrolly-section{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 760px;
+}
+
+/* Sur ordinateur, une confirmation se comporte comme une notification système
+   discrète : elle reste hors de l'axe central des modales et de leurs actions. */
+@media(min-width:761px){
+  #toast{
+    left:auto;
+    right:24px;
+    max-width:min(380px,calc(100vw - 48px));
+    border-radius:14px;
+    text-align:left;
+    transform:translateY(24px) scale(.98);
+  }
+  #toast.show{transform:translateY(0) scale(1)}
+}
+
+@media(max-width:760px){
+  html{
+    scroll-padding-top:132px;
+    scroll-padding-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+  :where(.p9-briefing,.catalog-state,.scrolly-section,footer){
+    scroll-margin-top:132px;
+    scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom));
+  }
+}
 
 /* ═══════════ Phase 6 — écrans secondaires et micro-interactions ═══════════
    Les transitions sont brèves, informatives et identiques sur tous les outils.

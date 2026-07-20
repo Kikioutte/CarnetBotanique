@@ -89,6 +89,11 @@ jobs:
       - name: Phase 9 — maturité produit
         run: npm run test:phase9
 
+      # Phase 10 : sortie production — peinture différée, dock mobile,
+      # notifications non bloquantes et captures clair/sombre finales.
+      - name: Phase 10 — préparation de la sortie
+        run: npm run test:phase10
+
       - name: Publier les rapports et captures
         if: always()
         uses: actions/upload-artifact@v4
@@ -99,4 +104,5 @@ jobs:
             test-results/phase2/
             test-results/phase8/
             test-results/phase9/
+            test-results/phase10/
           if-no-files-found: error
