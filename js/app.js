@@ -239,8 +239,8 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 function plantIsToxic(p){
   return !!p && (p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique'));
 }
-const HERO_FALLBACK="https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop";
-const HERO_FALLBACK_SRCSET="https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=480&auto=format&fit=crop 480w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=800&auto=format&fit=crop 800w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop 1200w";
+const HERO_FALLBACK="img/hero-botanique-960.webp";
+const HERO_FALLBACK_SRCSET="img/hero-botanique-640.webp 640w, img/hero-botanique-960.webp 960w, img/hero-botanique-1440.webp 1440w";
 // Jetons anti-course : #flashPhoto/#quizPhoto/#pdPhoto sont recréés à chaque rendu avec
 // le même id ; seule la requête photo la plus récente a le droit d'écrire dedans, sinon
 // une réponse lente d'une carte précédente s'affiche sur la carte actuellement visible.
@@ -927,16 +927,22 @@ function updateModeUI() {
   document.body.classList.toggle('mode-learn', appMode!=='garden');
   var l=document.getElementById('modeLearn'), g=document.getElementById('modeGarden');
   if(l)l.classList.toggle('on', appMode!=='garden'); if(g)g.classList.toggle('on', appMode==='garden');
+  // Phase 7 : n'écrire dans le hero que si le contenu change vraiment. Au
+  // démarrage en mode Apprentissage, titre et badge sont déjà ceux du HTML
+  // statique — les réécrire à l'identique forçait un repeint du titre (élément
+  // LCP) après le chargement des données et retardait la mesure.
+  function setHTML(el,html){ if(el&&el.innerHTML!==html)el.innerHTML=html; }
+  function setText(el,txt){ if(el&&el.textContent!==txt)el.textContent=txt; }
   if (appMode==='garden') {
-    if(heroBadge)heroBadge.textContent='Votre Domaine Privé';
-    if(heroTitle)heroTitle.innerHTML='Mon Jardin <i>personnel</i>';
-    if(heroText)heroText.textContent='Les espèces que vous avez adoptées, à cultiver et à suivre.';
+    setText(heroBadge,'Votre Domaine Privé');
+    setHTML(heroTitle,'Mon Jardin <i>personnel</i>');
+    setText(heroText,'Les espèces que vous avez adoptées, à cultiver et à suivre.');
   } else {
-    if(heroBadge)heroBadge.textContent='Académie Royale de Botanique';
-    if(heroTitle)heroTitle.innerHTML='Le carnet botanique <i>vivant</i>';
-    if(heroText)heroText.textContent=plants.length
+    setText(heroBadge,'Académie Royale de Botanique');
+    setHTML(heroTitle,'Le carnet botanique <i>vivant</i>');
+    setText(heroText,plants.length
       ?('Découvrez, apprenez et révisez les '+plants.length+' espèces avec élégance.')
-      :'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.';
+      :'Découvrez, apprenez et soignez les plus belles espèces du vivant avec élégance.');
   }
 }
 function setMode(m){

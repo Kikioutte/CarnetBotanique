@@ -65,6 +65,12 @@ jobs:
       - name: Phase 4 — budgets de performance Lighthouse
         run: npm run test:phase4
 
+      # Phase 7 : chemin critique 100 % local + scores ≥ 95 partout.
+      # --require-reports : en CI les rapports Lighthouse viennent d'être
+      # générés ; leur absence doit faire échouer le contrôle, pas l'ignorer.
+      - name: Phase 7 — performance mobile stable (chemin critique local)
+        run: npm run test:phase7:ci
+
       # Phase 5 : la couche premium reste cohérente, accessible et frugale.
       - name: Phase 5 — contrat de finition Liquid Glass
         run: npm run test:phase5

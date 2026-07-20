@@ -17,28 +17,30 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="L'Herbier de Vie — Carnet de Botanique Premium">
 <meta property="og:description" content="Carnet de botanique premium : plus de 300 plantes, fiches détaillées, flashcards, quiz, calendrier de floraison et conseils de soin.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop">
+<meta property="og:image" content="img/hero-social-1200.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="L'Herbier de Vie — Carnet de Botanique Premium">
 <meta name="twitter:description" content="Carnet de botanique premium : plus de 300 plantes, fiches détaillées, flashcards, quiz, calendrier de floraison et conseils de soin.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1545241047-6083a3684587?q=80&w=1200&auto=format&fit=crop">
+<meta name="twitter:image" content="img/hero-social-1200.jpg">
 
-<!-- Polices de luxe & Icônes -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Polices de luxe & Icônes — Phase 7 : polices auto-hébergées (woff2 dans /fonts,
+     @font-face dans styles.min.css, font-display:swap). Plus aucune origine externe
+     dans le chemin critique : le premier rendu ne dépend que de ce serveur. Pas de
+     preload : sur mobile simulé, précharger les woff2 concurrence la feuille de
+     style bloquante et retarde FCP/LCP ; en local elles arrivent de toute façon
+     quelques dizaines de millisecondes après le premier rendu. -->
 <!-- Les photos du catalogue proviennent de Wikimedia : la connexion est établie en avance -->
 <link rel="preconnect" href="https://upload.wikimedia.org">
 <link rel="dns-prefetch" href="https://commons.wikimedia.org">
 <link rel="dns-prefetch" href="https://fr.wikipedia.org">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
 <!-- Les icônes sont décoratives : leur feuille minifiée arrive sans bloquer le premier rendu. -->
 <link rel="stylesheet" href="dist/icons.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="dist/icons.min.css"></noscript>
 
-<!-- Préchargement de l'image hero pour améliorer le LCP -->
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop" imagesrcset="https://images.unsplash.com/photo-1545241047-6083a3684587?q=74&w=640&auto=format&fit=crop 640w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=76&w=960&auto=format&fit=crop 960w, https://images.unsplash.com/photo-1545241047-6083a3684587?q=78&w=1200&auto=format&fit=crop 1200w" imagesizes="100vw" fetchpriority="high">
+<!-- Phase 7 : la photo du hero est désormais locale, responsive et prioritaire.
+     Le navigateur choisit un AVIF ou un WebP adapté au viewport sans dépendre
+     d'un CDN tiers pour le premier affichage. -->
 <!-- GSAP & Lenis : déplacés en bas de page pour ne plus bloquer le rendu initial -->
 
 <link rel="stylesheet" href="dist/styles.min.css">
@@ -89,6 +91,15 @@
 
 <!-- HERO D'ACCUEIL INTRODUCTIF -->
 <section class="hero" id="heroSection" aria-labelledby="heroTitle">
+  <picture class="hero-media" aria-hidden="true">
+    <source media="(max-width: 640px)" type="image/avif" srcset="img/hero-botanique-640.avif">
+    <source media="(max-width: 640px)" type="image/webp" srcset="img/hero-botanique-640.webp">
+    <source media="(max-width: 960px)" type="image/avif" srcset="img/hero-botanique-960.avif">
+    <source media="(max-width: 960px)" type="image/webp" srcset="img/hero-botanique-960.webp">
+    <source type="image/avif" srcset="img/hero-botanique-1440.avif">
+    <img src="img/hero-botanique-1440.webp" alt="" width="1440" height="990"
+         loading="eager" fetchpriority="high" decoding="async">
+  </picture>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-badge" id="heroBadge">Académie Royale de Botanique</span>

@@ -13,6 +13,7 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8', '.json': 'application/json',
   '.webmanifest': 'application/manifest+json', '.svg': 'image/svg+xml',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp',
+  '.avif': 'image/avif', '.woff2': 'font/woff2',
 };
 const COMPRESSIBLE = new Set(['.html', '.css', '.js', '.json', '.webmanifest', '.svg']);
 
