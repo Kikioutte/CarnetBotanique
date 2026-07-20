@@ -12,6 +12,7 @@ const JS = [
   'js/extensions-v8.js',
   'js/extensions-v9.js',
   'js/extensions-v10.js',
+  'js/extensions-v11.js',
 ];
 
 fs.mkdirSync(OUT, { recursive: true });

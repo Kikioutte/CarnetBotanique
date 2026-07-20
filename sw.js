@@ -17,8 +17,8 @@
      hdv-* de l'application sont supprimés. */
 'use strict';
 
-const VERSION = 'hdv-v10';
-const SHELL_HASH = 'e18c5ad3c627'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
+const VERSION = 'hdv-v11';
+const SHELL_HASH = '62c8a3ff7597'; // empreinte du shell — voir scripts/check-sw-version.mjs --fix
 const CACHE_PREFIX = 'hdv-';
 const SHELL_CACHE = VERSION + '-' + SHELL_HASH + '-shell';
 const RUNTIME_CACHE = VERSION + '-runtime';

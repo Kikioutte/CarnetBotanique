@@ -129,7 +129,7 @@ la CI le publie en artifact `phase0-baseline` à chaque exécution.
     coquille : les mises à jour v8–v10 ne lui parviennent jamais tant que
     `VERSION` n'est pas incrémentée. **Non corrigé en Phase 0, volontairement.**
     → **Corrigé depuis** par la PR « Fiabiliser les mises à jour PWA » :
-    `VERSION = 'hdv-v10'` + empreinte `SHELL_HASH` contrôlée en CI
+    `VERSION = 'hdv-v11'` + empreinte `SHELL_HASH` contrôlée en CI
     (`npm run test:sw-version:strict`, bloquant) et flux de mise à jour côté
     page (`npm run test:pwa`).
 11. **Lighthouse mobile : performance 57** (desktop 85).
