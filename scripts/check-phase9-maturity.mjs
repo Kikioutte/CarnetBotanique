@@ -91,6 +91,12 @@ try{
   check('briefing personnalisé immédiatement',/Bonjour Alex/.test(await page.textContent('#p9BriefingTitle')));
   await page.waitForTimeout(4700);
   await page.locator('#p9Briefing').scrollIntoViewIfNeeded();
+  await page.evaluate(()=>{
+    const briefing=document.getElementById('p9Briefing'),dock=document.querySelector('.fusion-mobile-dock'),header=document.getElementById('mainHeader'),search=document.querySelector('.search-wrapper');
+    if(!briefing||!dock||!header)return;
+    const safeTop=Math.max(header.getBoundingClientRect().bottom,search?search.getBoundingClientRect().bottom:0);
+    window.scrollBy(0,briefing.getBoundingClientRect().top-safeTop-12);
+  });
   await page.locator('#p9Briefing').screenshot({path:path.join(OUT,'briefing-mobile.png')});
 
   console.log('▶ Phase 9 — priorités et journal de vie');
