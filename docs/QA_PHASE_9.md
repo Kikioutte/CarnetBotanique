@@ -9,7 +9,7 @@ Transformer les fonctions déjà présentes en une expérience quotidienne cohé
 1. **Briefing « Aujourd’hui »** — une synthèse immédiatement actionnable regroupe les arrosages dus, les routines configurées et les observations du mois. Elle se recalcule après une adoption, un soin ou une note.
 2. **Onboarding progressif** — le premier lancement reste consultable. Une invitation non bloquante ouvre un parcours réutilisable en trois étapes : prénom facultatif, niveau, espace principal, objectifs et préférence de notifications.
 3. **Profil local et transparent** — les choix sont conservés sous `hdv_profile_v1`. Aucun compte ni transfert réseau n’est créé. Les notifications ne sont jamais demandées automatiquement.
-4. **Journal de vie enrichi** — les anciennes notes restent visibles. Les nouveaux événements sont datés et typés : observation, arrosage, croissance, floraison, rempotage ou soin.
+4. **Journal de vie enrichi** — les anciennes notes et les photos personnelles restent visibles. Les nouveaux événements sont datés et typés : observation, arrosage, croissance, floraison, rempotage ou soin.
 5. **Source de données unique** — le journal v7 expose une petite API transactionnelle. Rappels, filtres, fiche express et chronologie continuent donc à lire le même objet en mémoire.
 6. **Centre de sauvegarde** — l’utilisateur voit ce qui est conservé localement, la dernière sauvegarde connue et les actions de téléchargement/restauration. Il réutilise la validation stricte et l’inclusion des photos déjà éprouvées en v7/v8.
 7. **Accès responsive** — profil et sauvegarde sont disponibles dans le menu principal mobile ; le briefing et les quatre nouveaux parcours ont des dispositions dédiées aux petits écrans.
@@ -39,4 +39,4 @@ Transformer les fonctions déjà présentes en une expérience quotidienne cohé
 - `report.json`
 - `summary.md`
 
-Le contrôle échoue si l’onboarding bloque le premier lancement, si le profil n’est pas persisté, si le briefing ne reflète pas les vraies routines, si une note historique disparaît, si un échec de stockage altère le journal ou si le centre de sauvegarde ne donne plus accès aux deux actions essentielles.
+Le contrôle échoue si l’onboarding bloque le premier lancement, si le profil n’est pas persisté, si le briefing ne reflète pas les vraies routines, si une note historique ou une photo personnelle disparaît du journal enrichi, si un échec de stockage altère le journal ou si le centre de sauvegarde ne donne plus accès aux deux actions essentielles.

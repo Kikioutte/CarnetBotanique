@@ -146,6 +146,10 @@
       inp.value='';
     };
   }
+  /* Point d'intégration public : les versions ultérieures qui remplacent le
+     contenu du journal peuvent réinjecter le bloc photos sans dépendre du
+     wrapper historique de openJournal. */
+  window.__v8InjectPhotos=injectPhotos;
   function renderPhotos(id){
     var g=$('v8-photos-'+id);if(!g)return;
     getPhotos(id).then(function(arr){

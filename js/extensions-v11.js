@@ -135,6 +135,10 @@
       '<section class="p9-timeline" aria-labelledby="p9TimelineTitle"><div class="p9-section-heading"><h3 id="p9TimelineTitle">Historique</h3><span>'+entries.length+' événement'+(entries.length>1?'s':'')+'</span></div>'+timelineHTML(entries)+'</section>'+ 
       '<div class="p9-journal-footer"><button class="btn-luxe" type="button" onclick="window.sharePlant(\''+esc(id)+'\')"><i class="fa-solid fa-share-nodes"></i> Partager la fiche</button><button class="btn-luxe" type="button" onclick="window.p9OpenBackupCenter()"><i class="fa-solid fa-bookmark"></i> Sauvegarder le carnet</button></div></div>';
     modal(html);var card=$('v7-modal');if(card){card.setAttribute('aria-labelledby','p9JournalTitle');card.removeAttribute('aria-label');}
+    /* v11 remplace openJournal après que v8 l'a enrichi. Réinjecter
+       explicitement les photos évite de perdre ce module dans le nouveau
+       journal et conserve le repli localStorage pendant la migration IDB. */
+    if(typeof window.__v8InjectPhotos==='function')setTimeout(function(){window.__v8InjectPhotos(id);},0);
   };
   window.p9SaveJournalRoutine=function(id){var zone=$('p9JournalZone'),water=$('p9JournalWater');var ok=journalUpdate(id,function(item){item.zone=zone?zone.value.trim().slice(0,80):'';item.waterEvery=water?Math.max(0,Math.min(365,parseInt(water.value,10)||0)):0;});if(!ok){toast("La routine n'a pas pu être enregistrée.");return;}toast('Routine de soins enregistrée');renderBriefing();};
   window.p9AddJournalEvent=function(event,id){

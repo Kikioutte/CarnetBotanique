@@ -31,6 +31,7 @@ check('profil et sauvegarde accessibles depuis le menu responsive',/data-nav-act
 check('extension Phase 9 incluse dans le build','js/extensions-v11.js'.split('/').every(Boolean)&&build.includes("'js/extensions-v11.js'"));
 check('onboarding local, explicite et réouvrable',/hdv_profile_v1/.test(source)&&/Aucun compte, aucun transfert/.test(source)&&/p9OpenOnboarding/.test(source));
 check('journal compatible avec la source v7',/__hdvJournalUpdate/.test(read('js/extensions-v7.js'))&&/__hdvJournalUpdate/.test(source));
+check('journal enrichi conserve le module de photos personnelles',/__v8InjectPhotos/.test(read('js/extensions-v8.js'))&&/__v8InjectPhotos/.test(source));
 check('centre de sauvegarde réutilise export et import validés',/window\.v7Export/.test(source)&&/window\.v7Import|v7-file/.test(source));
 check('styles responsive et mode sombre présents',/@media\(max-width:760px\)/.test(css)&&/body\.theme-dark \.p9-onboarding/.test(css));
 
@@ -101,8 +102,12 @@ try{
   });
   const metrics=await page.evaluate(()=>Array.from(document.querySelectorAll('.p9-metric b')).map(el=>el.textContent));
   check('briefing recalculé depuis les vraies données de soin',metrics[0]==='1'&&metrics[1]==='1/1',metrics);
+  await page.evaluate(id=>{var tiny='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';localStorage.setItem('hdv_photos',JSON.stringify({[id]:[tiny]}));},plantId);
   await page.evaluate(id=>window.openJournal(id),plantId);
   await page.waitForSelector('.p9-journal');
+  await page.waitForSelector(`#v8-photos-${plantId} img`);
+  check('photos personnelles conservées dans le journal enrichi',await page.locator(`#v8-photos-${plantId} img`).count()===1);
+  await page.evaluate(()=>localStorage.removeItem('hdv_photos'));
   check('ancienne note v7 conservée dans la nouvelle chronologie',/Note historique conservée/.test(await page.textContent('.p9-timeline')));
   await page.selectOption('#p9EventType','bloom');
   await page.fill('#p9EventText','Première floraison observée');
