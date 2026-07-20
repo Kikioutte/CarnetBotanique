@@ -84,6 +84,11 @@ jobs:
       - name: Phase 8 — robustesse des parcours produit
         run: npm run test:phase8
 
+      # Phase 9 : onboarding progressif, briefing quotidien, historique typé
+      # et sauvegarde explicite sans altérer les formats de données existants.
+      - name: Phase 9 — maturité produit
+        run: npm run test:phase9
+
       - name: Publier les rapports et captures
         if: always()
         uses: actions/upload-artifact@v4
@@ -93,4 +98,5 @@ jobs:
             test-results/phase0/
             test-results/phase2/
             test-results/phase8/
+            test-results/phase9/
           if-no-files-found: error

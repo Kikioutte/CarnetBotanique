@@ -22,6 +22,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const CURRENT_VERSION = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8')
+  .match(/const VERSION\s*=\s*['"]([^'"]+)['"]/)?.[1];
+if (!CURRENT_VERSION) throw new Error('VERSION courante introuvable dans sw.js');
+const CURRENT_CACHE_PREFIX = CURRENT_VERSION + '-';
 
 let chromium;
 try { ({ chromium } = await import('playwright')); }
@@ -218,7 +222,7 @@ async function waitForWaitingWorker(page, timeout = 45000) {
       const registration = await navigator.serviceWorker.getRegistration();
       return { waiting: !!(registration && registration.waiting), keys: await caches.keys() };
     });
-    if (state.waiting && state.keys.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell'))) {
+    if (state.waiting && state.keys.some(k => k.startsWith(CURRENT_CACHE_PREFIX) && k.endsWith('-shell'))) {
       return state;
     }
     await page.waitForTimeout(200);
@@ -260,7 +264,7 @@ async function testUpdateButton(browser) {
     const keysBeforeUpdate = await cacheKeys(page);
     check('A — ancien et nouveau shells coexistent avant activation',
       keysBeforeUpdate.includes('hdv-v7-shell') &&
-      keysBeforeUpdate.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')), keysBeforeUpdate);
+      keysBeforeUpdate.some(k => k.startsWith(CURRENT_CACHE_PREFIX) && k.endsWith('-shell')), keysBeforeUpdate);
     check('A — aucun rechargement spontané avant le clic', navCount === 1, navCount);
 
     await page.evaluate(() => { window.__avantClic = true; });
@@ -272,7 +276,7 @@ async function testUpdateButton(browser) {
     const keysAfterUpdate = await cacheKeys(page);
     check('A — cache hdv-v7 supprimé', !keysAfterUpdate.some(k => k.startsWith('hdv-v7')), keysAfterUpdate);
     check('A — seuls les caches actifs restent',
-      keysAfterUpdate.every(k => !k.startsWith('hdv-') || k.startsWith('hdv-v10-')), keysAfterUpdate);
+      keysAfterUpdate.every(k => !k.startsWith('hdv-') || k.startsWith(CURRENT_CACHE_PREFIX)), keysAfterUpdate);
     const userData = await readUserData(page);
     check('A — localStorage conservé',
       userData.marker === 'conserve' && JSON.parse(userData.quiz || '{}').ok === 7, userData);
@@ -320,7 +324,7 @@ async function testLegacyRecovery(browser) {
 
     deploy = 'new';
     // Une nouvelle visite déclenche la vérification native du script SW. Le
-    // premier onglet reste ouvert : le worker v10 doit donc réellement attendre.
+    // premier onglet reste ouvert : le worker courant doit donc réellement attendre.
     const updatePage = await ctx.newPage();
     observePage(updatePage, pageErrors);
     await updatePage.goto(origin + '/', { waitUntil: 'load', timeout: 60000 });
@@ -333,7 +337,7 @@ async function testLegacyRecovery(browser) {
       (await cssDeploy(updatePage)) === 'old', await cssDeploy(updatePage));
     check('B — les deux générations coexistent pendant l’attente',
       waitingKeys.includes('hdv-v7-shell') &&
-      waitingKeys.some(k => k.startsWith('hdv-v10-') && k.endsWith('-shell')), waitingKeys);
+      waitingKeys.some(k => k.startsWith(CURRENT_CACHE_PREFIX) && k.endsWith('-shell')), waitingKeys);
 
     await updatePage.close();
     await page.close();
@@ -351,8 +355,8 @@ async function testLegacyRecovery(browser) {
     check('B — nouveau shell servi à la visite suivante', (await cssDeploy(page)) === 'new', await cssDeploy(page));
     const activeKeys = await cacheKeys(page);
     check('B — ancien cache supprimé sans clic', !activeKeys.some(k => k.startsWith('hdv-v7')), activeKeys);
-    check('B — uniquement les caches v10 restent',
-      activeKeys.every(k => !k.startsWith('hdv-') || k.startsWith('hdv-v10-')), activeKeys);
+    check('B — uniquement les caches actifs restent',
+      activeKeys.every(k => !k.startsWith('hdv-') || k.startsWith(CURRENT_CACHE_PREFIX)), activeKeys);
     const userData = await readUserData(page);
     check('B — localStorage conservé sans clic',
       userData.marker === 'conserve' && JSON.parse(userData.quiz || '{}').ok === 7, userData);

@@ -20,6 +20,18 @@ var journal=L('hdv_journal',{});
 function saveJournal(){S('hdv_journal',journal);}
 function J(pid){if(!journal[pid])journal[pid]={entries:[],zone:'',waterEvery:0,lastWater:''};return journal[pid];}
 function knownZones(){var s={},o=[];Object.keys(journal).forEach(function(k){var z=journal[k]&&journal[k].zone;if(z&&!s[z]){s[z]=1;o.push(z);}});return o.sort();}
+/* API transactionnelle utilisée par les couches produit suivantes. Le journal
+   reste détenu ici afin que rappels, filtres et historique partagent toujours
+   la même source en mémoire, sans divergence après une modification. */
+window.__hdvJournalSnapshot=function(){try{return JSON.parse(JSON.stringify(journal));}catch(e){return {};}};
+window.__hdvJournalUpdate=function(pid,mutator){
+  var before;try{before=JSON.parse(JSON.stringify(journal));}catch(e){before={};}
+  try{
+    var entry=J(pid);mutator(entry,journal);
+    localStorage.setItem('hdv_journal',JSON.stringify(journal));
+    return true;
+  }catch(e){journal=before;return false;}
+};
 
 /* ---------- Filtres + tri ---------- */
 var advFilters={fam:'',type:'',tox:'',zone:'',inv:''},advSort='default';

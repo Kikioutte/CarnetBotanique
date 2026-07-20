@@ -116,6 +116,15 @@
 <!-- HUB MODULAIRE : fusion du prototype mobile avec le site complet -->
 <section class="fusion-hub" id="fusionHub" aria-label="Espaces de l'Herbier de Vie">
   <div class="fusion-hub-shell">
+    <section class="p9-briefing" id="p9Briefing" aria-labelledby="p9BriefingTitle">
+      <div class="p9-briefing-copy">
+        <span class="fusion-kicker">Aujourd'hui</span>
+        <h2 id="p9BriefingTitle">Votre jardin en un regard</h2>
+        <p id="p9BriefingText">Préparation de votre programme botanique…</p>
+      </div>
+      <div class="p9-briefing-metrics" id="p9BriefingMetrics" aria-live="polite"></div>
+      <div class="p9-briefing-actions" id="p9BriefingActions"></div>
+    </section>
     <div class="fusion-hub-head">
       <div>
         <div class="fusion-kicker">Compagnon botanique</div>
@@ -630,6 +639,8 @@
   <button class="mnav-btn btn-luxe-accent garden-only" data-nav-action="add" onclick="closeMobileNav();openDrawer('add')"><i class="fa-solid fa-plus" aria-hidden="true"></i> <span>Ajouter une fiche</span></button>
   <div class="mnav-divider"></div>
   <button class="mnav-btn" data-nav-action="reminders" onclick="closeMobileNav();window.openReminders()"><i class="fa-solid fa-bell" aria-hidden="true"></i> <span>Rappels d'arrosage</span></button>
+  <button class="mnav-btn" data-nav-action="profile" onclick="closeMobileNav();window.p9OpenOnboarding()"><i class="fa-solid fa-leaf" aria-hidden="true"></i> <span>Mon profil botanique</span></button>
+  <button class="mnav-btn" data-nav-action="backup" onclick="closeMobileNav();window.p9OpenBackupCenter()"><i class="fa-solid fa-bookmark" aria-hidden="true"></i> <span>Sauvegarde et données</span></button>
   <button class="mnav-btn" id="mnavThemeBtn" data-nav-action="theme" onclick="window.toggleTheme()"><i class="fa-solid fa-moon" aria-hidden="true"></i> <span class="mnav-theme-label">Mode sombre</span></button>
 </nav>
 
