@@ -7,6 +7,7 @@ let appMode = "learn"; // "learn" = Tous les végétaux, "garden" = Mon Jardin (
 let flashMode = false;
 let currentFlashIndex = 0;
 let deleteTargetId = null;
+let catalogLoadState = 'loading'; // loading | ready | error
 
 // --- ACCÉLÉRATEUR DE DÉFILEMENT (LENIS) ---
 // v6 : initialisation protégée. Si le CDN Lenis échoue, on retombe sur un
@@ -85,13 +86,28 @@ function scheduleMotionEnhancements(){
 }
 window.addEventListener('load',scheduleMotionEnhancements,{once:true});
 
+// État réseau discret : le PWA reste consultable hors-ligne, mais les photos et
+// enrichissements distants peuvent être indisponibles. L'utilisateur sait donc
+// immédiatement ce qui fonctionne encore et quand la connexion revient.
+window.addEventListener('offline', function () {
+  showToast('Mode hors ligne — vos fiches enregistrées restent disponibles');
+});
+window.addEventListener('online', function () {
+  showToast('Connexion rétablie');
+});
+
 // --- INITIALISATION ---
 window.onload = function() {
   // v6 : chaque étape est isolée — une erreur ponctuelle n'interrompt plus tout le démarrage.
   // loadData() est asynchrone (fetch de plants.json au tout premier lancement uniquement) ;
   // tout le reste de l'init attend que les données soient prêtes pour éviter un catalogue vide.
   loadData().catch(function(e){ console.warn('loadData', e); }).then(function() {
-    try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    // Ne jamais migrer/persister un tableau vide après un échec réseau initial :
+    // cela transformerait une panne temporaire en collection vide durable et
+    // empêcherait le bouton « Réessayer » de récupérer plants.json.
+    if (catalogLoadState === 'ready') {
+      try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    }
     try { renderCatalog(); } catch (e) { console.warn('renderCatalog', e); }
     try { initHeaderScroll(); } catch (e) { console.warn('initHeaderScroll', e); }
     try { initGSAPAnimations(); } catch (e) { console.warn('initGSAPAnimations', e); }
@@ -151,22 +167,27 @@ function loadData() {
         }
       }
       _finish();
+      catalogLoadState = 'ready';
       return Promise.resolve();
     }
+    catalogLoadState = 'loading';
     return fetch('plants.json')
       .then(function(r) { return r.json(); })
       .then(function(base) {
         plants = base;
         _finish();
         saveData();
+        catalogLoadState = 'ready';
       })
       .catch(function(e) {
         console.warn('Échec du chargement de plants.json', e);
         plants = [];
+        catalogLoadState = 'error';
         _finish();
       });
   } catch(e) {
     plants = [];
+    catalogLoadState = 'error';
     try { _finish(); } catch(e2) {}
     return Promise.resolve();
   }
@@ -175,10 +196,24 @@ function loadData() {
 function saveData() {
   try {
     localStorage.setItem('herbier_plants_data_v4', JSON.stringify(plants));
+    return true;
   } catch(e) {
     showToast("Impossible d'enregistrer localement.");
+    return false;
   }
 }
+
+window.retryCatalogLoad = function retryCatalogLoad() {
+  catalogLoadState = 'loading';
+  renderCatalog();
+  loadData().then(function () {
+    if (catalogLoadState === 'ready') {
+      try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    }
+    renderCatalog();
+    if (catalogLoadState === 'ready') showToast('Herbier chargé');
+  });
+};
 
 function migrateToV5() {
   if (localStorage.getItem('herbier_v5_migrated_r3')) return;
@@ -373,8 +408,50 @@ function initLazyImages(){
   document.querySelectorAll('.scrolly-section').forEach(s=>io.observe(s));
 }
 
+function catalogHasActiveFilters() {
+  var search = document.getElementById('searchInput');
+  if (search && search.value.trim()) return true;
+  return ['v7-f-fam','v7-f-type','v7-f-tox','v7-f-inv','v7-f-zone'].some(function (id) {
+    var el = document.getElementById(id); return !!(el && el.value);
+  }) || !!window._v8WishOnly;
+}
+
+window.resetCatalogFilters = function resetCatalogFilters() {
+  var search = document.getElementById('searchInput');
+  if (search) search.value = '';
+  window._v8WishOnly = false;
+  var wish = document.getElementById('v8-wishbtn');
+  if (wish) wish.classList.remove('active');
+  var reset = document.getElementById('v7-reset');
+  if (reset) reset.click(); else renderCatalog();
+  var catalog = document.getElementById('plantCatalog');
+  if (catalog) catalog.scrollIntoView({ block:'start', behavior:'smooth' });
+};
+
+function catalogStateHTML(kind, title, text, actions) {
+  var icon = kind === 'error' ? 'fa-cloud-arrow-down' : kind === 'garden' ? 'fa-seedling' : 'fa-magnifying-glass';
+  return '<div class="catalog-state catalog-state-'+kind+'" role="status" aria-live="polite">'+
+    '<span class="catalog-state-icon" aria-hidden="true"><i class="fa-solid '+icon+'"></i></span>'+
+    '<h3>'+title+'</h3><p>'+text+'</p>'+
+    (actions ? '<div class="catalog-state-actions">'+actions+'</div>' : '')+
+  '</div>';
+}
+
 function renderCatalog() {
   const catalog = document.getElementById('plantCatalog');
+  catalog.setAttribute('aria-busy', catalogLoadState === 'loading' ? 'true' : 'false');
+  if (catalogLoadState === 'loading') {
+    catalog.innerHTML = '<div class="catalog-state catalog-state-loading" role="status" aria-live="polite">'+
+      '<span class="catalog-state-spinner" aria-hidden="true"></span><h3>Ouverture de votre herbier…</h3>'+
+      '<p>Les fiches botaniques se préparent sur cet appareil.</p></div>';
+    return;
+  }
+  if (catalogLoadState === 'error') {
+    catalog.innerHTML = catalogStateHTML('error', 'Impossible de charger l’herbier',
+      'La collection de départ n’est pas encore disponible sur cet appareil. Vérifiez votre connexion puis réessayez.',
+      '<button type="button" class="btn-luxe btn-luxe-accent" onclick="retryCatalogLoad()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Réessayer</button>');
+    return;
+  }
   const searchVal = document.getElementById('searchInput').value.toLowerCase();
   
   // Filtrage selon mode et recherche
@@ -395,15 +472,20 @@ function renderCatalog() {
   if (typeof window.__catPage === 'function') { try { filtered = window.__catPage(filtered); } catch(e){} }
 
   if (filtered.length === 0) {
-    catalog.innerHTML = `
-      <div style="text-align: center; padding: 120px 20px; background: var(--bg-sand-dark)">
-        <i class="fa-solid fa-seedling" style="font-size: 3rem; color: var(--gold); margin-bottom: 20px;"></i>
-        <h3 style="font-size: 2rem;">Votre Herbier est préservé</h3>
-        <p style="font-family: var(--primary-serif); font-style: italic; max-width: 450px; margin: 10px auto;">
-          ${appMode === 'garden' ? "Vous n'avez pas encore adopté de spécimen dans votre jardin privé." : "Aucune espèce correspondante dans nos registres."}
-        </p>
-      </div>
-    `;
+    if (catalogHasActiveFilters()) {
+      catalog.innerHTML = catalogStateHTML('search', 'Aucune espèce trouvée',
+        'Essayez un autre nom ou effacez les filtres actifs pour retrouver toute la collection.',
+        '<button type="button" class="btn-luxe btn-luxe-accent" onclick="resetCatalogFilters()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Effacer les filtres</button>');
+    } else if (appMode === 'garden') {
+      catalog.innerHTML = catalogStateHTML('garden', 'Votre jardin attend sa première plante',
+        'Explorez l’herbier puis choisissez « Adopter » sur une fiche, ou créez votre propre spécimen.',
+        '<button type="button" class="btn-luxe btn-luxe-accent" onclick="setMode(\'learn\');scrollToCatalog()"><i class="fa-solid fa-leaf" aria-hidden="true"></i> Explorer l’herbier</button>'+
+        '<button type="button" class="btn-luxe" onclick="openDrawer(\'add\')"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inscrire une plante</button>');
+    } else {
+      catalog.innerHTML = catalogStateHTML('garden', 'Aucune fiche disponible',
+        'Créez une première fiche botanique pour commencer votre collection.',
+        '<button type="button" class="btn-luxe btn-luxe-accent" onclick="openDrawer(\'add\')"><i class="fa-solid fa-plus" aria-hidden="true"></i> Créer une fiche</button>');
+    }
     return;
   }
 
@@ -487,6 +569,7 @@ function renderCatalog() {
   }).join('');
 
   initLazyImages();
+  catalog.setAttribute('aria-busy','false');
   // Re-déclencher les animations GSAP suite au nouveau rendu
   setTimeout(() => {
     initGSAPAnimations();
@@ -548,11 +631,11 @@ function initGSAPAnimations() {
   var _pc = document.getElementById('plantCatalog');
   var _t = null;
   _si.addEventListener('input', function () {
-    if (_pc) _pc.style.opacity = '.55';
+    if (_pc) { _pc.style.opacity = '.55'; _pc.setAttribute('aria-busy','true'); }
     if (_t) clearTimeout(_t);
     _t = setTimeout(function(){
       try { renderCatalog(); } catch(e){}
-      if (_pc) _pc.style.opacity = '1';
+      if (_pc) { _pc.style.opacity = '1'; _pc.setAttribute('aria-busy','false'); }
     }, 180);
   });
 })();
@@ -818,7 +901,10 @@ function _setOverlayState(overlay,open){
   else overlay.setAttribute('inert','');
 }
 function _focusablesIn(el){
-  return el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+  return Array.prototype.filter.call(
+    el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'),
+    function(node){ return !node.closest('[inert]') && node.offsetParent !== null; }
+  );
 }
 function trapFocus(overlay,returnFocus){
   if(!overlay) return;
@@ -955,12 +1041,19 @@ function setMode(m){
 function toggleGardenStatus(id) {
   const p = plants.find(item => item.id === id);
   if (!p) return;
+  var previousGarden = p.inGarden === true;
   p.inGarden = !p.inGarden;
   loadCareState();
+  var previousAdoptedAt = careState.adoptedAt[p.id];
   if(p.inGarden) careState.adoptedAt[p.id]=carePeriod(0).key;
   else delete careState.adoptedAt[p.id];
+  if (!saveData()) {
+    p.inGarden = previousGarden;
+    if (previousAdoptedAt) careState.adoptedAt[p.id] = previousAdoptedAt;
+    else delete careState.adoptedAt[p.id];
+    return;
+  }
   saveCareState();
-  saveData();
   showToast(p.inGarden ? `${p.nomFr} ajoutée à votre Jardin` : `${p.nomFr} retirée de votre Jardin`);
   // En mode Jardin la liste filtrée change : re-rendu complet nécessaire.
   // Sinon, mise à jour en place de la section — évite de reconstruire 30 fiches
@@ -986,6 +1079,31 @@ function toggleGardenStatus(id) {
 }
 
 // --- CONCIERGERIE DRAWERS (OUVERTURE/FERMETURE) ---
+var _drawerBaseline = '';
+var _formSubmitting = false;
+function drawerFormSnapshot() {
+  var form = document.getElementById('plantForm');
+  if (!form) return '';
+  var values = [];
+  Array.prototype.forEach.call(form.elements, function (el) {
+    if (!el.name && !el.id) return;
+    if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
+    values.push((el.name || el.id) + '=' + String(el.value || ''));
+  });
+  return values.join('&');
+}
+function captureDrawerBaseline() { _drawerBaseline = drawerFormSnapshot(); }
+function drawerHasUnsavedChanges() {
+  var drawer = document.getElementById('plantDrawer');
+  return !!(drawer && drawer.classList.contains('open') && drawerFormSnapshot() !== _drawerBaseline);
+}
+function setFormFeedback(message, kind) {
+  var feedback = document.getElementById('formFeedback');
+  if (!feedback) return;
+  feedback.hidden = !message;
+  feedback.textContent = message || '';
+  feedback.className = 'form-feedback' + (kind ? ' is-' + kind : '');
+}
 function openDrawer(type, plantId = null) {
   const drawer = document.getElementById('plantDrawer');
   const title = document.getElementById('drawerTitle');
@@ -993,6 +1111,14 @@ function openDrawer(type, plantId = null) {
   drawer.setAttribute('aria-hidden', 'false');
   document.getElementById('plantForm').reset();
   document.getElementById('formPlantId').value = "";
+  setFormFeedback('', '');
+  _formSubmitting = false;
+  var submit = document.getElementById('plantSubmitBtn');
+  if (submit) submit.disabled = false;
+  var submitLabel = document.getElementById('plantSubmitLabel');
+  if (submitLabel) submitLabel.textContent = type === 'add' ? 'Créer la fiche' : 'Enregistrer les modifications';
+  var guard = document.getElementById('drawerDiscardGuard');
+  if (guard) guard.hidden = true;
   var _gkRestore = localStorage.getItem('herbier_gemini_key');
   if (_gkRestore) { var _gkEl = document.getElementById('geminiKeyInput'); if (_gkEl) _gkEl.value = _gkRestore; }
   switchFormTab(0);
@@ -1002,12 +1128,30 @@ function openDrawer(type, plantId = null) {
     renderSubstratRows([]);
   }
 
+  captureDrawerBaseline();
+
   drawer.classList.add('open');
   document.body.classList.add('no-scroll');
   try { lenis.stop(); } catch(e) {}
   trapFocus(drawer);
 }
 
+function requestCloseDrawer() {
+  if (drawerHasUnsavedChanges()) {
+    var guard = document.getElementById('drawerDiscardGuard');
+    if (guard) {
+      guard.hidden = false;
+      var keep = document.getElementById('drawerKeepEditingBtn');
+      if (keep) keep.focus();
+    }
+    return false;
+  }
+  return closeDrawer();
+}
+
+// Fermeture technique, conservée sans garde pour les parcours internes qui ont
+// déjà enregistré/annulé leur action. Les sorties utilisateur passent par
+// requestCloseDrawer() afin de protéger les brouillons.
 function closeDrawer() {
   releaseFocusTrap();
   const drawer = document.getElementById('plantDrawer');
@@ -1016,7 +1160,36 @@ function closeDrawer() {
   drawer.setAttribute('inert', '');
   document.body.classList.remove('no-scroll');
   try { lenis.start(); } catch(e) {}
+  return true;
 }
+
+window.dismissDrawerDiscard = function dismissDrawerDiscard() {
+  var guard = document.getElementById('drawerDiscardGuard');
+  if (guard) guard.hidden = true;
+  var close = document.querySelector('#plantDrawer .close-drawer');
+  if (close) close.focus();
+};
+window.discardDrawerChanges = function discardDrawerChanges() {
+  captureDrawerBaseline();
+  closeDrawer();
+};
+
+window.addEventListener('beforeunload', function (event) {
+  if (!drawerHasUnsavedChanges()) return;
+  event.preventDefault();
+  event.returnValue = '';
+});
+
+document.getElementById('plantForm').addEventListener('invalid', function (event) {
+  var panel = event.target.closest && event.target.closest('.form-tab-panel');
+  if (panel) {
+    var panels = Array.prototype.slice.call(document.querySelectorAll('.form-tab-panel'));
+    var idx = panels.indexOf(panel);
+    if (idx >= 0) switchFormTab(idx);
+  }
+  setFormFeedback('Vérifiez les champs obligatoires indiqués avant d’enregistrer.', 'error');
+  setTimeout(function () { try { event.target.focus(); } catch(e) {} }, 0);
+}, true);
 
 window.switchFormTab = function switchFormTab(idx) {
   var panels = document.querySelectorAll('.form-tab-panel');
@@ -1735,12 +1908,21 @@ function openEditDrawer(id) {
     _sv('formStockage',    p.stockage   || p.pro_stock || '');
     _sv('formPrecautions', p.precautions|| p.pro_prec  || '');
     switchFormTab(0);
+    captureDrawerBaseline();
   }
 }
 
 // Formulaire Soumission
 function handleFormSubmit(e) {
   e.preventDefault();
+  if (_formSubmitting) return;
+  _formSubmitting = true;
+  var submit = document.getElementById('plantSubmitBtn');
+  var submitLabel = document.getElementById('plantSubmitLabel');
+  var idleLabel = submitLabel ? submitLabel.textContent : 'Enregistrer';
+  if (submit) submit.disabled = true;
+  if (submitLabel) submitLabel.textContent = 'Enregistrement…';
+  setFormFeedback('Enregistrement de la fiche…', 'progress');
   const id          = _gv('formPlantId');
   const nomFr       = _gv('formNomFr');
   const nomLat      = _gv('formNomLat');
@@ -1788,21 +1970,43 @@ function handleFormSubmit(e) {
     humidite, temperature, rempotage, engrais, substrat, imgUrl, principes,
     prepa, tempIdeale, tenueVase, conservation, stockage, precautions };
 
+  var rollback = null;
+  var successMessage = '';
   if (id) {
     const index = plants.findIndex(item => item.id === id);
-    if (index !== -1) {
-      plants[index] = { ...plants[index], ...newFields };
-      showToast("Fiche botanique enrichie");
+    if (index === -1) {
+      _formSubmitting = false;
+      if (submit) submit.disabled = false;
+      if (submitLabel) submitLabel.textContent = idleLabel;
+      setFormFeedback('Cette fiche n’existe plus. Fermez puis rouvrez l’éditeur.', 'error');
+      return;
     }
+    var previous = plants[index];
+    plants[index] = { ...plants[index], ...newFields };
+    rollback = function () { plants[index] = previous; };
+    successMessage = 'Fiche botanique enregistrée';
   } else {
     const newPlant = { id: "p_" + Date.now(), ...newFields, inGarden: false };
     plants.push(newPlant);
-    showToast("Nouveau spécimen recensé");
+    rollback = function () { plants.pop(); };
+    successMessage = 'Nouvelle fiche créée';
   }
 
-  saveData();
+  if (!saveData()) {
+    rollback();
+    _formSubmitting = false;
+    if (submit) submit.disabled = false;
+    if (submitLabel) submitLabel.textContent = idleLabel;
+    setFormFeedback('La fiche n’a pas été enregistrée. Libérez de l’espace sur l’appareil puis réessayez.', 'error');
+    return;
+  }
+
+  captureDrawerBaseline();
+  setFormFeedback('Fiche enregistrée.', 'success');
   closeDrawer();
   renderCatalog();
+  showToast(successMessage);
+  _formSubmitting = false;
 }
 
 // --- GÉNÉRATION D'ILLUSTRATION AVEC GEMINI / IMAGEN ---
@@ -1860,14 +2064,20 @@ async function generateAIImage() {
 // --- SUPPRESSION AVEC DIALOG ET EXPONENTIELLE RETRY ---
 var _confirmModalReturnFocus = null;
 function triggerDelete(id) {
+  var plant = plants.find(function(item){ return item.id === id; });
+  if (!plant) { showToast('Cette fiche n’existe plus.'); return; }
   deleteTargetId = id;
   _confirmModalReturnFocus = document.activeElement;
+  var title = document.getElementById('confirmModalTitle');
+  var text = document.getElementById('confirmModalText');
+  if (title) title.textContent = 'Supprimer « '+plant.nomFr+' » ?';
+  if (text) text.textContent = 'Cette fiche sera retirée de votre carnet. Vous pourrez annuler pendant quelques secondes.';
   document.getElementById('confirmModal').style.display = 'flex';
   document.body.classList.add('no-scroll');
   try { lenis.stop(); } catch(e) {}
   trapFocus(document.getElementById('confirmModal'));
   var btn = document.getElementById('confirmDeleteBtn');
-  if (btn) btn.focus();
+  if (btn) { btn.disabled = false; btn.textContent = 'Supprimer la fiche'; btn.focus(); }
 }
 
 function closeConfirmModal() {
@@ -1884,16 +2094,27 @@ function closeConfirmModal() {
 
 document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
   if (!deleteTargetId) return;
+  var deleteButton = document.getElementById('confirmDeleteBtn');
+  if (deleteButton) { deleteButton.disabled = true; deleteButton.textContent = 'Suppression…'; }
   const idx = plants.findIndex(item => item.id === deleteTargetId);
   closeConfirmModal(); // remet deleteTargetId à null : l'index est déjà capturé
   if (idx === -1) return;
   const removed = plants.splice(idx, 1)[0];
-  saveData();
+  if (!saveData()) {
+    plants.splice(Math.min(idx, plants.length), 0, removed);
+    renderCatalog();
+    return;
+  }
   renderCatalog();
   // Suppression annulable : la fiche est restaurable pendant la durée du toast.
   showUndoToast("Spécimen retiré des registres", function () {
     plants.splice(Math.min(idx, plants.length), 0, removed);
-    saveData();
+    if (!saveData()) {
+      var restoredIndex = plants.indexOf(removed);
+      if (restoredIndex >= 0) plants.splice(restoredIndex, 1);
+      renderCatalog();
+      return;
+    }
     renderCatalog();
     showToast(removed.nomFr + " restaurée dans l'herbier");
   });
@@ -2326,7 +2547,11 @@ function initV6Enhancements(){
     var modal = document.getElementById('confirmModal');
     if (modal && modal.style.display === 'flex') { try{closeConfirmModal();}catch(_){ } return; }
     var drawer = document.getElementById('plantDrawer');
-    if (drawer && drawer.classList.contains('open')) { try{closeDrawer();}catch(_){ } return; }
+    if (drawer && drawer.classList.contains('open')) {
+      var discardGuard = document.getElementById('drawerDiscardGuard');
+      if (discardGuard && !discardGuard.hidden) { try{dismissDrawerDiscard();}catch(_){ } return; }
+      try{requestCloseDrawer();}catch(_){ } return;
+    }
     var mnav = document.getElementById('mobileNav');
     if (mnav && mnav.classList.contains('open')) { try{closeMobileNav();}catch(_){ } return; }
     if (document.body.classList.contains('search-open')) { document.body.classList.remove('search-open'); return; }

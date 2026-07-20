@@ -182,7 +182,11 @@
 
 <!-- CONTENEUR DU SCROLLYTELLING DES PLANTES -->
 <main class="scrollytelling-container" id="plantCatalog">
-  <!-- Les fiches botaniques se génèrent ici en dynamique -->
+  <div class="catalog-state catalog-state-loading" role="status" aria-live="polite">
+    <span class="catalog-state-spinner" aria-hidden="true"></span>
+    <h3>Ouverture de votre herbier…</h3>
+    <p>Les fiches botaniques se préparent sur cet appareil.</p>
+  </div>
 </main>
 
 <!-- PANNEAU ET SYSTEME DE FLASHCARDS (APPRENTISSAGE) -->
@@ -205,11 +209,12 @@
 <div class="side-drawer" id="plantDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true" inert data-lenis-prevent>
   <div class="drawer-header">
     <h3 class="drawer-title" id="drawerTitle" tabindex="-1">Inscrire une plante</h3>
-    <button class="close-drawer" aria-label="Fermer" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="close-drawer" aria-label="Fermer" onclick="requestCloseDrawer()"><i class="fa-solid fa-xmark"></i></button>
   </div>
   
   <form id="plantForm" onsubmit="handleFormSubmit(event)">
     <input type="hidden" id="formPlantId">
+    <div id="formFeedback" class="form-feedback" role="status" aria-live="polite" hidden></div>
 
     <!-- Autofill Wikipedia/Wikidata -->
     <fieldset class="autofill-zone">
@@ -491,26 +496,37 @@
       </fieldset>
     </div>
 
-    <button type="submit" class="btn-luxe btn-luxe-accent" style="width:100%;justify-content:center;margin-top:20px;padding:15px;">
-      Enregistrer dans mon registre
+    <button type="submit" id="plantSubmitBtn" class="btn-luxe btn-luxe-accent" style="width:100%;justify-content:center;margin-top:20px;padding:15px;">
+      <span id="plantSubmitLabel">Créer la fiche</span>
     </button>
   </form>
+  <div class="drawer-discard-guard" id="drawerDiscardGuard" role="alertdialog" aria-modal="true" aria-labelledby="drawerDiscardTitle" aria-describedby="drawerDiscardText" hidden>
+    <div class="drawer-discard-card">
+      <span class="drawer-discard-icon" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></span>
+      <h4 id="drawerDiscardTitle">Abandonner les modifications ?</h4>
+      <p id="drawerDiscardText">Les changements non enregistrés dans cette fiche seront perdus.</p>
+      <div class="drawer-discard-actions">
+        <button type="button" class="btn-luxe" id="drawerKeepEditingBtn" onclick="dismissDrawerDiscard()">Continuer la fiche</button>
+        <button type="button" class="btn-luxe btn-danger" id="drawerDiscardBtn" onclick="discardDrawerChanges()">Abandonner</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- POPUP MODALE DE CONFIRMATION -->
 <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
   <div class="modal-box">
     <h3 id="confirmModalTitle" style="font-size: 1.8rem; margin-bottom: 15px;">Retirer de l'herbier ?</h3>
-    <p style="margin-bottom: 25px;">Cette action effacera définitivement cette fiche botanique de votre carnet.</p>
+    <p id="confirmModalText" style="margin-bottom: 25px;">Cette fiche sera retirée de votre carnet. Vous pourrez annuler pendant quelques secondes.</p>
     <div style="display:flex; justify-content: center; gap: 15px;">
       <button class="btn-luxe" onclick="closeConfirmModal()">Conserver</button>
-      <button class="btn-luxe btn-luxe-accent" id="confirmDeleteBtn">Arracher</button>
+      <button class="btn-luxe btn-danger" id="confirmDeleteBtn">Supprimer la fiche</button>
     </div>
   </div>
 </div>
 
 <!-- BANDEAU TOAST -->
-<div id="toast" role="status" aria-live="polite" aria-atomic="true">Fiche mise à jour avec succès</div>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- FICHE EXPRESS MOBILE / TABLETTE -->
 <div class="fusion-sheet-backdrop" id="fusionSheetBackdrop"></div>

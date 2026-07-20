@@ -79,6 +79,11 @@ jobs:
       - name: Phase 6 — contrat écrans secondaires
         run: npm run test:phase6
 
+      # Phase 8 : états produit actionnables, formulaires sans perte de saisie,
+      # échecs de stockage transactionnels et suppression réversible.
+      - name: Phase 8 — robustesse des parcours produit
+        run: npm run test:phase8
+
       - name: Publier les rapports et captures
         if: always()
         uses: actions/upload-artifact@v4
@@ -87,4 +92,5 @@ jobs:
           path: |
             test-results/phase0/
             test-results/phase2/
+            test-results/phase8/
           if-no-files-found: error
