@@ -102,7 +102,12 @@ window.onload = function() {
   // loadData() est asynchrone (fetch de plants.json au tout premier lancement uniquement) ;
   // tout le reste de l'init attend que les données soient prêtes pour éviter un catalogue vide.
   loadData().catch(function(e){ console.warn('loadData', e); }).then(function() {
-    try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    // Ne jamais migrer/persister un tableau vide après un échec réseau initial :
+    // cela transformerait une panne temporaire en collection vide durable et
+    // empêcherait le bouton « Réessayer » de récupérer plants.json.
+    if (catalogLoadState === 'ready') {
+      try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    }
     try { renderCatalog(); } catch (e) { console.warn('renderCatalog', e); }
     try { initHeaderScroll(); } catch (e) { console.warn('initHeaderScroll', e); }
     try { initGSAPAnimations(); } catch (e) { console.warn('initGSAPAnimations', e); }
@@ -202,6 +207,9 @@ window.retryCatalogLoad = function retryCatalogLoad() {
   catalogLoadState = 'loading';
   renderCatalog();
   loadData().then(function () {
+    if (catalogLoadState === 'ready') {
+      try { migrateToV5(); } catch (e) { console.warn('migrateToV5', e); }
+    }
     renderCatalog();
     if (catalogLoadState === 'ready') showToast('Herbier chargé');
   });
