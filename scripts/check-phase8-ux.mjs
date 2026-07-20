@@ -86,7 +86,8 @@ try {
   }));
   check('recherche sans résultat : explication et sortie explicites',
     noResult.title === 'Aucune espèce trouvée' && noResult.reset && noResult.busy === 'false', noResult);
-  await page.screenshot({ path:path.join(OUT, 'search-empty-mobile.png') });
+  await page.locator('.catalog-state-search').scrollIntoViewIfNeeded();
+  await page.locator('.catalog-state-search').screenshot({ path:path.join(OUT, 'search-empty-mobile.png') });
   await page.click('.catalog-state-search button');
   await page.waitForSelector('.scrolly-section');
   check('effacer les filtres restaure le catalogue',
@@ -115,7 +116,8 @@ try {
   }));
   check('fermer une fiche modifiée demande confirmation',
     guard.visible && guard.drawer && guard.focus === 'drawerKeepEditingBtn', guard);
-  await page.screenshot({ path:path.join(OUT, 'unsaved-guard-mobile.png') });
+  await page.waitForTimeout(350);
+  await page.locator('#plantDrawer').screenshot({ path:path.join(OUT, 'unsaved-guard-mobile.png') });
   await page.keyboard.press('Escape');
   check('Échap revient à l’édition sans perdre le brouillon', await page.evaluate(() => ({
     guard:document.getElementById('drawerDiscardGuard').hidden,
@@ -211,7 +213,8 @@ try {
   }));
   check('échec initial : erreur lisible et action Réessayer',
     /Impossible/.test(errorState.title) && /Réessayer/.test(errorState.retry) && errorState.busy === 'false', errorState);
-  await errorPage.screenshot({ path:path.join(OUT, 'load-error-desktop.png') });
+  await errorPage.locator('.catalog-state-error').scrollIntoViewIfNeeded();
+  await errorPage.locator('.catalog-state-error').screenshot({ path:path.join(OUT, 'load-error-desktop.png') });
   await errorPage.unroute(`http://localhost:${PORT}/plants.json`);
   await errorPage.click('.catalog-state-error button');
   await errorPage.waitForSelector('.scrolly-section', { timeout:15000 });
