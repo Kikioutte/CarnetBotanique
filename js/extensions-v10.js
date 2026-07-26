@@ -34,17 +34,23 @@
     updateGardenPanel();
     updateLearningPanel();
   }
+  /* « Est-ce à arroser » vient du prédicat partagé window.waterDue (v9 par
+     exemplaire, sinon v7 sur le journal) : le recalculer ici depuis l'agrégat
+     min(every)/max(last) du journal était faux dès qu'une plante avait
+     plusieurs exemplaires — un exemplaire jamais arrosé restait invisible.
+     Le journal ne sert plus qu'au libellé lisible et à l'emplacement. */
   function waterDueInfo(p){
     var journal=store('hdv_journal',{});
     var j=journal[p.id]||{};
     var every=parseInt(j.waterEvery,10)||0;
+    var due=(typeof window.waterDue==='function')?!!window.waterDue(p.id):false;
+    if(due)return {due:true,label:"À arroser aujourd'hui",zone:j.zone||''};
     if(!every)return {due:false,label:'Routine à définir',zone:j.zone||''};
-    if(!j.lastWater)return {due:true,label:'Premier arrosage à noter',zone:j.zone||''};
+    if(!j.lastWater)return {due:false,label:'Premier arrosage à noter',zone:j.zone||''};
     var last=new Date(j.lastWater).getTime();
-    if(!last)return {due:true,label:'Date à vérifier',zone:j.zone||''};
-    var days=Math.floor((Date.now()-last)/86400000);
-    var left=every-days;
-    return {due:left<=0,label:left<=0?"À arroser aujourd'hui":'Dans '+left+' j',zone:j.zone||''};
+    if(!last)return {due:false,label:'Date à vérifier',zone:j.zone||''};
+    var left=every-Math.floor((Date.now()-last)/86400000);
+    return {due:false,label:'Dans '+Math.max(left,0)+' j',zone:j.zone||''};
   }
   function updateGardenPanel(){
     var panel=$('fusionGardenPanel');if(!panel)return;

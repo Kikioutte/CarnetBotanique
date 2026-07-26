@@ -77,6 +77,9 @@ window.__enrichChips=function(p){
 };
 function readFilters(){var f=function(id){var e=$(id);return e?e.value:'';};advFilters.fam=f('v7-f-fam');advFilters.type=f('v7-f-type');advFilters.tox=f('v7-f-tox');advFilters.inv=f('v7-f-inv');advFilters.zone=f('v7-f-zone');advSort=f('v7-sort')||'default';}
 function rebuildZoneFilter(){var sel=$('v7-f-zone');if(!sel)return;var cur=sel.value;var zs=knownZones();sel.innerHTML='<option value="">Toutes zones</option>'+zs.map(opt).join('');sel.value=cur;}
+/* v11 a remplacé le journal de v7 et ne pouvait plus atteindre cette fonction
+   restée privée : les emplacements saisis n'alimentaient donc plus le filtre. */
+window.__hdvRebuildZoneFilter=rebuildZoneFilter;
 function buildToolbar(){
   var cat=$('plantCatalog');if(!cat||$('v7-toolbar'))return;
   var fams=uniq(plants.map(function(p){return p.famille;}));
@@ -195,12 +198,19 @@ window.openReminders=function(){
 };
 function checkReminders(notify){
   var due=plants.filter(function(p){return p.inGarden===true&&waterDue(p.id);});
-  var rb=$('v7-remind');
+  /* Le badge est porté par le bouton de menu (visible à toutes les largeurs)
+     et par l'entrée « Rappels d'arrosage » elle-même : l'ancien porteur
+     #v7-remind était masqué en permanence, l'indicateur ne se voyait jamais. */
+  var porteurs=[$('burgerBtn'),document.querySelector('[data-nav-action="reminders"]')].filter(Boolean);
+  porteurs.forEach(function(el){
+    el.classList.toggle('has-due',due.length>0);
+    if(due.length) el.setAttribute('data-due-count',String(due.length));
+    else el.removeAttribute('data-due-count');
+  });
   if(due.length){
-    if(rb)rb.classList.add('has-due');
     toast(due.length+' plante(s) a arroser');
     if(notify&&('Notification' in window)&&Notification.permission==='granted'){try{new Notification("L'Herbier de Vie",{body:due.length+' plante(s) a arroser : '+due.slice(0,3).map(function(p){return p.nomFr;}).join(', ')});}catch(e){}}
-  }else if(rb){rb.classList.remove('has-due');}
+  }
 }
 window.checkReminders=checkReminders; /* utilisé par v9 pour rafraîchir le badge de la cloche */
 
@@ -331,8 +341,12 @@ function injectManifest(){}
 
 /* ---------- Footer + boutons header ---------- */
 function injectFooter(){if($('v7-footer'))return;var cat=$('plantCatalog');var f=document.createElement('aside');f.id='v7-footer';f.className='v7-footer';f.setAttribute('aria-label','Crédits des illustrations et des données');f.innerHTML='<div>L\'Herbier de Vie</div><div class="v7-credit">Illustrations : Wikimedia Commons / loremflickr · Donnees enrichies par la communaute</div>';if(cat&&cat.parentNode){cat.parentNode.appendChild(f);}else{document.body.appendChild(f);}}
-function mkBtn(id,html,title,handler){var b=document.createElement('button');b.className='btn-luxe';b.id=id;b.title=title;b.setAttribute('aria-label',title);b.innerHTML=html;b.addEventListener('click',handler);return b;}
-function injectHeaderButtons(){var na=document.querySelector('.nav-actions');if(!na||$('v7-theme'))return;na.appendChild(mkBtn('v7-remind','<i class="fa-solid fa-bell"></i>',"Rappels d'arrosage",window.openReminders));na.appendChild(mkBtn('v7-theme','<i class="fa-solid fa-moon"></i>','Mode sombre',window.toggleTheme));}
+/* Les boutons cloche et thème étaient injectés dans .nav-actions puis masqués
+   par `header#mainHeader #v7-remind,#v7-theme{display:none !important}` à toutes
+   les largeurs : interface morte depuis la refonte de navigation. Leurs deux
+   fonctions restent accessibles par le menu principal (« Rappels d'arrosage »
+   et le bouton de thème). L'injection est donc supprimée, et l'indicateur
+   « à arroser » déplacé sur des éléments réellement visibles (cf. checkReminders). */
 
 /* ---------- Hooks sur les fonctions existantes ---------- */
 function installHooks(){
@@ -364,7 +378,6 @@ function installHooks(){
 function init(){
   injectManifest();
   installHooks();
-  injectHeaderButtons();
   try{buildToolbar();}catch(e){}
   injectFooter();
   applyTheme();

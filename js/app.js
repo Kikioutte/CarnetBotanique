@@ -2366,7 +2366,11 @@ function renderCalList(){
 function gotoPlant(id){
   if(calOn) toggleCalMode();
   const el=document.getElementById('section-'+id);
-  if(el){ try{lenis.scrollTo(el,{offset:-90});}catch(e){ el.scrollIntoView({behavior:'smooth'}); } }
+  if(el){ try{lenis.scrollTo(el,{offset:-90});}catch(e){ el.scrollIntoView({behavior:'smooth'}); } return; }
+  // Le catalogue ne rend que 20 fiches : 315 identifiants sur 335 sont absents du
+  // DOM. Sans ce repli, le calendrier et « Voir au catalogue » refermaient leur
+  // écran sans rien afficher. La fiche complète, elle, ne dépend pas du rendu.
+  if(typeof openPlantDetail==='function') openPlantDetail(id);
 }
 
 /* ══ IMPRESSION A4 — génère 4 fiches/page puis lance l'impression ══ */

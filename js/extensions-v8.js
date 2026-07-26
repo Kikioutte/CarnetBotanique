@@ -18,7 +18,35 @@
   // premier écran et réduisent fortement le coût DOM avant le LCP. Les autres
   // espèces restent accessibles par « Afficher plus », la recherche et les filtres.
   window._catPageSize=20;
-  window.__catPage=function(list){window._catTotal=list.length;var sz=window._catPageSize;if(!window._loadMore)window._catLimit=sz;if(window._catLimit==null)window._catLimit=sz;if(window._catLimit>list.length)window._catLimit=list.length;var out=list.slice(0,window._catLimit);window._catShown=out.length;return out;};
+  /* Signature du jeu de filtres courant : la pagination ne doit repartir à 20
+     que si la sélection change réellement. Elle était réinitialisée à CHAQUE
+     rendu, donc effacer une recherche renvoyait de 40 fiches à 20. */
+  function filterSignature(){
+    var g=function(id){var e=$(id);return e?e.value:'';};
+    return [g('searchInput'),g('v7-f-fam'),g('v7-f-type'),g('v7-f-tox'),g('v7-f-inv'),
+            g('v7-f-zone'),g('v7-sort'),
+            (typeof appMode!=='undefined'?appMode:''),
+            window._v8WishOnly?'1':'0'].join('');
+  }
+  /* La position est mémorisée PAR jeu de filtres : détecter le simple
+     changement ne suffisait pas, car effacer une recherche est lui aussi un
+     changement et ramenait l'utilisateur à 20 fiches. Revenir à une sélection
+     déjà parcourue restitue donc son avancement. */
+  window.__catPage=function(list){
+    window._catTotal=list.length;
+    var sz=window._catPageSize;
+    var sig=filterSignature();
+    if(!window._catLimits||typeof window._catLimits!=='object')window._catLimits={};
+    if(Object.keys(window._catLimits).length>30)window._catLimits={}; // borne mémoire (frappe au clavier)
+    if(!window._loadMore&&sig!==window._catSig)window._catLimit=window._catLimits[sig]||sz;
+    window._catSig=sig;
+    if(window._catLimit==null)window._catLimit=sz;
+    if(window._catLimit>list.length)window._catLimit=list.length;
+    window._catLimits[sig]=window._catLimit;
+    var out=list.slice(0,window._catLimit);
+    window._catShown=out.length;
+    return out;
+  };
   function afterCatalog(){
     var cat=$('plantCatalog');if(!cat)return;
     var old=document.querySelector('.v8-loadmore-wrap');if(old)old.remove();

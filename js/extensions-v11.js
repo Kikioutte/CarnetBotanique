@@ -18,14 +18,19 @@
   function eventType(type){
     return ({water:['Arrosage','fa-droplet'],repot:['Rempotage','fa-seedling'],growth:['Croissance','fa-chart-column'],bloom:['Floraison','fa-leaf'],care:['Soin','fa-hand-holding-droplet'],note:['Observation','fa-pen-to-square']})[type]||['Observation','fa-pen-to-square'];
   }
+  /* Même règle que le hub (v10) : l'échéance vient du prédicat partagé
+     window.waterDue, seul à connaître les exemplaires individuels. Le journal
+     ne fournit ici que « la routine est-elle configurée » et le libellé. */
   function dueInfo(p,data){
     var item=data[p.id]||{},every=parseInt(item.waterEvery,10)||0;
-    if(!every)return {configured:false,due:false,label:'Routine à définir'};
-    if(!item.lastWater)return {configured:true,due:true,label:'Premier arrosage à noter'};
+    var due=(typeof window.waterDue==='function')?!!window.waterDue(p.id):false;
+    if(!every)return {configured:false,due:due,label:due?"À arroser aujourd'hui":'Routine à définir'};
+    if(due)return {configured:true,due:true,label:"À arroser aujourd'hui"};
+    if(!item.lastWater)return {configured:true,due:false,label:'Premier arrosage à noter'};
     var last=new Date(item.lastWater).getTime();
-    if(!last)return {configured:true,due:true,label:'Date à vérifier'};
+    if(!last)return {configured:true,due:false,label:'Date à vérifier'};
     var left=every-Math.floor((Date.now()-last)/86400000);
-    return {configured:true,due:left<=0,label:left<=0?"À arroser aujourd'hui":'Dans '+left+' j'};
+    return {configured:true,due:false,label:'Dans '+Math.max(left,0)+' j'};
   }
   function observationsThisMonth(data){
     var prefix=todayISO().slice(0,7),count=0;
@@ -140,12 +145,21 @@
        journal et conserve le repli localStorage pendant la migration IDB. */
     if(typeof window.__v8InjectPhotos==='function')setTimeout(function(){window.__v8InjectPhotos(id);},0);
   };
-  window.p9SaveJournalRoutine=function(id){var zone=$('p9JournalZone'),water=$('p9JournalWater');var ok=journalUpdate(id,function(item){item.zone=zone?zone.value.trim().slice(0,80):'';item.waterEvery=water?Math.max(0,Math.min(365,parseInt(water.value,10)||0)):0;});if(!ok){toast("La routine n'a pas pu être enregistrée.");return;}toast('Routine de soins enregistrée');renderBriefing();};
+  window.p9SaveJournalRoutine=function(id){var zone=$('p9JournalZone'),water=$('p9JournalWater');var ok=journalUpdate(id,function(item){item.zone=zone?zone.value.trim().slice(0,80):'';item.waterEvery=water?Math.max(0,Math.min(365,parseInt(water.value,10)||0)):0;});if(!ok){toast("La routine n'a pas pu être enregistrée.");return;}toast('Routine de soins enregistrée');refreshAfterJournal();};
+  /* Un enregistrement de routine change l'emplacement et l'échéance : le filtre
+     par zone, les étiquettes des fiches, le hub et le briefing doivent suivre
+     sans attendre un rechargement. renderCatalog() est enveloppée par v10 et
+     v11, un seul appel rafraîchit donc les trois surfaces. */
+  function refreshAfterJournal(){
+    if(typeof window.__hdvRebuildZoneFilter==='function')try{window.__hdvRebuildZoneFilter();}catch(e){}
+    if(typeof window.renderCatalog==='function')try{window.renderCatalog();}catch(e){}
+    renderBriefing();
+  }
   window.p9AddJournalEvent=function(event,id){
     if(event)event.preventDefault();var type=$('p9EventType'),date=$('p9EventDate'),text=$('p9EventText');var typeValue=type?type.value:'note',meta=eventType(typeValue),detail=(text?text.value.trim():'')||meta[0]+' effectué';var iso=(date&&date.value)||todayISO();
     var entry={id:'event_'+Date.now(),type:typeValue,iso:iso,t:dateLabel(iso),txt:detail.slice(0,280)};
     var ok=journalUpdate(id,function(item){if(!Array.isArray(item.entries))item.entries=[];item.entries.push(entry);if(typeValue==='water')item.lastWater=new Date(iso+'T12:00:00').toISOString();});
-    if(!ok){toast("L’événement n'a pas pu être enregistré.");return;}toast(meta[0]+' ajouté au journal');window.p9OpenJournal(id);renderBriefing();
+    if(!ok){toast("L’événement n'a pas pu être enregistré.");return;}toast(meta[0]+' ajouté au journal');window.p9OpenJournal(id);refreshAfterJournal();
   };
 
   /* Remplace le journal v7 par la chronologie enrichie, sans changer les appels existants. */

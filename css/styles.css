@@ -1356,7 +1356,27 @@ body.theme-dark .btn-luxe:hover,body.theme-dark .btn-luxe.active{background:var(
 body.theme-dark .v7-cmpbar,body.theme-dark .v7-cmp-table thead th{color:#FAF7F2;}
 body.theme-dark input,body.theme-dark textarea,body.theme-dark select{background:#243029;}
 /* Boutons header additionnels */
-#v7-remind.has-due{color:var(--terracotta);border-color:var(--terracotta);}
+/* Indicateur « plantes à arroser ». Porté par le bouton de menu (toujours
+   visible) et par l'entrée « Rappels d'arrosage » du menu principal.
+   L'ancien porteur #v7-remind était masqué en permanence par la refonte de
+   navigation : le badge existait en CSS mais restait invisible. */
+#burgerBtn.has-due{position:relative;}
+#burgerBtn.has-due::after{
+  content:attr(data-due-count);
+  position:absolute;top:4px;right:4px;
+  min-width:18px;height:18px;padding:0 4px;
+  border-radius:9px;background:var(--terracotta);color:#FFFDFB;
+  font-family:var(--primary-sans);font-size:.62rem;font-weight:700;line-height:18px;
+  text-align:center;pointer-events:none;
+}
+.mnav-btn.has-due{color:var(--terracotta-text);border-color:var(--terracotta);}
+.mnav-btn.has-due::after{
+  content:attr(data-due-count);
+  margin-left:auto;
+  min-width:20px;padding:1px 6px;border-radius:10px;
+  background:var(--terracotta);color:#FFFDFB;
+  font-size:.68rem;font-weight:700;
+}
 /* Barre d'outils filtres */
 .v7-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;max-width:1300px;margin:24px auto 0;padding:14px 18px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;backdrop-filter:blur(12px);font-family:var(--primary-sans);}
 .v7-tb-group{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
@@ -1617,8 +1637,6 @@ header#mainHeader{
 }
 header#mainHeader > *{min-width:0}
 .nav-secondary,
-header#mainHeader #v7-remind,
-header#mainHeader #v7-theme{display:none !important}
 .burger-label{display:none}
 
 /* Un panneau fermé n'expose plus ses champs hors écran à la souris, au clavier
