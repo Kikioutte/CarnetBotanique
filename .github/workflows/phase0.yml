@@ -19,6 +19,9 @@ jobs:
       - name: Installer les dépendances
         run: npm install
 
+      - name: Analyse statique (ESLint)
+        run: npm run lint
+
       - name: Construire les assets de production
         run: npm run build:assets
 
@@ -49,7 +52,10 @@ jobs:
         run: npm run test:sw-version:strict
 
       # Phase 4 : mesure sur un serveur statique compressé, comme en production.
-      - name: Lighthouse (desktop + mobile)
+      # Le score mobile dépend fortement de la charge du runner : trois exécutions
+      # du même commit ont été mesurées localement à 81, 97 et 97. On mesure donc
+      # trois fois et on retient la médiane, sinon le portail échoue au hasard.
+      - name: Lighthouse (desktop + mobile, médiane de 3 exécutions)
         run: |
           node scripts/serve-production.mjs 8892 &
           sleep 2
@@ -57,10 +63,17 @@ jobs:
             --output=json --output=html \
             --output-path=test-results/phase0/lighthouse-desktop \
             --chrome-flags="--headless=new --no-sandbox" --quiet
-          npx --yes lighthouse@12 http://localhost:8892/ \
-            --output=json --output=html \
-            --output-path=test-results/phase0/lighthouse-mobile \
-            --chrome-flags="--headless=new --no-sandbox" --quiet
+          for run in 1 2 3; do
+            npx --yes lighthouse@12 http://localhost:8892/ \
+              --output=json \
+              --output-path=test-results/phase0/lighthouse-mobile-run$run.report.json \
+              --chrome-flags="--headless=new --no-sandbox" --quiet
+          done
+          node scripts/lighthouse-median.mjs \
+            test-results/phase0/lighthouse-mobile.report.json \
+            test-results/phase0/lighthouse-mobile-run1.report.json \
+            test-results/phase0/lighthouse-mobile-run2.report.json \
+            test-results/phase0/lighthouse-mobile-run3.report.json
 
       - name: Phase 4 — budgets de performance Lighthouse
         run: npm run test:phase4

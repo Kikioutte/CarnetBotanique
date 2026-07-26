@@ -4,7 +4,7 @@
   function ce(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
   function L(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}}
   function S(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){liveSay('Stockage plein');if(typeof window.showToast==='function')window.showToast('Stockage plein \u2014 espace insuffisant');return false;}}
-  function esc2(s){return (s==null?'':String(s)).replace(/[&<>\"]/g,function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'})[m];});}
+  function esc2(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(m){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m];});}
   function norm(s){try{return (s==null?'':String(s)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}catch(e){return (s==null?'':String(s)).toLowerCase();}}
   function liveSay(m){var el=$('v8-live');if(el)el.textContent=m;}
   function getPlants(){try{return plants;}catch(e){return [];}}
@@ -14,10 +14,12 @@
   function uniqSorted(arr){var s={},o=[];arr.forEach(function(x){if(x&&!s[x]){s[x]=1;o.push(x);}});o.sort(function(a,b){return String(a).localeCompare(b);});return o;}
 
   /* ============ GROUPE 1 : Performance ============ */
-  // Vitrine initiale volontairement limitée : 20 fiches suffisent pour le
-  // premier écran et réduisent fortement le coût DOM avant le LCP. Les autres
-  // espèces restent accessibles par « Afficher plus », la recherche et les filtres.
-  window._catPageSize=20;
+  // Vitrine initiale volontairement limitée : les autres espèces restent
+  // accessibles par « Charger plus », la recherche et les filtres.
+  // Sur mobile, la mise en page est le poste dominant du temps de chargement
+  // (styleLayout mesuré à 1652 ms pour 2234 nœuds) : on y rend 10 fiches au lieu
+  // de 20, ce qui retire environ un tiers du DOM initial sans rien masquer.
+  window._catPageSize=(window.matchMedia&&window.matchMedia('(max-width: 760px)').matches)?10:20;
   /* Signature du jeu de filtres courant : la pagination ne doit repartir à 20
      que si la sélection change réellement. Elle était réinitialisée à CHAQUE
      rendu, donc effacer une recherche renvoyait de 40 fiches à 20. */
@@ -276,7 +278,11 @@ ctr.innerHTML='<button id="v8-timed" class="'+(window._v8Timed?'on':'')+'" aria-
     setTimeout(function(){drawQR(link);},20);
   };
   window.v8CopyLink=function(){var el=$('v8-sharelink');if(!el)return;el.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(el.value).then(function(){toast('Lien copie');},function(){});}else if(ok)toast('Lien copie');};
-  function drawQR(link){var wrap=$('v8-qrwrap');if(!wrap)return;var m=qrEncode(link);if(!m){wrap.innerHTML='<p style="font-size:.8rem;font-style:italic;opacity:.75;">'+'Trop de plantes pour un QR code \u2014 utilisez le lien ci-dessus.'+'</p>';return;}var quiet=4,scale=6,n=m.length,dim=(n+quiet*2)*scale;var cv=document.createElement('canvas');cv.width=dim;cv.height=dim;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,dim,dim);ctx.fillStyle='#000';for(var r=0;r<n;r++)for(var c=0;c<n;c++){if(m[r][c])ctx.fillRect((c+quiet)*scale,(r+quiet)*scale,scale,scale);}var holder=ce('div');holder.id='v8-qr';holder.appendChild(cv);wrap.innerHTML='';wrap.appendChild(holder);wrap.appendChild(ce('div','v8-count-note','Scannez pour importer le jardin'));}
+  /* qrEncode() n'a jamais exist\u00e9 dans le projet : chaque ouverture de \u00ab Partager
+     le jardin \u00bb levait une ReferenceError, et le repli pr\u00e9vu juste en dessous
+     ne s'affichait donc jamais. Le lien copiable, lui, fonctionne \u2014 c'est ce
+     que l'on annonce tant qu'aucun encodeur n'est fourni. */
+  function drawQR(link){var wrap=$('v8-qrwrap');if(!wrap)return;var m=(typeof qrEncode==='function')?qrEncode(link):null;if(!m){wrap.innerHTML='<p style="font-size:.8rem;font-style:italic;opacity:.75;">'+'QR code indisponible \u2014 copiez le lien ci-dessus pour partager votre jardin.'+'</p>';return;}var quiet=4,scale=6,n=m.length,dim=(n+quiet*2)*scale;var cv=document.createElement('canvas');cv.width=dim;cv.height=dim;var ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,dim,dim);ctx.fillStyle='#000';for(var r=0;r<n;r++)for(var c=0;c<n;c++){if(m[r][c])ctx.fillRect((c+quiet)*scale,(r+quiet)*scale,scale,scale);}var holder=ce('div');holder.id='v8-qr';holder.appendChild(cv);wrap.innerHTML='';wrap.appendChild(holder);wrap.appendChild(ce('div','v8-count-note','Scannez pour importer le jardin'));}
   /* Le lien encode la partie numérique de l'id (cf. gardenLink) : on matche donc par
      extraction numérique et non en reconstruisant 'pNNN' — les vrais ids sont du type
      'p001-achillea-filipendulina', la reconstruction ne correspondait jamais. */

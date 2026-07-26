@@ -16,6 +16,9 @@ jobs:
           node-version: 20
       - name: Installer les dépendances
         run: npm install
+
+      - name: Analyse statique (ESLint)
+        run: npm run lint
       - name: Installer Chromium (Playwright)
         run: npx playwright install --with-deps chromium
       - name: Tests bout-en-bout

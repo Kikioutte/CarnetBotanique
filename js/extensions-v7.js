@@ -337,7 +337,6 @@ window.flashGrade=function(id,ok){var l=leit[id]||{box:0,due:0};if(ok){l.box=Mat
 /* Le manifest est désormais un vrai fichier (manifest.webmanifest, lié dans <head>) :
    les manifests injectés en blob ne déclenchent pas l'installation sur la plupart des
    navigateurs. L'enregistrement du service worker est fait dans js/app.js. */
-function injectManifest(){}
 
 /* ---------- Footer + boutons header ---------- */
 function injectFooter(){if($('v7-footer'))return;var cat=$('plantCatalog');var f=document.createElement('aside');f.id='v7-footer';f.className='v7-footer';f.setAttribute('aria-label','Crédits des illustrations et des données');f.innerHTML='<div>L\'Herbier de Vie</div><div class="v7-credit">Illustrations : Wikimedia Commons / loremflickr · Donnees enrichies par la communaute</div>';if(cat&&cat.parentNode){cat.parentNode.appendChild(f);}else{document.body.appendChild(f);}}
@@ -376,7 +375,6 @@ function installHooks(){
 
 /* ---------- Initialisation ---------- */
 function init(){
-  injectManifest();
   installHooks();
   try{buildToolbar();}catch(e){}
   injectFooter();

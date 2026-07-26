@@ -1984,12 +1984,23 @@ function handleFormSubmit(e) {
   // Compat legacy : soleil/eau = exposition/arrosage
   const soleil = exposition; const eau = arrosage;
 
-  const newFields = { nomFr, nomLat, famille, type, region, besoins, description: besoins, ennemis,
+  const saisis = { nomFr, nomLat, famille, type, region, besoins, description: besoins, ennemis,
     feuillage, port, hauteur, couleur, rusticite, fl_texte, visu1, visu2,
     toxPets, toxDetail, toxicite, invasive, mnemonic,
     exposition, arrosage, soleil, eau,
     humidite, temperature, rempotage, engrais, substrat, imgUrl, principes,
     prepa, tempIdeale, tenueVase, conservation, stockage, precautions };
+  // Un formulaire laissé vide ne doit pas écrire une quinzaine de clés à chaîne
+  // vide dans localStorage, dont le quota est le facteur limitant de l'app.
+  // Les champs déjà présents sur la fiche sont en revanche conservés tels quels
+  // s'ils sont vidés volontairement — d'où la comparaison avec l'existant.
+  const existante = id ? (plants.find(item => item.id === id) || {}) : {};
+  const newFields = {};
+  Object.keys(saisis).forEach(function (k) {
+    const v = saisis[k];
+    const vide = v === '' || v == null || (Array.isArray(v) && !v.length);
+    if (!vide || k in existante) newFields[k] = v;
+  });
 
   var rollback = null;
   var successMessage = '';

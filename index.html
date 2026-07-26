@@ -9,6 +9,29 @@
 <meta name="description" content="L'Herbier de Vie : carnet de botanique premium. Explorez plus de 300 plantes avec fiches détaillées (familles, besoins, toxicité), flashcards, quiz, calendrier de floraison et conseils de soin.">
 <meta name="author" content="L'Herbier de Vie">
 <meta name="theme-color" content="#1F2D24">
+<!-- Politique de sécurité du contenu. Limite volontairement assumée : l'application
+     repose sur des gestionnaires onclick et des styles inline (74 occurrences), donc
+     'unsafe-inline' reste nécessaire pour script-src et style-src ; s'en passer
+     demanderait de convertir tous les gestionnaires en écouteurs délégués.
+     Ce qui EST verrouillé ici a une valeur réelle : les seules destinations réseau
+     autorisées sont celles que l'application utilise vraiment, et aucun formulaire
+     ne peut poster ailleurs.
+     `frame-ancestors` est volontairement absent : cette directive est ignorée
+     lorsqu'elle est délivrée par un <meta> (et le navigateur le signale en
+     console). La protection contre l'encadrement par un tiers demande un en-tête
+     HTTP, que l'hébergement statique visé ne permet pas de définir. -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline';
+  font-src 'self';
+  img-src 'self' data: blob: https://upload.wikimedia.org https://commons.wikimedia.org https://loremflickr.com https://*.staticflickr.com;
+  connect-src 'self' https://fr.wikipedia.org https://en.wikipedia.org https://commons.wikimedia.org https://www.wikidata.org https://generativelanguage.googleapis.com;
+  manifest-src 'self';
+  worker-src 'self';
+  base-uri 'self';
+  form-action 'none';
+  object-src 'none'">
 <link rel="manifest" href="manifest.webmanifest">
 <!-- Favicon : feuille en SVG inline (aucune dépendance externe) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E">
