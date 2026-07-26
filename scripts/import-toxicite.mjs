@@ -30,7 +30,7 @@ if (!fichier) {
 /* Analyseur CSV conforme RFC 4180 : les champs « detail » contiennent des
    virgules et des guillemets, un découpage naïf sur la virgule les casserait. */
 function parseCSV(texte) {
-  const t = texte.replace(/^﻿/, '');
+  const t = texte.replace(/^\uFEFF/, ''); // BOM ajouté par les tableurs
   const lignes = [];
   let champ = '', ligne = [], dansGuillemets = false;
   for (let i = 0; i < t.length; i++) {
