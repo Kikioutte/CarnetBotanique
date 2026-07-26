@@ -787,9 +787,47 @@ function baseCareTaskDefs(p){
   };
   return (defs[kind]||defs.indoor).slice();
 }
+/* Le rempotage n'est pas une tâche mensuelle : les fiches précisent « en général
+   tous les 2 à 3 ans ». Les mois indiquent la FENÊTRE FAVORABLE (le printemps),
+   pas une échéance. L'application ne lisait que les mois et proposait donc la
+   tâche chaque année, quatre mois d'affilée, puis la signalait « en retard ».
+   On extrait aussi la fréquence, en retenant la borne basse : c'est le moment le
+   plus tôt où l'opération peut devenir nécessaire. */
+function careRepotIntervalYears(value){
+  var m=normalizeCareText(value).match(/tous les\s+(\d+)(?:\s*(?:a|-|–|—)\s*(\d+))?\s*ans/);
+  return m?(parseInt(m[1],10)||0):0;
+}
+/* Dernière année où le rempotage a réellement été validé, d'après l'historique. */
+function lastRepotYear(id){
+  loadCareState();
+  var derniere=0;
+  Object.keys(careState.months||{}).forEach(function(cle){
+    var fiche=careState.months[cle]&&careState.months[cle][id];
+    if(fiche&&fiche.repot){ var an=parseInt(String(cle).slice(0,4),10)||0; if(an>derniere)derniere=an; }
+  });
+  return derniere;
+}
+/* Rempotage encore à faire ? Oui si aucune fréquence connue, si aucun rempotage
+   n'a jamais été noté, ou si le dernier remonte à au moins `interval` années. */
+function repotIsDue(p, annee){
+  var interval=careRepotIntervalYears(p&&p.rempotage);
+  if(!interval) return true;
+  var dernier=lastRepotYear(p&&p.id);
+  if(!dernier) return true;
+  return (annee-dernier)>=interval;
+}
+/* Message informatif quand la fenêtre est ouverte mais l'échéance pas atteinte. */
+function careRepotNotice(p, month){
+  var repot=String(p&&p.rempotage||'').trim();
+  if(!repot||parseCareMonths(repot).indexOf(Number(month))<0) return '';
+  var annee=carePeriod(0).year;
+  if(repotIsDue(p,annee)) return '';
+  var interval=careRepotIntervalYears(repot), dernier=lastRepotYear(p&&p.id);
+  return 'Rempotage effectué en '+dernier+' — prochaine fenêtre à partir de '+(dernier+interval)+'.';
+}
 function seasonalCareTaskDefsForMonth(p, month){
   var tasks=[], repot=String(p&&p.rempotage||'').trim(), fert=String(p&&p.engrais||'').trim();
-  if(repot && parseCareMonths(repot).indexOf(Number(month))>=0) tasks.push({key:'repot',label:'Rempotage — '+repot});
+  if(repot && parseCareMonths(repot).indexOf(Number(month))>=0 && repotIsDue(p,carePeriod(0).year)) tasks.push({key:'repot',label:'Rempotage — '+repot});
   if(fert && parseCareMonths(fert).indexOf(Number(month))>=0) tasks.push({key:'fertilize',label:'Fertilisation — '+fert});
   return tasks;
 }
@@ -850,7 +888,13 @@ function careOverdueTaskDefs(p){
   var adoptedAt=careState.adoptedAt&&careState.adoptedAt[p.id];
   if(adoptedAt&&prev.key<adoptedAt) return [];
   var st=carePlantState(prev.key,p.id,false);
-  return seasonalCareTaskDefsForMonth(p,prev.month).filter(function(t){return !st[t.key];});
+  return seasonalCareTaskDefsForMonth(p,prev.month).filter(function(t){
+    if(st[t.key]) return false;
+    // Une opération pluriannuelle et conditionnelle (« lorsque la plante devient
+    // à l'étroit ») ne peut pas être « en retard » d'un mois sur l'autre.
+    if(t.key==='repot'&&careRepotIntervalYears(p&&p.rempotage)>0) return false;
+    return true;
+  });
 }
 function renderCare(){
   loadCareState();
@@ -873,6 +917,7 @@ function renderCare(){
       var done=defs.filter(function(t){return !!st[t.key];}).length;
       var seasonal=defs.slice(baseCareTaskDefs(p).length);
       var overdue=careOverdueTaskDefs(p);
+      var repotNotice=careRepotNotice(p,current.month);
       var tasksHtml=defs.map(function(t){
         var on=!!st[t.key];
         return '<button class="care-task'+(on?' done':'')+'" onclick="toggleCareTask(\''+p.id+'\',\''+t.key+'\',\''+current.key+'\')"><span class="cbx">'+(on?'<i class="fa-solid fa-check"></i>':'')+'</span>'+esc(t.label)+'</button>';
@@ -882,6 +927,7 @@ function renderCare(){
         '<div class="care-lat">'+esc(p.nomLat)+' · '+esc(p.famille)+'</div>'+
         '<div class="care-proto"><b>Conseil principal</b> &nbsp;'+esc(p.besoins||p.description||'')+'</div>'+
         (seasonal.length?'<div class="care-seasonal"><i class="fa-solid fa-calendar-check"></i> '+seasonal.length+' tâche(s) saisonnière(s) à faire ce mois-ci</div>':'')+
+        (repotNotice?'<div class="care-notice"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> '+esc(repotNotice)+'</div>':'')+
         (overdue.length?'<div class="care-overdue"><i class="fa-solid fa-clock-rotate-left"></i> <b>En retard :</b> '+esc(overdue.map(function(t){return t.label;}).join(' · '))+'</div>':'')+
         (p.ennemis?'<div class="care-warn"><i class="fa-solid fa-triangle-exclamation"></i> '+esc(p.ennemis)+'</div>':'')+
         '<div class="care-tasks">'+tasksHtml+'</div>'+
