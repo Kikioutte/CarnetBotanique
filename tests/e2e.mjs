@@ -924,6 +924,175 @@ const browser = await chromium.launch(launchOpts);
   }
 }
 
+// ── 9. Parcours fonctionnels : points d'entrée et cohérence entre écrans ────
+{
+  console.log('▶ parcours fonctionnels');
+
+  // 9.1 — Le calendrier et la fiche détail doivent mener à la plante, même
+  //       lorsqu'elle n'est pas dans les 20 fiches rendues (315 cas sur 335).
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(async () => {
+      const rendues = [...document.querySelectorAll('.scrolly-section')].map(s => s.id.replace('section-', ''));
+      toggleCalMode();
+      selectCalMonth(7);
+      const items = [...document.querySelectorAll('#calList .cal-item')];
+      let cible = null;
+      for (const it of items) {
+        const id = ((it.getAttribute('onclick') || '').match(/gotoPlant\('([^']+)'\)/) || [])[1];
+        if (id && rendues.indexOf(id) < 0) { cible = id; break; }
+      }
+      if (!cible) return { aucuneCible: true };
+      gotoPlant(cible);
+      await new Promise(r => setTimeout(r, 600));
+      const modale = document.getElementById('v7-modal');
+      return {
+        cible, rendues: rendues.length, total: items.length,
+        calFerme: !document.body.classList.contains('cal-on'),
+        contenuAffiche: !!(modale && modale.classList.contains('open')),
+        titre: modale?.querySelector('.v7-h')?.textContent || '',
+      };
+    });
+    check('calendrier : une espèce hors pagination reste atteignable',
+      !r.aucuneCible && r.calFerme && r.contenuAffiche && !!r.titre, r);
+    await ctx.close();
+  }
+
+  // 9.2 — État d'arrosage : un exemplaire en retard doit remonter partout.
+  //       L'agrégat min(every)/max(last) écrit dans le journal ne peut pas
+  //       représenter ce cas ; tous les écrans doivent donc interroger le
+  //       même prédicat plutôt que de le recalculer chacun de leur côté.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(async () => {
+      const w = ms => new Promise(r => setTimeout(r, ms));
+      const id = plants[0].id; plants[0].inGarden = true; saveData();
+      window.openReminders(); await w(300);
+      document.querySelector('[data-sp-act="add"]').click(); await w(300);
+      const n1 = [...document.querySelectorAll('.sp-num')];
+      n1[0].value = '3'; n1[0].dispatchEvent(new Event('change', { bubbles: true })); await w(200);
+      const n2 = [...document.querySelectorAll('.sp-num')];
+      n2[1].value = '30'; n2[1].dispatchEvent(new Event('change', { bubbles: true })); await w(300);
+      document.querySelectorAll('[data-sp-act="water"]')[0].click(); await w(300); // 1er seulement
+      window.closeModal(); await w(200);
+      renderCatalog(); await w(400);
+      const brief = document.getElementById('p9BriefingMetrics').textContent;
+      return {
+        waterDue: window.waterDue(id),
+        briefingAFaire: parseInt((brief.match(/^(\d+)/) || [])[1], 10),
+        hub: (document.getElementById('fusionGardenPanel')?.textContent || ''),
+      };
+    });
+    check('arrosage : un exemplaire en retard remonte dans le briefing',
+      r.waterDue === true && r.briefingAFaire === 1, r);
+    check('arrosage : le hub reflète le même état',
+      /arroser aujourd’hui|arroser aujourd'hui/i.test(r.hub), r.hub.slice(0, 120));
+    await ctx.close();
+  }
+
+  // 9.3 — L'emplacement saisi dans le journal doit alimenter le filtre par
+  //       zone et l'étiquette de la fiche, sans attendre un rechargement.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const id = await page.evaluate(() => plants[0].id);
+    await page.evaluate(i => window.openJournal(i), id);
+    await page.waitForSelector('#p9JournalZone');
+    await page.fill('#p9JournalZone', 'Véranda');
+    await page.click('button[onclick^="window.p9SaveJournalRoutine"]');
+    await page.waitForTimeout(600);
+    const r = await page.evaluate(id => {
+      window.closeModal();
+      return {
+        options: [...document.getElementById('v7-f-zone').options].map(o => o.value),
+        chip: (document.getElementById('section-' + id)?.textContent || '').includes('Véranda'),
+      };
+    }, id);
+    check('journal : l’emplacement alimente le filtre par zone',
+      r.options.includes('Véranda'), r.options);
+    check('journal : l’emplacement apparaît sur la fiche', r.chip, r);
+    await ctx.close();
+  }
+
+  // 9.4 — Aucun point d'entrée mort : le badge « à arroser » doit être visible.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(async () => {
+      const w = ms => new Promise(r => setTimeout(r, ms));
+      const id = plants[0].id; plants[0].inGarden = true; saveData();
+      window.__hdvJournalUpdate(id, it => {
+        it.waterEvery = 2; it.lastWater = new Date(Date.now() - 10 * 86400000).toISOString();
+      });
+      window.checkReminders(false); await w(300);
+      const visible = el => {
+        if (!el) return false;
+        const s = getComputedStyle(el), b = el.getBoundingClientRect();
+        return s.display !== 'none' && s.visibility !== 'hidden' && b.width > 0 && b.height > 0;
+      };
+      const porteurs = [...document.querySelectorAll('.has-due')];
+      return {
+        anciensBoutons: !!document.getElementById('v7-remind') || !!document.getElementById('v7-theme'),
+        porteurs: porteurs.map(e => e.id || e.getAttribute('data-nav-action') || e.className),
+        auMoinsUnVisible: porteurs.some(visible),
+      };
+    });
+    check('navigation : plus de bouton d’en-tête mort', !r.anciensBoutons, r);
+    check('rappels : le badge « à arroser » est porté par un élément visible',
+      r.auMoinsUnVisible, r);
+    await ctx.close();
+  }
+
+  // 9.5 — La pagination ne doit pas repartir de zéro après une recherche.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(async () => {
+      const w = ms => new Promise(r => setTimeout(r, ms));
+      const n = () => document.querySelectorAll('.scrolly-section').length;
+      const initial = n();
+      document.getElementById('v8-loadmore').click(); await w(400);
+      const apresPlus = n();
+      const si = document.getElementById('searchInput');
+      si.value = 'rose'; si.dispatchEvent(new Event('input', { bubbles: true })); await w(500);
+      const pendant = n();
+      si.value = ''; si.dispatchEvent(new Event('input', { bubbles: true })); await w(500);
+      const apres = n();
+      // un vrai changement de filtre doit, lui, bien repartir à 20
+      document.getElementById('v7-f-type').value = "Plante d'intérieur";
+      document.getElementById('v7-f-type').dispatchEvent(new Event('change', { bubbles: true })); await w(400);
+      const apresFiltre = n();
+      return { initial, apresPlus, pendant, apres, apresFiltre };
+    });
+    check('pagination : conservée après une recherche effacée', r.apres === r.apresPlus, r);
+    check('pagination : réinitialisée sur un vrai changement de filtre',
+      r.apresFiltre <= 20, r);
+    await ctx.close();
+  }
+}
+
 // ── Bilan ───────────────────────────────────────────────────────────────────
 const realErrors = pageErrors.filter(e => !/ERR_FAILED|Failed to fetch|NetworkError|Load failed/i.test(e));
 check('aucune erreur JavaScript', realErrors.length === 0, realErrors.slice(0, 5));
