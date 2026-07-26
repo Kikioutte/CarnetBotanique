@@ -40,7 +40,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Ombelle bleue/blanche",
     "visu2": "Feuilles rubanées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Agapanthus — saponines, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -55,7 +55,11 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 8–12°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Agapanthus — saponines, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/elaine/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p003-viburnum-opulus",
@@ -242,7 +246,7 @@
     "ennemis": "Botrytis, tiges creuses fragiles.",
     "visu1": "Grandes trompettes colorées",
     "visu2": "Tige creuse à soutenir",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Hippeastrum — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -257,7 +261,12 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Hippeastrum — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ridderstjerne",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p010-nerine-bowdenii",
@@ -328,7 +337,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Spathe blanche immaculée",
     "visu2": "Spadice jaune central",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -342,7 +351,12 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/trumpet-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p013-zantedeschia-hybrides",
@@ -384,7 +398,7 @@
     "ennemis": "Botrytis. TOUTE LA PLANTE EST TOXIQUE.",
     "visu1": "Clochettes blanches parfumées",
     "visu2": "Grandes feuilles basales",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — cardénolides, vomissements, convulsions.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -393,14 +407,17 @@
     "w2": "Convallaria majalis",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Toxique — cardénolides, vomissements, convulsions.",
     "conservation": "Chambre climatique 2–5°C. Eau propre + conservateur floral.",
     "tempIdeale": "2–5°C",
     "precautions": "Surveiller le botrytis (éviter l'humidité stagnante).",
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lily-valley",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p015-scilla-peruviana",
@@ -456,7 +473,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/muscari-armeniacum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p017-ornithogalum-arabicum-o-thyrsoides",
@@ -658,7 +679,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/gerber-daisy",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p024-liatris-spicata",
@@ -745,7 +770,11 @@
     "tenueVase": "7–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/china-aster",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p027-echinacea-purpurea",
@@ -803,7 +832,11 @@
     "tenueVase": "7–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/pot-marigold",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p029-helianthus-annuus",
@@ -1020,7 +1053,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Nuage de petites fleurs blanches",
     "visu2": "Tiges très ramifiées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Gypsophila — saponines, symptômes non précisés.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1035,7 +1068,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Gypsophila — saponines, symptômes non précisés.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/babys-breath/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p037-dianthus-caryophyllus",
@@ -1049,7 +1086,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Fleurs à pétales frangés",
     "visu2": "Calice cylindrique",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — composé irritant et toxine non précisée, dermatite.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1064,7 +1101,12 @@
     "tenueVase": "7–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — composé irritant et toxine non précisée, dermatite.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/wild-carnation",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p038-dianthus-barbatus",
@@ -1078,7 +1120,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Corymbes bicolores plats",
     "visu2": "Bractées foliacées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Dianthus — composé irritant, vomissements, dermatite.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1093,7 +1135,12 @@
     "tenueVase": "7–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Dianthus — composé irritant, vomissements, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/eastern-star",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p039-sedum-spectabile",
@@ -1136,7 +1183,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Fleurs papilionacées parfumées",
     "visu2": "Vrilles grimpantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, convulsions, troubles neuromusculaires, démarche instable, perte d’appétit.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1151,7 +1198,11 @@
     "tenueVase": "5–7 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, convulsions, troubles neuromusculaires, démarche instable, perte d’appétit.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/sweet-pea/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p041-lupinus-hybrides",
@@ -1165,7 +1216,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Épis colorés dressés",
     "visu2": "Feuilles palmées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Lupinus — alcaloïdes, symptômes non précisés.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1180,7 +1231,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Lupinus — alcaloïdes, symptômes non précisés.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/lupine/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p042-eustoma-russelianum",
@@ -1337,7 +1392,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Épis floraux colorés",
     "visu2": "Floraison de bas en haut",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Gladiolus — principe toxique non précisé, troubles digestifs, salivation excessive, démarche instable, léthargie.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1352,7 +1407,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Gladiolus — principe toxique non précisé, troubles digestifs, salivation excessive, démarche instable, léthargie.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/gladiolas/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p048-iris-germanica",
@@ -1366,7 +1425,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Fleurs bicolores à barbe",
     "visu2": "3 pétales tombants + 3 dressés",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Iris — composé irritant, salivation excessive, vomissements, diarrhée, léthargie.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1380,7 +1439,11 @@
     "tenueVase": "5–7 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Iris — composé irritant, salivation excessive, vomissements, diarrhée, léthargie.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/iris/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p049-iris-xiphium",
@@ -1394,7 +1457,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Fleurs bleues/blanches/jaunes",
     "visu2": "Sans barbe",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Iris — composé irritant, salivation excessive, vomissements, diarrhée, léthargie.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1408,7 +1471,11 @@
     "tenueVase": "5–7 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Iris — composé irritant, salivation excessive, vomissements, diarrhée, léthargie.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/iris/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p050-molucella-laevis",
@@ -1480,7 +1547,7 @@
     "ennemis": "Botrytis, criocère. Retirer les étamines.",
     "visu1": "Trompettes blanches pures",
     "visu2": "Très parfumé",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — toxine non précisée, insuffisance rénale, vomissements, léthargie, décès.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1495,7 +1562,12 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — toxine non précisée, insuffisance rénale, vomissements, léthargie, décès.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/easter-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p053-tulipa-hybrides",
@@ -1509,7 +1581,7 @@
     "ennemis": "Botrytis, virus des tulipes.",
     "visu1": "Variétés simples/doubles/perroquet",
     "visu2": "Continue à grandir dans le vase",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Tulipa — principe toxique non précisé, salivation excessive, vomissements, diarrhée, abattement.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1523,7 +1595,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Tulipa — principe toxique non précisé, salivation excessive, vomissements, diarrhée, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/tulip",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p054-chamelaucium-uncinatum",
@@ -1609,7 +1686,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/garden-snapdragon",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p057-veronica-longifolia-v-spicata",
@@ -1857,7 +1938,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "H. niger blanc hivernal",
     "visu2": "H. orientalis coloré",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — bufadiénolides, salivation excessive, diarrhée, douleur abdominale, abattement.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1872,7 +1953,12 @@
     "tenueVase": "5–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — bufadiénolides, salivation excessive, diarrhée, douleur abdominale, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lenten-rose",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p066-ranunculus-asiaticus",
@@ -1886,7 +1972,7 @@
     "ennemis": "Botrytis, éthylène des fruits. Éviter courants d'air.",
     "visu1": "Fleurs très doubles colorées",
     "visu2": "Pétales fins en couches",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Ranunculus — protoanémonine et composé irritant, salivation excessive, vomissements, diarrhée, abattement.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1900,7 +1986,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Ranunculus — protoanémonine et composé irritant, salivation excessive, vomissements, diarrhée, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/buttercup",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p067-nigella-damascena",
@@ -2174,7 +2265,7 @@
     "ennemis": "Mucilages toxiques pour les autres fleurs. Botrytis.",
     "visu1": "Couronne jaune",
     "visu2": "Stocker séparément 24h",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2183,7 +2274,7 @@
     "w2": "Narcissus pseudonarcissus",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "prepa": "Vase séparé 24h (purger les mucilages).",
     "conservation": "Chambre climatique 2–5°C. Eau propre + conservateur floral.",
     "tempIdeale": "2–5°C",
@@ -2191,7 +2282,10 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/paper-white",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p077-narcissus-hybrides",
@@ -2205,7 +2299,7 @@
     "ennemis": "Mucilages toxiques pour les autres fleurs. Botrytis.",
     "visu1": "Variétés à corona variée",
     "visu2": "Stocker séparément 24h",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2214,7 +2308,7 @@
     "w2": "Narcissus",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "prepa": "Vase séparé 24h (purger les mucilages).",
     "conservation": "Chambre climatique 2–5°C. Eau propre + conservateur floral.",
     "tempIdeale": "2–5°C",
@@ -2222,7 +2316,10 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/paper-white",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p078-hyacinthus-orientalis",
@@ -2236,7 +2333,7 @@
     "ennemis": "Mucilages toxiques pour les autres fleurs. Botrytis.",
     "visu1": "Grappe florale très parfumée",
     "visu2": "Ne pas couper le bulbe",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — alcaloïdes, vomissements, diarrhée, tremblements, abattement.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2245,7 +2342,7 @@
     "w2": "Hyacinthus orientalis",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Toxique — alcaloïdes, vomissements, diarrhée, tremblements, abattement.",
     "prepa": "Vase séparé 24h (purger les mucilages).",
     "conservation": "Chambre climatique 2–5°C. Eau propre + conservateur floral.",
     "tempIdeale": "2–5°C",
@@ -2253,7 +2350,10 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/hyacinth",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p079-chrysanthemum-hybrides-santini-bonnie",
@@ -2267,7 +2367,7 @@
     "ennemis": "Botrytis, oïdium, pucerons, thrips.",
     "visu1": "Petits capitules multiples",
     "visu2": "Variétés santini/bonnie",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2282,7 +2382,12 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/mum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p080-chrysanthemum-hybrides-anastasia-shamroc",
@@ -2296,7 +2401,7 @@
     "ennemis": "Botrytis, oïdium, pucerons, thrips.",
     "visu1": "Grand capitule unique",
     "visu2": "Variétés déco/araignée",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2311,7 +2416,12 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/mum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p081-solidago-hybrides",
@@ -2467,7 +2577,7 @@
     "ennemis": "Botrytis, moniliose.",
     "visu1": "Fleurs doubles sur bois nu",
     "visu2": "Couleur rose vif",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Prunus — principe toxique non précisé, difficulté respiratoire, pupilles dilatées.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2481,7 +2591,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Prunus — principe toxique non précisé, difficulté respiratoire, pupilles dilatées.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/cherry",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p087-asclepias-tuberosa",
@@ -2583,7 +2698,7 @@
     "ennemis": "Botrytis. Latex irritant ou très toxique.",
     "visu1": "Grande fleur satinée",
     "visu2": "Étamines noires",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Papaver — alcaloïdes, troubles digestifs, ataxie.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2592,7 +2707,7 @@
     "w2": "Papaver orientale",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Genre Papaver — alcaloïdes, troubles digestifs, ataxie.",
     "prepa": "Brûler l'extrémité ou immerger 30 sec dans eau bouillante.",
     "conservation": "Chambre climatique 2–5°C. Eau propre + conservateur floral.",
     "tempIdeale": "2–5°C",
@@ -2600,7 +2715,9 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/poppy/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p091-polianthes-tuberosa",
@@ -3109,7 +3226,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Spathe orange et bleue",
     "visu2": "Ressemble à un oiseau exotique",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, vomissements, nausées.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -3124,7 +3241,12 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, vomissements, nausées.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/birds-tongue-flower",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p109-alpinia-purpurata",
@@ -3266,7 +3388,7 @@
     "ennemis": "Cochenilles, araignées rouges. Pourriture racinaire si excès d'eau.",
     "visu1": "S. trifasciata",
     "visu2": "S. cylindrica",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, vomissements, diarrhée, nausées.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3293,7 +3415,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, vomissements, diarrhée, nausées.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/snake-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p114-yucca-elephantipes",
@@ -3307,7 +3434,7 @@
     "ennemis": "Cochenilles, araignées rouges. Pourriture racinaire si excès d'eau.",
     "visu1": "Port en caudex",
     "visu2": "Feuilles rigides",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Yucca — saponines, vomissements, dermatite.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3334,7 +3461,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Yucca — saponines, vomissements, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/yucca",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p115-euphorbia-trigona-e-milii",
@@ -3348,7 +3480,7 @@
     "ennemis": "Cochenilles, araignées rouges. Sève irritante.",
     "visu1": "E. milii (couronne du Christ)",
     "visu2": "E. trigona (cierge)",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, irritation digestive, salivation excessive, vomissements, diarrhée.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3375,7 +3507,11 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, irritation digestive, salivation excessive, vomissements, diarrhée.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/crown-of-thorns/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p116-senecio-rowleyanus",
@@ -3430,7 +3566,7 @@
     "ennemis": "Cochenilles, araignées rouges. Pourriture racinaire si excès d'eau.",
     "visu1": "Fleurs en épi",
     "visu2": "Rosette d'aloe",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, vomissements, diarrhée, léthargie.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3457,7 +3593,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, vomissements, diarrhée, léthargie.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/aloe",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p118-echeveria-setosa",
@@ -3512,7 +3653,7 @@
     "ennemis": "Botrytis, oïdium, pucerons.",
     "visu1": "Fleurs groupées colorées",
     "visu2": "Feuilles charnues",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Kalanchoe — principe toxique non précisé, vomissements, diarrhée.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -3539,7 +3680,12 @@
     "temperature": "Min. 15°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Kalanchoe — principe toxique non précisé, vomissements, diarrhée.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/kalanchoe",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p120-crassula-arborescens",
@@ -3553,7 +3699,7 @@
     "ennemis": "Cochenilles, araignées rouges. Pourriture racinaire si excès d'eau.",
     "visu1": "Floraison blanche",
     "visu2": "Port arborescent",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — toxine non précisée, nausées.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3580,7 +3726,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — toxine non précisée, nausées.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/silver-jade-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p121-sedum-morganianum",
@@ -3621,7 +3772,11 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/burros-tail",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p122-opuntia-ficus-indica",
@@ -3881,7 +4036,7 @@
     "ennemis": "Cochenilles, pucerons, botrytis.",
     "visu1": "Ombelle orangée",
     "visu2": "Feuilles linéaires",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Clivia — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -3908,7 +4063,12 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Clivia — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/clivia-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p129-chamaedorea-elegans",
@@ -3949,7 +4109,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/reed-palm",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p130-chrysalidocarpus-lutescens",
@@ -4031,7 +4195,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/paradise-palm",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p132-cocos-nucifera",
@@ -4127,7 +4295,7 @@
     "ennemis": "Araignées rouges, cochenilles. Éviter eau calcaire.",
     "visu1": "D. marginata",
     "visu2": "D. fragrans",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré en hiver, copieux en été",
@@ -4154,7 +4322,12 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/cornstalk-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p135-nolina-recurvata",
@@ -4250,7 +4423,7 @@
     "ennemis": "Cochenilles, mouche blanche, botrytis.",
     "visu1": "Bractées rouges",
     "visu2": "Cyathes (vraie fleur)",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — composé irritant, vomissements.",
     "principes": "",
     "soleil": "Lumière forte",
     "eau": "Modéré",
@@ -4277,7 +4450,12 @@
     "temperature": "Min. 15°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — composé irritant, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/poinsettia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p138-stephanotis-floribunda",
@@ -4318,7 +4496,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/madagascar-jasmine",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p139-ceropegia-woodii",
@@ -4400,7 +4582,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/silver-heart",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p141-codiaeum-variegatum",
@@ -4414,7 +4600,7 @@
     "ennemis": "Araignées rouges, cochenilles. Chute feuilles si déplacé.",
     "visu1": "Feuillage bigarré",
     "visu2": "Variété de couleurs",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, irritation digestive, irritation cutanée.",
     "principes": "",
     "soleil": "Pleine lumière",
     "eau": "Modéré",
@@ -4441,7 +4627,11 @@
     "temperature": "Min. 15°C",
     "humidite": "≥70%",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, irritation digestive, irritation cutanée.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/apple-leaf-croton/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p142-saintpaulia-ionantha",
@@ -4496,7 +4686,7 @@
     "ennemis": "Araignées rouges, cochenilles. Chute feuilles si stress.",
     "visu1": "Port pleureur",
     "visu2": "Petites feuilles luisantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, symptômes non précisés.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré en hiver, copieux en été",
@@ -4523,7 +4713,12 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, symptômes non précisés.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/indian-rubber-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p144-ficus-elastica",
@@ -4537,7 +4732,7 @@
     "ennemis": "Cochenilles, araignées rouges.",
     "visu1": "Grandes feuilles brillantes",
     "visu2": "Bourgeon rouge apical",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré en hiver, copieux en été",
@@ -4564,7 +4759,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/rubber-tree-plant/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p145-ficus-microcarpa",
@@ -4578,7 +4777,7 @@
     "ennemis": "Cochenilles, araignées rouges.",
     "visu1": "Port bonsaï",
     "visu2": "Racines aériennes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré en hiver, copieux en été",
@@ -4605,7 +4804,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/rubber-tree-plant/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p146-ficus-pumila",
@@ -4619,7 +4822,7 @@
     "ennemis": "Cochenilles, araignées rouges.",
     "visu1": "Tapis de petites feuilles",
     "visu2": "Accrochage aux supports",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière modérée",
     "eau": "Modéré",
@@ -4646,7 +4849,11 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/rubber-tree-plant/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p147-ficus-lyrata",
@@ -4660,7 +4867,7 @@
     "ennemis": "Cochenilles, araignées rouges.",
     "visu1": "Feuilles en lyre",
     "visu2": "Port arborescent",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré en hiver, copieux en été",
@@ -4687,7 +4894,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/rubber-tree-plant/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p148-hypoestes-phyllostachya",
@@ -4728,7 +4939,11 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/polka-dot-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p149-aglaonema-commutatum",
@@ -4865,7 +5080,7 @@
     "ennemis": "Araignées rouges, cochenilles. SÈVE TRÈS IRRITANTE.",
     "visu1": "Feuilles tachetées",
     "visu2": "Port dressé",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -4892,7 +5107,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/variable-dieffenbachia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p153-philodendron-scandens-xanadu-selloum",
@@ -4906,7 +5126,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "P. scandens (liane)",
     "visu2": "P. xanadu (touffu)",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Philodendron — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -4933,7 +5153,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Philodendron — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/philodendron-pertusum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p154-epipremnum-pinnatum",
@@ -4988,7 +5213,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Fenestrations adultes",
     "visu2": "Grande feuille découpée",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5015,7 +5240,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p156-spathiphyllum-hybrides",
@@ -5070,7 +5300,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Feuilles trilobées",
     "visu2": "Formes variables selon âge",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5097,7 +5327,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/nephthytis",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p158-hedera-helix",
@@ -5111,7 +5346,7 @@
     "ennemis": "Araignées rouges si air sec, pucerons.",
     "visu1": "Port grimpant",
     "visu2": "Feuilles lobées",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, salivation excessive, vomissements, diarrhée, douleur abdominale.",
     "principes": "",
     "soleil": "Lumière modérée à vive",
     "eau": "Modéré",
@@ -5138,7 +5373,12 @@
     "temperature": "Min. 5°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, salivation excessive, vomissements, diarrhée, douleur abdominale.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sweetheart-ivy",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p159-schefflera-arboricola",
@@ -5193,7 +5433,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Ramilles plumeux",
     "visu2": "Baies rouges décoratives",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — toxine non précisée, vomissements, diarrhée, douleur abdominale, dermatite.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5220,7 +5460,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — toxine non précisée, vomissements, diarrhée, douleur abdominale, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/emerald-feather",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p161-aspidistra-elatior",
@@ -5261,7 +5506,11 @@
     "temperature": "Min. 5°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/cast-iron-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p162-chlorophytum-comosum",
@@ -5302,7 +5551,11 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/walking-anthericum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p163-cordyline-australis-c-fruticosa",
@@ -5316,7 +5569,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "C. fruticosa coloré",
     "visu2": "C. australis vert",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5343,7 +5596,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/palm-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p164-begonia-elatior",
@@ -5357,7 +5615,7 @@
     "ennemis": "Oïdium, botrytis, pucerons.",
     "visu1": "Fleurs doubles colorées",
     "visu2": "Feuilles brillantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5384,7 +5642,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p165-begonia-rex",
@@ -5398,7 +5661,7 @@
     "ennemis": "Oïdium, botrytis.",
     "visu1": "Feuilles métallisées",
     "visu2": "Coloris variés",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5425,7 +5688,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rex-begonia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p166-tradescantia-fluminensis",
@@ -5589,7 +5857,11 @@
     "temperature": "Min. 18°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/violet-slipper-gloxinia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p170-streptocarpus-hybrides",
@@ -5712,7 +5984,11 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/money-tree",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p173-calathea-makoyana",
@@ -6081,7 +6357,11 @@
     "temperature": "Min. 12°C",
     "humidite": "≥80%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/feather-palm",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p182-platycerium-alcicorne",
@@ -6122,7 +6402,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/platycerium-alcicorne",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p183-pteris-cretica",
@@ -6939,7 +7223,11 @@
     "arrosage": "Modéré",
     "temperature": "Min. 5°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/canary-date-palm",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p203-nerium-oleander",
@@ -6953,7 +7241,7 @@
     "ennemis": "Pucerons cotoneux, cochenilles. TOUTE LA PLANTE EST TOXIQUE.",
     "visu1": "Fleurs rose/rouge/blanc",
     "visu2": "Feuilles lancéolées",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — hétérosides cardiotoniques, salivation excessive, diarrhée, douleur abdominale, abattement.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré",
@@ -6962,7 +7250,7 @@
     "w2": "Nerium oleander",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Toxique — hétérosides cardiotoniques, salivation excessive, diarrhée, douleur abdominale, abattement.",
     "substrat": [
       {
         "m": "Terre de jardin",
@@ -6981,7 +7269,10 @@
     "arrosage": "Modéré",
     "temperature": "Min. 5°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/oleander",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p204-mandevilla-sanderi",
@@ -7035,7 +7326,7 @@
     "ennemis": "Pucerons, cochenilles.",
     "visu1": "Hampe florale blanche",
     "visu2": "Feuilles rigides pointues",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Yucca — saponines, vomissements, dermatite.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Régulier en période sèche",
@@ -7061,7 +7352,12 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "Min. -15°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Yucca — saponines, vomissements, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/yucca",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p206-begonia-semperflorens",
@@ -7075,7 +7371,7 @@
     "ennemis": "Oïdium, botrytis.",
     "visu1": "Floraison continue",
     "visu2": "Feuilles luisantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré",
@@ -7101,7 +7397,12 @@
     "arrosage": "Modéré",
     "temperature": "Min. 5°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p207-begonia-tuberhybrida",
@@ -7115,7 +7416,7 @@
     "ennemis": "Oïdium, botrytis.",
     "visu1": "Fleurs doubles",
     "visu2": "Tubercule de stockage",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré",
@@ -7141,7 +7442,12 @@
     "arrosage": "Modéré",
     "temperature": "Min. 5°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Begonia — oxalates de calcium solubles et oxalates de calcium, insuffisance rénale, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/begonia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p208-buxus-sempervirens",
@@ -7155,7 +7461,7 @@
     "ennemis": "Pyrale du buis (Cydalima perspectalis).",
     "visu1": "Fleurs jaune-vert discrètes",
     "visu2": "Petites feuilles persistantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Buxus — alcaloïdes, vomissements, diarrhée, convulsions.",
     "principes": "",
     "soleil": "Mi-ombre",
     "eau": "Régulier en période sèche",
@@ -7181,7 +7487,12 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Buxus — alcaloïdes, vomissements, diarrhée, convulsions.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/boxwood",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p209-sedum-sieboldii",
@@ -7381,7 +7692,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "Min. -15°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rosemary",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p214-salvia-officinalis",
@@ -7421,7 +7736,11 @@
     "arrosage": "Modéré",
     "temperature": "Min. 5°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sage",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p215-thymus-vulgaris",
@@ -7461,7 +7780,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "Min. -20°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/thyme",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p216-olea-europaea",
@@ -7595,7 +7918,7 @@
     "ennemis": "Pucerons, cochenilles.",
     "visu1": "H. niger (blanc)",
     "visu2": "H. orientalis (rose/pourpre)",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — bufadiénolides, salivation excessive, diarrhée, douleur abdominale, abattement.",
     "principes": "",
     "soleil": "Mi-ombre",
     "eau": "Régulier en période sèche",
@@ -7621,7 +7944,12 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "Min. -20°C",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — bufadiénolides, salivation excessive, diarrhée, douleur abdominale, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lenten-rose",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p220-petroselinum-sativum",
@@ -7835,7 +8163,7 @@
     "ennemis": "Pucerons, oïdium.",
     "visu1": "Variétés florales multiples",
     "visu2": "Feuillage découpé",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -7861,7 +8189,12 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Chrysanthemum — composé irritant, salivation excessive, vomissements, diarrhée, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/mum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p226-tagetes-patula",
@@ -7875,7 +8208,7 @@
     "ennemis": "Araignées rouges. Répulsive contre nématodes.",
     "visu1": "Fleurs orange/jaune",
     "visu2": "Feuillage odorant",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Tagetes — principe toxique non précisé, symptômes non précisés.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -7901,7 +8234,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Tagetes — principe toxique non précisé, symptômes non précisés.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/marigold/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p227-tagetes-erecta",
@@ -7915,7 +8252,7 @@
     "ennemis": "Araignées rouges.",
     "visu1": "Gros capitules jaunes",
     "visu2": "Port dressé",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Tagetes — principe toxique non précisé, symptômes non précisés.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -7941,7 +8278,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Tagetes — principe toxique non précisé, symptômes non précisés.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/marigold/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p228-bellis-perennis",
@@ -8075,7 +8416,7 @@
     "ennemis": "Cochenilles, oïdium.",
     "visu1": "E. japonicus panaché",
     "visu2": "E. fortunei couvre-sol",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Euonymus — cardénolides, troubles du rythme cardiaque, troubles digestifs, collapsus.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -8101,7 +8442,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Euonymus — cardénolides, troubles du rythme cardiaque, troubles digestifs, collapsus.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/euonymus/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p232-aucuba-japonica",
@@ -8221,7 +8566,11 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/basil",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p235-mentha-hybrides",
@@ -8755,7 +9104,7 @@
     "ennemis": "Pucerons. Fruits toxiques!",
     "visu1": "Baies orange-rouge toxiques",
     "visu2": "Petites fleurs blanches",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — principe toxique non précisé, dépression respiratoire, convulsions, abattement.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -8764,7 +9113,7 @@
     "w2": "Solanum pseudocapsicum",
     "inGarden": true,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Toxique — principe toxique non précisé, dépression respiratoire, convulsions, abattement.",
     "substrat": [
       {
         "m": "Terre de jardin",
@@ -8783,7 +9132,10 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/winter-cherry",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p249-verbena-hybrides",
@@ -9037,7 +9389,7 @@
     "ennemis": "Fusariose du bulbe, cochenilles.",
     "visu1": "Grandes trompettes colorées",
     "visu2": "Bulbe imposant",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Hippeastrum — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9059,7 +9411,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "février à avril — plantation ou rempotage avant la croissance",
-    "engrais": "avril à août — pendant la croissance et la floraison"
+    "engrais": "avril à août — pendant la croissance et la floraison",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Hippeastrum — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ridderstjerne",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p256-narcissus-pseudonarcissus",
@@ -9073,7 +9430,7 @@
     "ennemis": "Fusariose, nématodes du bulbe.",
     "visu1": "Fleur jaune à couronne",
     "visu2": "Feuilles rubanées",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9097,7 +9454,10 @@
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
     "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin"
+    "toxDetail": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/paper-white",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p257-narcissus-hybrides",
@@ -9111,7 +9471,7 @@
     "ennemis": "Fusariose, nématodes.",
     "visu1": "Variétés à corona variée",
     "visu2": "Corolle à corona",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9135,7 +9495,10 @@
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
     "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin"
+    "toxDetail": "Genre Narcissus — alcaloïdes et lycorine, troubles du rythme cardiaque, vomissements, diarrhée, tremblements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/paper-white",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p258-galanthus-nivalis",
@@ -9185,7 +9548,7 @@
     "ennemis": "Fusariose du bulbe, pourriture si sol humide.",
     "visu1": "Spathe blanche",
     "visu2": "Spadice jaune",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière forte",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9207,7 +9570,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "Min. 10°C",
     "rempotage": "février à avril — plantation ou rempotage avant la croissance",
-    "engrais": "avril à août — pendant la croissance et la floraison"
+    "engrais": "avril à août — pendant la croissance et la floraison",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/trumpet-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p260-zantedeschia-hybrides",
@@ -9257,7 +9625,7 @@
     "ennemis": "Fusariose du bulbe, pourriture si sol humide.",
     "visu1": "Grappe florale très parfumée",
     "visu2": "Bulbe tuniqué",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — alcaloïdes, vomissements, diarrhée, tremblements, abattement.",
     "principes": "",
     "soleil": "Lumière forte",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9281,7 +9649,10 @@
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
     "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin"
+    "toxDetail": "Toxique — alcaloïdes, vomissements, diarrhée, tremblements, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/hyacinth",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p262-muscari-armeniacum",
@@ -9317,7 +9688,11 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
-    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage"
+    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/muscari-armeniacum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p263-crocus-vernus",
@@ -9331,7 +9706,7 @@
     "ennemis": "Rongeurs (souris, écureuils).",
     "visu1": "Fleurs précoces en gobelet",
     "visu2": "Pistil orange vif",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Crocus — principe toxique non précisé, salivation excessive, vomissements, diarrhée, perte d’appétit.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9353,7 +9728,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
-    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage"
+    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Crocus — principe toxique non précisé, salivation excessive, vomissements, diarrhée, perte d’appétit.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/crocus/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p264-lilium-hybrides",
@@ -9403,7 +9783,7 @@
     "ennemis": "Botrytis tulipae, fusariose.",
     "visu1": "Fleurs variées",
     "visu2": "Bulbe tuniqué brun",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Tulipa — principe toxique non précisé, salivation excessive, vomissements, diarrhée, abattement.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9425,7 +9805,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "septembre à novembre — plantation ou renouvellement des bulbes",
-    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage"
+    "engrais": "février à mai — pendant la croissance, arrêter après jaunissement du feuillage",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Tulipa — principe toxique non précisé, salivation excessive, vomissements, diarrhée, abattement.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/tulip",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p266-cyclamen-persicum",
@@ -9439,7 +9824,7 @@
     "ennemis": "Botrytis, fusariose du corme.",
     "visu1": "Fleurs en oreilles de lapin",
     "visu2": "Feuilles marbrées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Cyclamen — saponines, vomissements, diarrhée, convulsions, décès.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9461,7 +9846,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "août à septembre — au redémarrage de la végétation",
-    "engrais": "septembre à février — faiblement dosé pendant la croissance"
+    "engrais": "septembre à février — faiblement dosé pendant la croissance",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Cyclamen — saponines, vomissements, diarrhée, convulsions, décès.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sowbread",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p267-calluna-vulgaris",
@@ -9557,7 +9947,7 @@
     "ennemis": "Chlorose si calcaire, botrytis.",
     "visu1": "Floraison abondante hivernale",
     "visu2": "Petites feuilles coriaces",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Rhododendron — principe toxique non précisé, salivation excessive, vomissements, diarrhée, hypotension.",
     "principes": "",
     "soleil": "Mi-ombre",
     "eau": "Abondant — eau non calcaire",
@@ -9584,7 +9974,12 @@
     "temperature": "8–15°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — tous les 2 à 3 ans en pot, dans un substrat acide",
-    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice"
+    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Rhododendron — principe toxique non précisé, salivation excessive, vomissements, diarrhée, hypotension.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rosebay",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p270-azalea-japonica",
@@ -9639,7 +10034,7 @@
     "ennemis": "Chlorose calcaire, phytophthora.",
     "visu1": "Grandes ombelles florales",
     "visu2": "Feuilles coriaces persistantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Rhododendron — principe toxique non précisé, salivation excessive, vomissements, diarrhée, hypotension.",
     "principes": "",
     "soleil": "Mi-ombre",
     "eau": "Abondant — eau non calcaire",
@@ -9666,7 +10061,12 @@
     "temperature": "8–15°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — tous les 2 à 3 ans en pot, dans un substrat acide",
-    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice"
+    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Rhododendron — principe toxique non précisé, salivation excessive, vomissements, diarrhée, hypotension.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rosebay",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p272-genista-fragrans-cytisus-hybrides",
@@ -9721,7 +10121,7 @@
     "ennemis": "Pucerons, botrytis. Couleur varie selon pH du sol.",
     "visu1": "H. macrophylla (boule)",
     "visu2": "H. paniculata (épi)",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Hydrangea — composés cyanogènes, difficulté respiratoire, salivation excessive, vomissements, convulsions.",
     "principes": "",
     "soleil": "Mi-ombre",
     "eau": "Abondant — eau non calcaire",
@@ -9748,7 +10148,11 @@
     "temperature": "8–15°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — tous les 2 à 3 ans en pot, dans un substrat acide",
-    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice"
+    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Hydrangea — composés cyanogènes, difficulté respiratoire, salivation excessive, vomissements, convulsions.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/hydrangea/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p274-gardenia-jasminoides",
@@ -9762,7 +10166,7 @@
     "ennemis": "Cochenilles, araignées rouges, chlorose calcaire.",
     "visu1": "Fleurs blanches très parfumées",
     "visu2": "Feuilles coriaces luisantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe toxique non précisé, vomissements, diarrhée.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Abondant — eau non calcaire",
@@ -9789,7 +10193,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — tous les 2 à 3 ans en pot, dans un substrat acide",
-    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice"
+    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe toxique non précisé, vomissements, diarrhée.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/gardenia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p275-camellia-japonica",
@@ -9830,7 +10239,11 @@
     "temperature": "Min. -10°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — tous les 2 à 3 ans en pot, dans un substrat acide",
-    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice"
+    "engrais": "mars à juin — engrais pour plantes acidophiles selon la notice",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/thea-japonica",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p276-viburnum-tinus",
@@ -9930,7 +10343,7 @@
     "ennemis": "Botrytis, desséchement.",
     "visu1": "Feuilles lobées persistantes",
     "visu2": "Tiges flexibles",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, salivation excessive, vomissements, diarrhée, douleur abdominale.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -9959,7 +10372,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, salivation excessive, vomissements, diarrhée, douleur abdominale.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sweetheart-ivy",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p279-fatsia-japonica",
@@ -10002,7 +10420,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/japanese-aralia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p280-chamaedorea-elegans",
@@ -10045,7 +10467,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/reed-palm",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p281-cocos-nucifera",
@@ -10174,7 +10600,11 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/cast-iron-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p284-asparagus-setaceus-a-densiflorus",
@@ -10188,7 +10618,7 @@
     "ennemis": "Botrytis, desséchement.",
     "visu1": "Feuillage plumeux léger",
     "visu2": "Texture aérienne",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — toxine non précisée, vomissements, diarrhée, douleur abdominale, dermatite.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -10217,7 +10647,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — toxine non précisée, vomissements, diarrhée, douleur abdominale, dermatite.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/emerald-feather",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p285-asparagus-virgatus",
@@ -10488,7 +10923,7 @@
     "ennemis": "TOXIQUE : toutes les parties.",
     "visu1": "Palmes luisantes rigides",
     "visu2": "Folioles en épée",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Toxique — cycasine, troubles digestifs, vomissements, diarrhée, convulsions.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -10497,7 +10932,7 @@
     "w2": "Cycas revoluta",
     "inGarden": false,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Toxique — cycasine, troubles digestifs, vomissements, diarrhée, convulsions.",
     "substrat": [
       {
         "m": "Terre légère",
@@ -10518,7 +10953,9 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/sago-palm/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p292-galax-urceola",
@@ -10876,7 +11313,7 @@
     "ennemis": "Botrytis, desséchement.",
     "visu1": "E. cinerea (feuilles rondes)",
     "visu2": "E. gunnii (feuilles oblongues)",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Eucalyptus — huiles essentielles, nausées.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -10905,7 +11342,11 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Eucalyptus — huiles essentielles, nausées.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/eucalyptus/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p301-pandanus-baptistii",
@@ -11263,7 +11704,7 @@
     "ennemis": "Botrytis, desséchement.",
     "visu1": "Grandes feuilles luisantes",
     "visu2": "Baies noires toxiques",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Prunus — principe toxique non précisé, difficulté respiratoire, pupilles dilatées.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -11292,7 +11733,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Prunus — principe toxique non précisé, difficulté respiratoire, pupilles dilatées.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/cherry",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p310-typha-latifolia",
@@ -11435,7 +11881,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Feuilles très découpées",
     "visu2": "Végétal tropical",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Philodendron — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -11464,7 +11910,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Philodendron — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/philodendron-pertusum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p314-monstera-deliciosa",
@@ -11478,7 +11929,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Feuilles à fenestrations",
     "visu2": "Feuille tropicale iconique",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -11507,7 +11958,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p315-anthurium-andreanum",
@@ -11607,7 +12063,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Feuilles rubanées réfléchies",
     "visu2": "Port en spirale",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -11636,7 +12092,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/malaysian-dracaena",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p318-dracaena-sanderiana",
@@ -11650,7 +12111,7 @@
     "ennemis": "Chlorose si eau calcaire.",
     "visu1": "Tiges en section noeuds",
     "visu2": "Feuilles panachées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Dracaena — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -11678,7 +12139,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Dracaena — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ribbon-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p319-ficus-benghalensis",
@@ -11692,7 +12158,7 @@
     "ennemis": "Cochenilles, araignées rouges. Chute de feuilles si courant d'air ou excès d'eau. Latex irritant.",
     "visu1": "Grandes feuilles vert mat veloutées",
     "visu2": "Nervures claires marquées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -11719,7 +12185,11 @@
     "temperature": "Min. 12°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Ficus — composé irritant, irritation buccale, troubles digestifs, salivation excessive, vomissements.",
+    "toxSource": "Pet Poison Helpline — https://www.petpoisonhelpline.com/poison/rubber-tree-plant/",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p320-alocasia-zebrina",
@@ -11733,7 +12203,7 @@
     "ennemis": "Araignées rouges, cochenilles. SÈVE TOXIQUE (oxalates de calcium).",
     "visu1": "Pétioles rayés type zèbre",
     "visu2": "Feuilles sagittées dressées",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Alocasia — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -11742,7 +12212,7 @@
     "w2": "Alocasia zebrina",
     "inGarden": true,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Genre Alocasia — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "substrat": [
       {
         "m": "Terreau universel",
@@ -11762,7 +12232,10 @@
     "temperature": "Min. 16°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/alocasia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p321-alocasia-sanderiana",
@@ -11776,7 +12249,7 @@
     "ennemis": "Araignées rouges, cochenilles. SÈVE TOXIQUE (oxalates de calcium).",
     "visu1": "Feuilles sagittées vert sombre",
     "visu2": "Nervures et marges argentées",
-    "toxicite": "Toxique — manipuler avec soin",
+    "toxicite": "Genre Alocasia — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -11785,7 +12258,7 @@
     "w2": "Alocasia sanderiana",
     "inGarden": true,
     "toxPets": "toxic",
-    "toxDetail": "Toxique — manipuler avec soin",
+    "toxDetail": "Genre Alocasia — oxalates de calcium insolubles, irritation buccale, salivation excessive, vomissements.",
     "substrat": [
       {
         "m": "Terreau universel",
@@ -11805,7 +12278,10 @@
     "temperature": "Min. 16°C",
     "humidite": "≥70%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/alocasia",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p322-dracaena-surculosa",
@@ -11819,7 +12295,7 @@
     "ennemis": "Araignées rouges, cochenilles. Éviter eau calcaire.",
     "visu1": "Feuilles ovales mouchetées de jaune",
     "visu2": "Tiges fines ramifiées",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — toxine non précisée, salivation excessive, vomissements, douleur abdominale, faiblesse.",
     "principes": "",
     "soleil": "Lumière modérée à vive",
     "eau": "Modéré",
@@ -11846,7 +12322,12 @@
     "temperature": "Min. 13°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — toxine non précisée, salivation excessive, vomissements, douleur abdominale, faiblesse.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/gold-dust-dracaena",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p323-albuca-bracteata",
@@ -11983,7 +12464,7 @@
     "ennemis": "Pucerons, aleurodes, mildiou. Feuillage et fruits verts toxiques.",
     "visu1": "Grandes feuilles cordées veloutées",
     "visu2": "Fruits ovoïdes rouge-orangé",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Solanum — saponines, troubles digestifs, salivation excessive, diarrhée, faiblesse.",
     "principes": "",
     "soleil": "Lumière vive",
     "eau": "Modéré",
@@ -12010,7 +12491,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Solanum — saponines, troubles digestifs, salivation excessive, diarrhée, faiblesse.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/nightshade",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p327-crassula-multicava",
@@ -12065,7 +12551,7 @@
     "ennemis": "Cochenilles. Pourriture racinaire si excès d'eau.",
     "visu1": "Feuille unique très large en nageoire",
     "visu2": "Marbrures vert clair/foncé",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Dracaena — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -12092,7 +12578,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Dracaena — saponines, salivation excessive, vomissements, abattement, perte d’appétit.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/ribbon-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p329-coleus-scutellarioides",
@@ -12174,7 +12665,11 @@
     "temperature": "Min. 15°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rhynchophorum",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p331-monstera-adansonii",

@@ -664,6 +664,7 @@ body.flash-on .flashcard-overlay {
 .tag-inv    { background:#fff3df; border-color:#f0cf9a; color:#9a6212; }
 .tag-garden { background:#e8f3e6; border-color:#a8cf9f; color:#2d6a31; }
 .tag-unknown{ background:#f1eee8; border-color:#c9bfa9; color:#5c4d31; }
+.pd-source{display:inline-block;margin-top:3px;opacity:.72;font-size:.72rem;font-style:italic;line-height:1.4}
 
 /* SUBSTRAT BARRE VISUELLE */
 .substrat-bar    { display:flex; height:11px; border-radius:6px; overflow:hidden; border:1px solid rgba(194,162,106,0.25); margin:6px 0 4px; }

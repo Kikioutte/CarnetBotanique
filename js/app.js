@@ -2544,6 +2544,14 @@ function openPlantDetail(id){
     + _pdRow('Rusticité', p.rusticite) + _pdRow('<i class="fa-solid fa-seedling" aria-hidden="true"></i> Floraison', p.fl_texte)
     + _pdRow('<i class="fa-solid fa-sun" aria-hidden="true"></i> Exposition', exposi) + _pdRow('<i class="fa-solid fa-droplet" aria-hidden="true"></i> Arrosage', arrosa)
     + _pdRow('Humidité', p.humidite) + _pdRow('Température', p.temperature)
+    // Une information de toxicité n'a de valeur que si l'on peut remonter à sa
+    // source : la fiche indique donc d'où vient le classement et à quelle date.
+    + (p.toxSource ? '<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">'
+        + (plantIsToxic(p) ? 'Toxicité animaux' : 'Innocuité vérifiée') + '</span>'
+        + '<span class="tech-val">' + esc(p.toxDetail || (plantIsToxic(p) ? 'Toxique' : 'Non toxique'))
+        + (p.toxAnimaux ? ' — ' + esc(p.toxAnimaux) : '')
+        + '<br><small class="pd-source">Source : ' + esc(String(p.toxSource).split(' — ')[0])
+        + (p.toxSourceDate ? ', consultée le ' + esc(p.toxSourceDate) : '') + '</small></span></div>' : '')
     + _pdRow('<i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage', p.rempotage) + _pdRow('<i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais', p.engrais)
     + _pdRow('<i class="fa-solid fa-flask" aria-hidden="true"></i> Principes actifs', p.principes)
     + (subBar ? '<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">Substrat conseillé</span>'+subBar+'</div>' : '')
