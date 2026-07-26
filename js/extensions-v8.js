@@ -219,8 +219,16 @@
     var spark='<div class="v8-spark">'+days.map(function(k){var h=hist[k]||{ok:0,no:0};var okh=Math.round(h.ok/maxd*54),noh=Math.round(h.no/maxd*54);var dd=k.slice(8);return '<div class="col" title="'+k+' : '+h.ok+' OK / '+h.no+' KO"><div class="ok" style="height:'+okh+'px"></div><div class="no" style="height:'+noh+'px"></div><div class="d">'+dd+'</div></div>';}).join('')+'</div>';
     var byReg={};getPlants().forEach(function(p){var r=p.region||'\u2014';byReg[r]=(byReg[r]||0)+1;});var regs=Object.keys(byReg).map(function(k){return [k,byReg[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,6);var rmax=regs.length?regs[0][1]:1;
     var regHTML=regs.map(function(r){return '<div class="v8-bar"><span class="lbl" title="'+esc2(r[0])+'">'+esc2(r[0])+'</span><span class="track"><span class="fill" style="width:'+Math.round(r[1]/rmax*100)+'%"></span></span><span class="num">'+r[1]+'</span></div>';}).join('');
-    var safe=getPlants().filter(function(p){return !plantIsToxic(p);}).length;var toxc=getPlants().length-safe;var tt=safe+toxc||1;
-    var toxHTML='<div class="v8-bar"><span class="lbl">'+'Non toxiques'+'</span><span class="track"><span class="fill" style="width:'+Math.round(safe/tt*100)+'%;background:var(--sage-green)"></span></span><span class="num">'+safe+'</span></div>'+'<div class="v8-bar"><span class="lbl">'+'Toxiques'+'</span><span class="track"><span class="fill" style="width:'+Math.round(toxc/tt*100)+'%;background:var(--terracotta)"></span></span><span class="num">'+toxc+'</span></div>';
+    // Trois barres : l'ancienne version additionnait « non documenté » avec
+    // « sans danger » et annonçait 321 fiches inoffensives, ce qui était faux.
+    var safe=getPlants().filter(function(p){return plantToxicity(p)==='safe';}).length;
+    var toxc=getPlants().filter(function(p){return plantToxicity(p)==='toxic';}).length;
+    var unk=getPlants().filter(function(p){return plantToxicity(p)==='unknown';}).length;
+    var tt=safe+toxc+unk||1;
+    function toxBar(label,n,color){return '<div class="v8-bar"><span class="lbl">'+label+'</span><span class="track"><span class="fill" style="width:'+Math.round(n/tt*100)+'%;background:'+color+'"></span></span><span class="num">'+n+'</span></div>';}
+    var toxHTML=toxBar('Sans danger confirme',safe,'var(--sage-green)')
+               +toxBar('Toxiques',toxc,'var(--terracotta)')
+               +toxBar('Non renseignees',unk,'var(--gold)');
     box.innerHTML='<div class="v8-panel"><h4><i class="fa-solid fa-layer-group"></i> '+'Progression (revision espacee)'+'</h4>'+leitHTML+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-chart-column"></i> '+'Quiz \u2014 14 derniers jours'+'</h4>'+spark+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-earth-europe"></i> '+'Top regions'+'</h4>'+regHTML+'</div>'+'<div class="v8-panel"><h4><i class="fa-solid fa-triangle-exclamation"></i> '+'Toxicite'+'</h4>'+toxHTML+'</div>';
   }
 

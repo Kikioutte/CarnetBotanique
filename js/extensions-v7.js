@@ -38,9 +38,12 @@ var advFilters={fam:'',type:'',tox:'',zone:'',inv:''},advSort='default';
 window.__advFilter=function(p){
   if(advFilters.fam&&p.famille!==advFilters.fam)return false;
   if(advFilters.type&&p.type!==advFilters.type)return false;
-  var _isToxic=plantIsToxic(p); // prédicat partagé (app.js) — même réponse sur tous les écrans
-  if(advFilters.tox==='toxic'&&!_isToxic)return false;
-  if(advFilters.tox==='safe'&&_isToxic)return false;
+  var _tox=plantToxicity(p); // prédicat partagé (app.js) — même réponse sur tous les écrans
+  if(advFilters.tox==='toxic'&&_tox!=='toxic')return false;
+  // « Sans danger » exige une innocuité explicitement documentée, jamais une
+  // simple absence d'information (cf. plantToxicity dans app.js).
+  if(advFilters.tox==='safe'&&_tox!=='safe')return false;
+  if(advFilters.tox==='unknown'&&_tox!=='unknown')return false;
   if(advFilters.inv==='invasive'&&!p.invasive)return false;
   if(advFilters.inv==='noninvasive'&&p.invasive)return false;
   if(advFilters.zone){var z=(journal[p.id]&&journal[p.id].zone)||'';if(z!==advFilters.zone)return false;}
@@ -83,7 +86,7 @@ function buildToolbar(){
    '<div class="v7-tb-group">'+
    '<select id="v7-f-fam" aria-label="Filtrer par famille"><option value="">Toutes familles</option>'+fams.map(opt).join('')+'</select>'+
    '<select id="v7-f-type" aria-label="Filtrer par type"><option value="">Tous types</option>'+types.filter(Boolean).map(opt).join('')+'</select>'+
-   '<select id="v7-f-tox" aria-label="Filtrer par toxicité pour les animaux"><option value="">Animaux : toutes</option><option value="safe">Sans danger</option><option value="toxic">Toxiques</option></select>'+
+   '<select id="v7-f-tox" aria-label="Filtrer par toxicité pour les animaux"><option value="">Animaux : toutes</option><option value="safe">Sans danger confirmé</option><option value="toxic">Toxiques</option><option value="unknown">Toxicité non renseignée</option></select>'+
    '<select id="v7-f-inv" aria-label="Filtrer par caractère invasif"><option value="">Invasive : toutes</option><option value="invasive">Invasives</option><option value="noninvasive">Non invasives</option></select>'+
    '<select id="v7-f-zone" aria-label="Filtrer par zone du jardin"><option value="">Toutes zones</option></select>'+
    '<select id="v7-sort" aria-label="Trier les espèces"><option value="default">Tri par defaut</option><option value="nom">Nom (A-Z)</option><option value="nom-desc">Nom (Z-A)</option><option value="fam">Famille</option></select>'+
@@ -175,6 +178,10 @@ window.saveJournalMeta=function(id){var j=J(id);var z=$('v7-zone'),w=$('v7-water
 
 /* ---------- Rappels d'arrosage + notifications ---------- */
 function waterDue(id){var j=journal[id];if(!j||!j.waterEvery)return false;if(!j.lastWater)return true;var last=new Date(j.lastWater).getTime();return (Date.now()-last)>=j.waterEvery*86400000;}
+/* Exposé pour que v9 puisse déléguer aux plantes sans exemplaire enregistré :
+   sans cela son `origWaterDue` valait undefined et window.waterDue renvoyait
+   toujours false. Les appels internes ci-dessous utilisent la version locale. */
+window.waterDue=waterDue;
 window.setWater=function(id,v){var j=J(id);j.waterEvery=parseInt(v,10)||0;saveJournal();};
 window.waterNow=function(id){var j=J(id);j.lastWater=new Date().toISOString();saveJournal();openReminders();toast('Arrosage enregistre');};
 window.enableNotif=function(){if(!('Notification' in window)){toast('Notifications non supportees');return;}Notification.requestPermission().then(function(p){if(p==='granted'){toast('Notifications activees');checkReminders(true);}});};
@@ -215,6 +222,7 @@ window.v7Import=function(){var inp=$('v7-file');if(inp)inp.click();};
    jamais pouvoir laisser localStorage dans un état qui casse l'app au rechargement.
    Le jeu de données critique (herbier_plants_data_v4) doit être un tableau de fiches
    valides ; l'état précédent est conservé sous hdv_prev_plants pour rollback (cf. loadData). */
+var IMPORT_PROTECTED_KEYS=['herbier_gemini_key'];
 function validPlantsJSON(str){
   try{
     var arr=JSON.parse(str);
@@ -239,11 +247,26 @@ function importHandler(e){
       var entries=[];
       Object.keys(data).forEach(function(k){
         if(k.indexOf('herbier')!==0&&k.indexOf('hdv_')!==0)return;
+        // Clés qui ne sont PAS des données de carnet : un fichier tiers ne doit
+        // jamais pouvoir y injecter une valeur (la clé API partait sinon sur le
+        // compte de l'auteur du fichier lors des appels d'enrichissement).
+        if(IMPORT_PROTECTED_KEYS.indexOf(k)>=0)return;
         var val=data[k];var str=(typeof val==='string')?val:JSON.stringify(val);
         if(k==='herbier_plants_data_v4'&&!validPlantsJSON(str))throw new Error('plantes invalides');
         entries.push([k,str]);
       });
       if(!entries.length)throw new Error('aucune donnée Herbier');
+      // Le remplacement est intégral et non réversible depuis l'interface : on demande.
+      var incoming=null;
+      try{ var raw=data.herbier_plants_data_v4; if(raw) incoming=JSON.parse(raw).length; }catch(cnt){}
+      if(incoming!==null){
+        var actuelles=(typeof plants!=='undefined'&&Array.isArray(plants))?plants.length:0;
+        if(!window.confirm('Remplacer vos '+actuelles+' fiche(s) par les '+incoming+' fiche(s) du fichier ?\n\n'+
+                           'Une copie de secours de vos fiches actuelles sera conservée.')){
+          toast('Import annulé — rien n\'a été modifié');
+          return;
+        }
+      }
       // 2e passe : sauvegarde de l'état courant puis écriture
       try{var cur=localStorage.getItem('herbier_plants_data_v4');if(cur)localStorage.setItem('hdv_prev_plants',cur);}catch(bk){}
       entries.forEach(function(kv){localStorage.setItem(kv[0],kv[1]);});

@@ -663,6 +663,7 @@ body.flash-on .flashcard-overlay {
 .tag-tox    { background:#fde8e8; border-color:#eaa9a9; color:#9b2c2c; }
 .tag-inv    { background:#fff3df; border-color:#f0cf9a; color:#9a6212; }
 .tag-garden { background:#e8f3e6; border-color:#a8cf9f; color:#2d6a31; }
+.tag-unknown{ background:#f1eee8; border-color:#c9bfa9; color:#5c4d31; }
 
 /* SUBSTRAT BARRE VISUELLE */
 .substrat-bar    { display:flex; height:11px; border-radius:6px; overflow:hidden; border:1px solid rgba(194,162,106,0.25); margin:6px 0 4px; }
@@ -727,6 +728,7 @@ body.theme-dark .form-tabs { border-bottom-color:rgba(194,162,106,0.15); }
 body.theme-dark .tag-safe { background:rgba(34,104,63,0.15); }
 body.theme-dark .tag-tox  { background:rgba(155,44,44,0.15); }
 body.theme-dark .tag-inv  { background:rgba(154,98,18,0.15); }
+body.theme-dark .tag-unknown { background:rgba(194,162,106,0.14); border-color:rgba(194,162,106,0.38); color:#E4D9C2; }
 
 /* TOAST NOTIFICATION */
 #toast {

@@ -174,7 +174,13 @@ function loadData() {
     return fetch('plants.json')
       .then(function(r) { return r.json(); })
       .then(function(base) {
-        plants = base;
+        // inGarden est un état UTILISATEUR, pas une donnée de référence : le catalogue
+        // de base en contenait 39 à true, ce qui livrait un « Mon Jardin » déjà rempli
+        // et rendait l'état vide inatteignable. On neutralise à l'amorçage — les
+        // collections déjà enregistrées dans localStorage ne passent pas par ici.
+        plants = Array.isArray(base)
+          ? base.map(function (p) { return Object.assign({}, p, { inGarden: false }); })
+          : [];
         _finish();
         saveData();
         catalogLoadState = 'ready';
@@ -271,9 +277,21 @@ function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'
 // (v7) et tri/stats (v8) doivent donner la même réponse pour une même fiche, quels que
 // soient les champs présents selon l'origine des données : toxPets (v5), tox_anim
 // (legacy booléen) ou toxicite (legacy texte). Déclaration top-level → window.plantIsToxic.
-function plantIsToxic(p){
-  return !!p && (p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique'));
+// Trois états, et non deux. « Non toxique » sans toxPets explicite est la valeur
+// PAR DÉFAUT du catalogue de base (321 fiches sur 335) : elle ne documente rien.
+// La traiter comme une innocuité prouvée faisait remonter des espèces réputées
+// toxiques (Dieffenbachia, Monstera, Lilium…) dans le filtre « sans danger ».
+// Seul un toxPets='safe' explicite — saisi par l'utilisateur ou l'enrichissement
+// IA — vaut garantie ; tout le reste est « non renseigné ».
+function plantToxicity(p){
+  if(!p) return 'unknown';
+  if(p.toxPets==='toxic' || !!p.tox_anim || !!(p.toxicite && p.toxicite!=='Non toxique')) return 'toxic';
+  if(p.toxPets==='safe') return 'safe';
+  return 'unknown';
 }
+// Prédicat historique conservé à l'identique côté « toxique » : badge, tags,
+// tableau de bord, filtres (v7) et tri/stats (v8) gardent la même réponse.
+function plantIsToxic(p){ return plantToxicity(p)==='toxic'; }
 const HERO_FALLBACK="img/hero-botanique-960.webp";
 const HERO_FALLBACK_SRCSET="img/hero-botanique-640.webp 640w, img/hero-botanique-960.webp 960w, img/hero-botanique-1440.webp 1440w";
 // Jetons anti-course : #flashPhoto/#quizPhoto/#pdPhoto sont recréés à chaque rendu avec
@@ -1258,8 +1276,11 @@ function mkSubstratBar(substrat) {
 // Tags d'alerte v5 (toxicité animaux, invasif) intégrés au design luxe
 function mkV5Tags(p) {
   var tags = [];
-  if (p.toxPets === 'safe') tags.push('<span class="v5-tag tag-safe"><i class="fa-solid fa-heart" aria-hidden="true"></i> Sans danger animaux</span>');
+  if (plantToxicity(p) === 'safe') tags.push('<span class="v5-tag tag-safe"><i class="fa-solid fa-heart" aria-hidden="true"></i> Sans danger animaux</span>');
   else if (plantIsToxic(p)) tags.push('<span class="v5-tag tag-tox"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Toxique animaux</span>');
+  // L'absence de donnée doit être visible : sans cette étiquette, une fiche non
+  // documentée était indiscernable d'une fiche vérifiée comme inoffensive.
+  else tags.push('<span class="v5-tag tag-unknown"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> Toxicité non renseignée</span>');
   if (p.invasive) tags.push('<span class="v5-tag tag-inv"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Invasive / Épillets</span>');
   if (p.inGarden) tags.push('<span class="v5-tag tag-garden"><i class="fa-solid fa-seedling" aria-hidden="true"></i> Au jardin</span>');
   return tags.length ? '<div class="v5-tags">'+tags.join('')+'</div>' : '';

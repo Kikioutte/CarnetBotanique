@@ -11,10 +11,38 @@
   /* `plants` est un `let` de portée script (app.js) : jamais attaché à window,
      mais visible depuis les <script> suivants — on le référence donc directement. */
   function adopted(){try{return (Array.isArray(plants)?plants:[]).filter(function(p){return p.inGarden===true;});}catch(e){return [];}}
-  function ensure(pid){var s=store();if(!s[pid]||!s[pid].length){var j=(window.journal&&window.journal[pid])||{};s[pid]=[{id:uid(),label:'',zone:j.zone||'',every:j.waterEvery||0,last:j.lastWater||''}];save(s);}return s;}
+  /* Le journal est détenu par v7 dans une closure : il n'est PAS accessible via
+     `window.journal`. On passe donc par l'API publique exposée à cet effet
+     (__hdvJournalSnapshot / __hdvJournalUpdate), avec repli sur localStorage. */
+  function journalRead(){
+    if(typeof window.__hdvJournalSnapshot==='function'){try{return window.__hdvJournalSnapshot()||{};}catch(e){}}
+    return lg('hdv_journal',{})||{};
+  }
+  function ensure(pid){var s=store();if(!s[pid]||!s[pid].length){var j=journalRead()[pid]||{};s[pid]=[{id:uid(),label:'',zone:j.zone||'',every:j.waterEvery||0,last:j.lastWater||''}];save(s);}return s;}
   function specs(pid){return ensure(pid)[pid];}
   function specDue(sp){if(!sp.every||sp.every<=0)return false;if(!sp.last)return true;return (Date.now()-new Date(sp.last).getTime())>=sp.every*86400000;}
-  function syncJournal(pid){try{var arr=specs(pid);var ev=arr.map(function(x){return x.every;}).filter(function(n){return n>0;});var la=arr.map(function(x){return x.last;}).filter(Boolean);var minE=ev.length?Math.min.apply(null,ev):0;var maxL=la.length?la.sort().slice(-1)[0]:'';if(!window.journal)window.journal={};if(!window.journal[pid])window.journal[pid]={entries:[],zone:'',waterEvery:0,lastWater:''};window.journal[pid].waterEvery=minE;window.journal[pid].lastWater=maxL;ls('hdv_journal',window.journal);}catch(e){}}
+  /* Ne remonte QUE l'agrégat d'arrosage vers le journal. L'écriture passe par
+     __hdvJournalUpdate : mise à jour ciblée de la plante concernée, sans toucher
+     à ses notes ni à son emplacement, et sans réécrire les autres plantes.
+     (Régression corrigée : l'ancienne version repartait d'un `window.journal`
+     inexistant et persistait cet objet vide par-dessus tout hdv_journal.) */
+  function syncJournal(pid){
+    try{
+      var arr=specs(pid);
+      var ev=arr.map(function(x){return x.every;}).filter(function(n){return n>0;});
+      var la=arr.map(function(x){return x.last;}).filter(Boolean);
+      var minE=ev.length?Math.min.apply(null,ev):0;
+      var maxL=la.length?la.sort().slice(-1)[0]:'';
+      if(typeof window.__hdvJournalUpdate==='function'){
+        window.__hdvJournalUpdate(pid,function(item){item.waterEvery=minE;item.lastWater=maxL;});
+        return;
+      }
+      var data=lg('hdv_journal',{})||{};
+      if(!data[pid])data[pid]={entries:[],zone:'',waterEvery:0,lastWater:''};
+      data[pid].waterEvery=minE;data[pid].lastWater=maxL;
+      ls('hdv_journal',data);
+    }catch(e){}
+  }
   var origWaterDue=window.waterDue;
   window.waterDue=function(id){var s=store();if(s[id]&&s[id].length)return s[id].some(specDue);if(typeof origWaterDue==='function')return origWaterDue(id);return false;};
   function doAdd(pid){var s=ensure(pid);s[pid].push({id:uid(),label:'',zone:'',every:(s[pid][0]&&s[pid][0].every)||0,last:''});save(s);syncJournal(pid);window.openReminders();}

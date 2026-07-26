@@ -164,10 +164,12 @@
   }
   window.p9OpenBackupCenter=function(){
     var last=localStorage.getItem('hdv_last_backup'),summary=storageSummary(),garden=list().filter(function(item){return item&&item.inGarden===true;}).length;
+    var hasPrev=false;try{hasPrev=!!localStorage.getItem('hdv_prev_plants');}catch(e){}
     var html='<div class="p9-backup"><div class="p9-backup-head"><span class="p9-backup-icon"><i class="fa-solid fa-bookmark"></i></span><span class="fusion-kicker">Données personnelles</span><h2 id="p9BackupTitle">Votre carnet vous appartient</h2><p>Créez un fichier de sauvegarde contenant les fiches, routines, notes, progression et photos personnelles. Aucun serveur n’est utilisé.</p></div>'+ 
       '<div class="p9-backup-status"><div><b>'+list().length+'</b><span>fiches</span></div><div><b>'+garden+'</b><span>adoptées</span></div><div><b>'+summary.kb+' Ko</b><span>données locales</span></div></div>'+ 
       '<div class="p9-backup-card '+(last?'is-safe':'is-warning')+'"><i class="fa-solid '+(last?'fa-check':'fa-triangle-exclamation')+'"></i><div><b>'+(last?'Dernière sauvegarde créée':'Aucune sauvegarde connue')+'</b><span>'+(last?esc(new Date(last).toLocaleString('fr-FR')):'Exportez maintenant votre carnet pour pouvoir le restaurer sur un autre appareil.')+'</span></div></div>'+ 
-      '<div class="p9-backup-actions"><button class="btn-luxe btn-luxe-accent" type="button" onclick="window.p9ExportBackup()"><i class="fa-solid fa-download"></i> Télécharger une sauvegarde</button><button class="btn-luxe" type="button" onclick="window.p9ImportBackup()"><i class="fa-solid fa-upload"></i> Restaurer un fichier</button></div>'+ 
+      '<div class="p9-backup-actions"><button class="btn-luxe btn-luxe-accent" type="button" onclick="window.p9ExportBackup()"><i class="fa-solid fa-download"></i> Télécharger une sauvegarde</button><button class="btn-luxe" type="button" onclick="window.p9ImportBackup()"><i class="fa-solid fa-upload"></i> Restaurer un fichier</button>'+
+      (hasPrev?'<button class="btn-luxe" type="button" onclick="window.p9RestorePrevious()"><i class="fa-solid fa-rotate-left"></i> Annuler le dernier import</button>':'')+'</div>'+
       '<div class="p9-privacy"><i class="fa-solid fa-bookmark"></i><span>La restauration valide entièrement le fichier avant toute écriture et conserve une copie de secours des fiches actuelles.</span></div></div>';
     modal(html);var root=$('v7-modal');if(root){root.setAttribute('aria-labelledby','p9BackupTitle');root.removeAttribute('aria-label');}
   };
@@ -178,6 +180,17 @@
   window.p9ImportBackup=function(){
     var input=$('v7-file');if(!input){toast('Ouvrez une première fois le catalogue puis réessayez.');return;}
     close();input.click();
+  };
+  /* hdv_prev_plants est écrit avant chaque import mais n'était exploité qu'en
+     cas de corruption détectée : l'utilisateur n'avait aucun moyen de revenir
+     en arrière après un import regretté. */
+  window.p9RestorePrevious=function(){
+    var prev=null;try{prev=localStorage.getItem('hdv_prev_plants');}catch(e){}
+    if(!prev){toast('Aucune copie de secours disponible');return;}
+    var n=0;try{n=JSON.parse(prev).length;}catch(e){}
+    if(!window.confirm('Restaurer la copie de secours ('+n+' fiche(s)) ?\n\nLes fiches actuelles seront remplacées.'))return;
+    try{localStorage.setItem('herbier_plants_data_v4',prev);}catch(e){toast('Restauration impossible');return;}
+    location.reload();
   };
 
   function installHooks(){
