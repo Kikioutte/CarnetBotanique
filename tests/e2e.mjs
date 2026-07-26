@@ -813,6 +813,37 @@ const browser = await chromium.launch(launchOpts);
     await ctx.close();
   }
 
+  // 8.1b — Cohérence entre fiches d'un même taxon (contrôle statique).
+  //        27 espèces figurent en double ou triple dans le catalogue, selon leur
+  //        usage (fleur coupée / plante en pot / feuillage). C'est volontaire,
+  //        mais les propriétés INTRINSÈQUES à l'espèce ne peuvent pas diverger :
+  //        trois fiches se contredisaient sur la toxicité (« Jonquille coupée :
+  //        toxique » contre « Jonquille bulbeuse : non toxique »), ce qui
+  //        prouvait à soi seul que la donnée n'était pas documentée.
+  {
+    const catalogue = JSON.parse(fs.readFileSync(path.join(ROOT, 'plants.json'), 'utf8'));
+    const parTaxon = new Map();
+    for (const f of catalogue) {
+      if (!parTaxon.has(f.nomLat)) parTaxon.set(f.nomLat, []);
+      parTaxon.get(f.nomLat).push(f);
+    }
+    const divergences = [];
+    for (const [taxon, fiches] of parTaxon) {
+      if (fiches.length < 2) continue;
+      for (const champ of ['toxicite', 'toxPets', 'famille']) {
+        const valeurs = new Set(fiches.map(f => f[champ] || ''));
+        if (valeurs.size > 1) divergences.push(`${taxon} · ${champ} : ${[...valeurs].join(' / ')}`);
+      }
+    }
+    check('données : aucune contradiction entre fiches d’un même taxon',
+      divergences.length === 0, divergences.slice(0, 5));
+
+    // Les identifiants doivent rester uniques malgré les doublons d'espèce.
+    const ids = catalogue.map(f => f.id);
+    check('données : identifiants uniques', new Set(ids).size === ids.length,
+      ids.length - new Set(ids).size);
+  }
+
   // 8.2 — « Sans danger » ne doit jamais inclure une fiche dont la toxicité
   //       n'est pas documentée (321/335 portaient la valeur par défaut).
   {
