@@ -1093,6 +1093,36 @@ const browser = await chromium.launch(launchOpts);
   }
 }
 
+// ── 10. Partage du jardin : aucun plantage sur le bloc QR ───────────────────
+//     drawQR() appelait qrEncode(), une fonction qui n'a jamais existé dans le
+//     projet : chaque ouverture levait une ReferenceError et le repli prévu
+//     juste en dessous ne s'affichait jamais. Défaut trouvé par ESLint.
+{
+  console.log('▶ partage du jardin');
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+  const page = await newPage(ctx);
+  const erreursIci = [];
+  page.on('pageerror', e => erreursIci.push(e.message));
+  await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+  await page.waitForSelector('.scrolly-section');
+  await page.waitForTimeout(600);
+
+  const r = await page.evaluate(async () => {
+    plants[0].inGarden = true; saveData();
+    window.v8ShareGarden();
+    await new Promise(r => setTimeout(r, 600));
+    const wrap = document.getElementById('v8-qrwrap');
+    return {
+      lien: (document.getElementById('v8-sharelink') || {}).value || '',
+      blocRempli: !!(wrap && wrap.textContent.trim()),
+    };
+  });
+  check('partage : le lien du jardin est produit', /#hdvg=/.test(r.lien), r.lien.slice(0, 60));
+  check('partage : le bloc QR affiche un repli au lieu de rester vide', r.blocRempli, r);
+  check('partage : aucune erreur JavaScript', erreursIci.length === 0, erreursIci);
+  await ctx.close();
+}
+
 // ── Bilan ───────────────────────────────────────────────────────────────────
 const realErrors = pageErrors.filter(e => !/ERR_FAILED|Failed to fetch|NetworkError|Load failed/i.test(e));
 check('aucune erreur JavaScript', realErrors.length === 0, realErrors.slice(0, 5));
