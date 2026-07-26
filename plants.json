@@ -1518,7 +1518,7 @@
     "ennemis": "Botrytis, criocère du lis. Retirer les étamines (tachent).",
     "visu1": "Grandes fleurs parfumées",
     "visu2": "Étamines à pollen colorant",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Lilium — principe toxique inconnu, vomissements, abattement, insuffisance rénale et décès chez le chat.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -1533,7 +1533,12 @@
     "tenueVase": "10–14 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Lilium — principe toxique inconnu, vomissements, abattement, insuffisance rénale et décès chez le chat.",
+    "toxAnimaux": "chat",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p052-lilium-longiflorum",
@@ -2789,7 +2794,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Spathe lacquée longue durée",
     "visu2": "Spadice jaune pointu",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -2804,7 +2809,12 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — fleur coupée",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/flamingo-flower",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p094-ananas-comosus",
@@ -3347,7 +3357,7 @@
     "ennemis": "Cochenilles, araignées rouges. Pourriture racinaire si excès d'eau.",
     "visu1": "Port général",
     "visu2": "Feuilles cireuses luisantes",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Zamioculcas — oxalates de calcium insolubles, douleur et irritation buccales, salivation, nausées, vomissements et diarrhée.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Très modéré — laisser sécher entre arrosages",
@@ -3374,7 +3384,12 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Zamioculcas — oxalates de calcium insolubles, douleur et irritation buccales, salivation, nausées, vomissements et diarrhée.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/news/these-houseplants-can-cause-trouble-your-pets",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p113-sansevieria-trifasciata-s-cylindrica",
@@ -3817,7 +3832,11 @@
     "temperature": "Min. 10°C",
     "humidite": "",
     "rempotage": "mars à mai — lorsque la plante devient à l’étroit, en général tous les 2 à 4 ans",
-    "engrais": "avril à septembre — une fois par mois, faiblement dosé"
+    "engrais": "avril à septembre — une fois par mois, faiblement dosé",
+    "toxPets": "safe",
+    "toxDetail": "",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/tree-cactus",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p123-cereus-peruvianus",
@@ -4998,7 +5017,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Spathe lacquée rouge",
     "visu2": "Spadice jaune",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5025,7 +5044,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/flamingo-flower",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p151-caladium-bicolor",
@@ -5039,7 +5063,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Feuilles translucides",
     "visu2": "Nervures colorées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Caladium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -5066,7 +5090,12 @@
     "temperature": "Min. 18°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Caladium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/caladium",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p152-dieffenbachia-picta-d-seguine",
@@ -5172,7 +5201,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Tiges retombantes",
     "visu2": "Feuilles marbrées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Epipremnum — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5199,7 +5228,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Epipremnum — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/golden-pothos",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p155-monstera-deliciosa",
@@ -5259,7 +5293,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Spathe blanche",
     "visu2": "Feuilles vert profond",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Spathiphyllum — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5286,7 +5320,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Spathiphyllum — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/mauna-loa-peace-lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p157-syngonium-podophyllum",
@@ -5392,7 +5431,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Feuilles en main",
     "visu2": "Port arborescent",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Schefflera — cristaux d’oxalate de calcium, irritation et brûlure buccales, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Modéré en hiver, copieux en été",
@@ -5419,7 +5458,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥75%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Schefflera — cristaux d’oxalate de calcium, irritation et brûlure buccales, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/schefflera",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p160-asparagus-densiflorus",
@@ -8864,7 +8908,7 @@
     "ennemis": "Pucerons, botrytis.",
     "visu1": "Fleurs de couleurs vives",
     "visu2": "Feuilles gaufrées en rosette",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe non identifié, vomissements légers.",
     "principes": "",
     "soleil": "Lumière importante",
     "eau": "Régulier en période sèche",
@@ -8890,7 +8934,12 @@
     "arrosage": "Régulier en période sèche",
     "temperature": "",
     "rempotage": "mars à juin — uniquement pour les sujets en pot, selon l’enracinement",
-    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture"
+    "engrais": "mars à juin — selon l’espèce, le sol et le mode de culture",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe non identifié, vomissements légers.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/primrose",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p243-primula-obconica",
@@ -9747,7 +9796,7 @@
     "ennemis": "Criocère du lis, botrytis, fusariose.",
     "visu1": "Grandes fleurs trompette",
     "visu2": "Étamines teintées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Lilium — principe toxique inconnu, vomissements, abattement, insuffisance rénale et décès chez le chat.",
     "principes": "",
     "soleil": "Plein soleil",
     "eau": "Modéré pendant la végétation, sec au repos",
@@ -9769,7 +9818,12 @@
     "arrosage": "Modéré pendant la végétation, sec au repos",
     "temperature": "8–15°C",
     "rempotage": "février à avril — plantation ou rempotage avant la croissance",
-    "engrais": "avril à août — pendant la croissance et la floraison"
+    "engrais": "avril à août — pendant la croissance et la floraison",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Lilium — principe toxique inconnu, vomissements, abattement, insuffisance rénale et décès chez le chat.",
+    "toxAnimaux": "chat",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lily",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p265-tulipa-hybrides",
@@ -10666,7 +10720,7 @@
     "ennemis": "Botrytis, desséchement.",
     "visu1": "Feuillage arachnéen fin",
     "visu2": "Tiges rigides élancées",
-    "toxicite": "Non toxique",
+    "toxicite": "Toxique — principe non précisé, dermatite allergique; les baies peuvent provoquer vomissements, douleur abdominale ou diarrhée.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -10695,7 +10749,12 @@
     "tenueVase": "7–10 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Toxique — principe non précisé, dermatite allergique; les baies peuvent provoquer vomissements, douleur abdominale ou diarrhée.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/asparagus-fern",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p286-ruscus-hypoglossum",
@@ -11977,7 +12036,7 @@
     "ennemis": "Botrytis si froid, desséchement.",
     "visu1": "Grande feuille cordée brillante",
     "visu2": "Nervation prononcée",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "",
     "eau": "",
@@ -12006,7 +12065,12 @@
     "tenueVase": "14–21 jours",
     "stockage": "En boîte ou vase à 2–5°C, à l'abri de la lumière directe.",
     "rempotage": "Non concerné — feuillage coupé",
-    "engrais": "Non concerné après la coupe"
+    "engrais": "Non concerné après la coupe",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Anthurium — oxalates de calcium insolubles, irritation et gonflement buccaux, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien,cheval",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/flamingo-flower",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p316-cordyline-fruticosa",
@@ -12683,7 +12747,7 @@
     "ennemis": "Araignées rouges, cochenilles, pucerons.",
     "visu1": "Feuilles percées de trous (fenestrations)",
     "visu2": "Liane à port grimpant/retombant",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Monstera — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -12710,7 +12774,12 @@
     "temperature": "Min. 15°C",
     "humidite": "≥60%",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Monstera — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p332-monstera-thai-constellation",
@@ -12724,7 +12793,7 @@
     "ennemis": "Araignées rouges, cochenilles. Panachure crème sujette aux brûlures.",
     "visu1": "Panachure crème étoilée",
     "visu2": "Grandes feuilles fenestrées",
-    "toxicite": "Non toxique",
+    "toxicite": "Genre Monstera — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
     "principes": "",
     "soleil": "Lumière vive, sans soleil direct",
     "eau": "Modéré",
@@ -12751,7 +12820,12 @@
     "temperature": "Min. 16°C",
     "humidite": "",
     "rempotage": "mars à juin — lorsque les racines remplissent le pot, en général tous les 2 à 3 ans",
-    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce"
+    "engrais": "mars à octobre — une à deux fois par mois selon l’espèce",
+    "toxPets": "toxic",
+    "toxDetail": "Genre Monstera — oxalates de calcium insolubles, brûlure et irritation buccales, salivation, vomissements et difficulté à avaler.",
+    "toxAnimaux": "chat,chien",
+    "toxSource": "ASPCA — https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/swiss-cheese-plant",
+    "toxSourceDate": "2026-07-26"
   },
   {
     "id": "p333-peperomia-orba-pixie",

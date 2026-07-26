@@ -2549,7 +2549,7 @@ function openPlantDetail(id){
     + (p.toxSource ? '<div class="tech-item" style="grid-column:1/-1"><span class="tech-label">'
         + (plantIsToxic(p) ? 'Toxicité animaux' : 'Innocuité vérifiée') + '</span>'
         + '<span class="tech-val">' + esc(p.toxDetail || (plantIsToxic(p) ? 'Toxique' : 'Non toxique'))
-        + (p.toxAnimaux ? ' — ' + esc(p.toxAnimaux) : '')
+        + (p.toxAnimaux ? ' — Concerne : ' + esc(p.toxAnimaux) : '')
         + '<br><small class="pd-source">Source : ' + esc(String(p.toxSource).split(' — ')[0])
         + (p.toxSourceDate ? ', consultée le ' + esc(p.toxSourceDate) : '') + '</small></span></div>' : '')
     + _pdRow('<i class="fa-solid fa-seedling" aria-hidden="true"></i> Rempotage', p.rempotage) + _pdRow('<i class="fa-solid fa-leaf" aria-hidden="true"></i> Engrais', p.engrais)
