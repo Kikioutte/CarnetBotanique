@@ -6,6 +6,7 @@
  */
 import http from 'node:http';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -744,6 +745,183 @@ const browser = await chromium.launch(launchOpts);
   check('candidats épuisés → repli sur la photo générique locale', /\/img\/hero-botanique-960\.webp(?:\?|$)/.test(r.step3.src), r);
 
   await ctx.close();
+}
+
+// ── 8. Intégrité des données : les quatre régressions P0 de l'audit ─────────
+// Chacun de ces contrôles reproduit un défaut réel constaté sur le dépôt.
+// Ils franchissent volontairement les frontières entre couches (v7↔v9↔v11),
+// là où les suites par phase ne regardaient pas.
+{
+  console.log('▶ intégrité des données');
+
+  // 8.1 — Le suivi par exemplaire (v9) ne doit jamais écraser le journal (v7/v11).
+  //       Régression : v9 écrivait via `window.journal`, qui n'existe pas — il
+  //       repartait donc d'un objet vide et le persistait par-dessus hdv_journal.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+
+    const ids = await page.evaluate(() => {
+      const a = plants[0].id, b = plants[1].id;
+      plants[0].inGarden = true; plants[1].inGarden = true; saveData();
+      return { a, b };
+    });
+
+    // Deux plantes documentées via l'interface réelle (journal v11).
+    for (const [id, zone, jours, note] of [[ids.a, 'Salon', '7', 'Première pousse'], [ids.b, 'Balcon', '3', 'Floraison']]) {
+      await page.evaluate(i => window.openJournal(i), id);
+      await page.waitForSelector('#p9EventText');
+      await page.fill('#p9EventText', note);
+      await page.click('.p9-event-composer button[type="submit"]');
+      await page.waitForTimeout(250);
+      await page.fill('#p9JournalZone', zone);
+      await page.fill('#p9JournalWater', jours);
+      await page.click('button[onclick^="window.p9SaveJournalRoutine"]');
+      await page.waitForTimeout(200);
+      await page.evaluate(() => window.closeModal());
+    }
+
+    // L'écran Rappels doit refléter la routine saisie (et non des champs vides).
+    await page.evaluate(() => window.openReminders());
+    await page.waitForSelector('[data-sp-act="water"]');
+    const affiche = await page.evaluate(() => ({
+      every: document.querySelector('.sp-num').value,
+      zone: document.querySelector('.sp-zone').value,
+    }));
+    check('rappels : la routine saisie dans le journal est reprise',
+      affiche.every === '7' && affiche.zone === 'Salon', affiche);
+
+    // L'action d'arrosage ne doit toucher que waterEvery/lastWater.
+    await page.click('[data-sp-act="water"]');
+    await page.waitForTimeout(300);
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+
+    const apres = await page.evaluate(k => JSON.parse(localStorage.getItem('hdv_journal') || '{}'), null);
+    check('journal : aucune plante perdue après un arrosage',
+      Object.keys(apres).length === 2, Object.keys(apres));
+    check('journal : notes conservées après un arrosage',
+      (apres[ids.a] || {}).entries?.length === 1 && (apres[ids.b] || {}).entries?.length === 1,
+      { a: (apres[ids.a] || {}).entries, b: (apres[ids.b] || {}).entries });
+    check('journal : emplacement et rythme conservés après un arrosage',
+      apres[ids.a]?.zone === 'Salon' && apres[ids.a]?.waterEvery === 7
+      && apres[ids.b]?.zone === 'Balcon' && apres[ids.b]?.waterEvery === 3,
+      { a: apres[ids.a], b: apres[ids.b] });
+
+    await ctx.close();
+  }
+
+  // 8.2 — « Sans danger » ne doit jamais inclure une fiche dont la toxicité
+  //       n'est pas documentée (321/335 portaient la valeur par défaut).
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(() => {
+      if (typeof plantToxicity !== 'function') return { absent: true };
+      const etats = { toxic: 0, safe: 0, unknown: 0 };
+      plants.forEach(p => { etats[plantToxicity(p)]++; });
+      const sel = document.getElementById('v7-f-tox');
+      sel.value = 'safe';
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+      const passeEnSafe = plants.filter(p => window.__advFilter(p));
+      return {
+        etats,
+        nonDocumenteesEnSafe: passeEnSafe.filter(p => p.toxPets !== 'safe').map(p => p.nomFr).slice(0, 5),
+        optionInconnue: !!sel.querySelector('option[value="unknown"]'),
+        predicatToxiqueInchange: plantIsToxic({ toxPets: 'toxic' })
+          && plantIsToxic({ toxicite: 'Toxique chats' })
+          && plantIsToxic({ tox_anim: 1 })
+          && !plantIsToxic({ toxicite: 'Non toxique' }),
+      };
+    });
+    check('toxicité : trois états distincts (toxic/safe/unknown)',
+      !r.absent && r.etats.toxic > 0 && r.etats.unknown > 0, r.absent ? 'plantToxicity() absente' : r.etats);
+    check('toxicité : aucune fiche non documentée dans « sans danger »',
+      !r.absent && r.nonDocumenteesEnSafe.length === 0, r.nonDocumenteesEnSafe);
+    check('toxicité : filtre « non renseignée » disponible', !r.absent && r.optionInconnue);
+    check('toxicité : le prédicat « toxique » reste inchangé', !r.absent && r.predicatToxiqueInchange);
+
+    await ctx.close();
+  }
+
+  // 8.3 — Un carnet neuf démarre sur un jardin vide (39 fiches étaient
+  //       pré-adoptées dans plants.json, ce qui rendait l'état vide inatteignable).
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const r = await page.evaluate(() => {
+      setMode('garden');
+      return {
+        adoptees: plants.filter(p => p.inGarden === true).length,
+        persistees: JSON.parse(localStorage.getItem('herbier_plants_data_v4') || '[]')
+          .filter(p => p.inGarden === true).length,
+        etatVide: !!document.querySelector('.catalog-state-garden'),
+      };
+    });
+    check('premier lancement : aucun spécimen pré-adopté', r.adoptees === 0 && r.persistees === 0, r);
+    check('premier lancement : l’état « jardin vide » est atteignable', r.etatVide, r);
+
+    await ctx.close();
+  }
+
+  // 8.4 — L'import d'une sauvegarde demande confirmation et n'écrase jamais
+  //       les clés qui ne sont pas des données de carnet (clé API notamment).
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const dossier = fs.mkdtempSync(path.join(os.tmpdir(), 'hdv-e2e-'));
+    const fichier = path.join(dossier, 'sauvegarde.json');
+    fs.writeFileSync(fichier, JSON.stringify({
+      _app: 'HerbierDeVie', _v: 8,
+      data: {
+        herbier_plants_data_v4: JSON.stringify([{ id: 'imp1', nomFr: 'Importée' }]),
+        herbier_gemini_key: 'CLE-DU-FICHIER',
+      },
+    }));
+
+    await page.evaluate(() => localStorage.setItem('herbier_gemini_key', 'CLE-LOCALE'));
+
+    // a) refus de la confirmation : rien ne doit être écrit
+    page.once('dialog', d => d.dismiss());
+    await page.setInputFiles('#v7-file', fichier);
+    await page.waitForTimeout(900);
+    const refus = await page.evaluate(() => ({
+      fiches: JSON.parse(localStorage.getItem('herbier_plants_data_v4') || '[]').length,
+      cle: localStorage.getItem('herbier_gemini_key'),
+    }));
+    check('import : le refus de confirmation n’écrit rien', refus.fiches > 1, refus);
+
+    // b) acceptation : les fiches sont remplacées, la clé API ne l'est pas
+    page.once('dialog', d => d.accept());
+    await page.setInputFiles('#v7-file', fichier);
+    await page.waitForTimeout(1600);
+    const apres = await page.evaluate(() => ({
+      fiches: JSON.parse(localStorage.getItem('herbier_plants_data_v4') || '[]').length,
+      cle: localStorage.getItem('herbier_gemini_key'),
+      secours: !!localStorage.getItem('hdv_prev_plants'),
+    }));
+    check('import : les fiches sont bien restaurées après confirmation', apres.fiches === 1, apres);
+    check('import : la clé API locale n’est pas écrasée par le fichier',
+      apres.cle === 'CLE-LOCALE', apres);
+    check('import : une copie de secours des fiches précédentes est conservée', apres.secours, apres);
+
+    fs.rmSync(dossier, { recursive: true, force: true });
+    await ctx.close();
+  }
 }
 
 // ── Bilan ───────────────────────────────────────────────────────────────────
