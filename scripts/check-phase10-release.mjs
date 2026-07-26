@@ -62,9 +62,21 @@ try{
   const darkText=await page.evaluate(()=>({title:getComputedStyle(document.getElementById('p9BriefingTitle')).color,button:getComputedStyle(document.querySelector('#p9BriefingActions button')).color}));
   check('briefing sombre garde un contraste clair',darkText.title==='rgb(255, 253, 251)'&&darkText.button==='rgb(255, 253, 251)',darkText);
   await page.addScriptTag({path:path.join(ROOT,'node_modules','axe-core','axe.min.js')});
-  const darkAxe=await page.evaluate(async()=>{const report=await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}});return report.violations.map(item=>({id:item.id,impact:item.impact,nodes:item.nodes.length}));});
-  check('aucune violation axe-core en mode sombre',darkAxe.length===0,darkAxe);
+  // content-visibility:auto retire les sections hors écran de l'arbre analysé :
+  // sans cette neutralisation, axe ne voyait jamais le bas de page et laissait
+  // passer un pied de page illisible en thème sombre.
+  await page.addStyleTag({content:'*{content-visibility:visible !important}'});
+  const runDarkAxe=()=>page.evaluate(async()=>{const report=await axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}});return report.violations.map(item=>({id:item.id,impact:item.impact,nodes:item.nodes.length,exemples:item.nodes.slice(0,3).map(n=>n.target.join(' '))}));});
+  const darkAxe=await runDarkAxe();
+  check('aucune violation axe-core en mode sombre (mobile)',darkAxe.length===0,darkAxe);
   await page.screenshot({path:path.join(OUT,'02-mobile-dark.png')});
+  // Le contrôle sombre ne s'exécutait qu'en 390 px, où le pied de page est hors
+  // écran : plusieurs défauts de contraste n'apparaissaient qu'en ordinateur.
+  await page.setViewportSize({width:1280,height:900});await page.waitForTimeout(500);
+  const darkAxeDesktop=await runDarkAxe();
+  check('aucune violation axe-core en mode sombre (ordinateur)',darkAxeDesktop.length===0,darkAxeDesktop);
+  await page.screenshot({path:path.join(OUT,'02b-desktop-dark.png')});
+  await page.setViewportSize({width:390,height:844});await page.waitForTimeout(300);
 
   console.log('▶ Phase 10 — toast et journal ordinateur');
   await page.setViewportSize({width:1280,height:900});await page.evaluate(()=>window.toggleTheme());

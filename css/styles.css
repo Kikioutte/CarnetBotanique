@@ -1327,6 +1327,14 @@ body.theme-dark img.scrolly-img{filter:brightness(.92);}
 /* ===== Mode sombre : lisibilite texte, icones & fonds clairs codes en dur ===== */
 body.theme-dark p,body.theme-dark .plant-desc{color:rgba(236,231,221,.82);}
 body.theme-dark .hero-text{color:rgba(236,231,221,.85);}
+/* Le pied de page tire son fond de --ink-deep et son texte de --bg-sand : ces
+   deux variables s'inversent en thème sombre, le fond passait donc en clair
+   pendant que les textes restaient clairs (contrastes mesurés 1.07 à 1.09).
+   Les couleurs de texte sont posées en style inline dans le HTML et via un
+   !important : on corrige le fond, qui est la véritable cause, plutôt que de
+   surenchérir sur chaque texte. */
+body.theme-dark footer{background:#171E19;color:#FAF7F2;}
+body.theme-dark .footer-copy{color:rgba(250,247,242,.62);}
 body.theme-dark header#mainHeader{background:linear-gradient(120deg,rgba(31,40,35,.85),rgba(23,30,25,.72));}
 body.theme-dark header#mainHeader.scrolled{background:linear-gradient(120deg,rgba(31,40,35,.94),rgba(23,30,25,.86));}
 body.theme-dark .hero-overlay{background:linear-gradient(to bottom,rgba(15,20,17,.30),rgba(15,20,17,.93));}
