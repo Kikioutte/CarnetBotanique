@@ -61,17 +61,25 @@
       var arr=specs(p.id);var dc=arr.filter(specDue).length;
       h+='<div class="sp-group">';
       h+='<div class="sp-g-head"><span class="sp-g-name">'+esc(p.nomFr)+' <small>x '+arr.length+'</small>'+(dc?'<span class="sp-due-tag">'+dc+' a arroser</span>':'')+'</span>';
-      h+='<button class="btn-luxe sp-mini" data-sp-act="waterall" data-pid="'+p.id+'"><i class="fa-solid fa-droplet"></i> Tout arroser</button>';
-      h+='<button class="btn-luxe sp-mini" data-sp-act="add" data-pid="'+p.id+'"><i class="fa-solid fa-plus"></i> Exemplaire</button></div>';
+      h+='<button class="btn-luxe sp-mini" data-sp-act="waterall" data-pid="'+p.id+'" aria-label="Noter un arrosage pour tous les exemplaires de '+esc(p.nomFr)+'"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Tout arroser</button>';
+      h+='<button class="btn-luxe sp-mini" data-sp-act="add" data-pid="'+p.id+'" aria-label="Ajouter un exemplaire de '+esc(p.nomFr)+'"><i class="fa-solid fa-plus" aria-hidden="true"></i> Exemplaire</button></div>';
       arr.forEach(function(sp){
         var due=specDue(sp);
         h+='<div class="sp-row '+(due?'due':'')+'">';
-        h+='<input class="sp-label sp-edit" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="label" value="'+esc(sp.label)+'" placeholder="Nom (ex. Salon)">';
-        h+='<input class="sp-zone sp-edit" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="zone" value="'+esc(sp.zone)+'" placeholder="Emplacement">';
-        h+='<span class="sp-int"><label>tous les</label><input class="sp-num sp-edit" type="number" min="0" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="every" value="'+(sp.every||'')+'"> j</span>';
+        /* Chaque champ porte son propre nom accessible : les lignes sont générées
+           sans id, le <label>tous les</label> ne pouvait donc être associé à rien
+           et un lecteur d'écran annonçait trois « zone de saisie » identiques.
+           Le nom de la plante est repris pour distinguer les lignes entre elles. */
+        var nomPlante=esc(p.nomFr);
+        h+='<input class="sp-label sp-edit" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="label" value="'+esc(sp.label)+'" placeholder="Nom (ex. Salon)" aria-label="Nom de cet exemplaire de '+nomPlante+'">';
+        h+='<input class="sp-zone sp-edit" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="zone" value="'+esc(sp.zone)+'" placeholder="Emplacement" aria-label="Emplacement de cet exemplaire de '+nomPlante+'">';
+        h+='<span class="sp-int"><span aria-hidden="true">tous les</span><input class="sp-num sp-edit" type="number" min="0" max="365" data-pid="'+p.id+'" data-sid="'+sp.id+'" data-field="every" value="'+(sp.every||'')+'" aria-label="Arroser tous les combien de jours — '+nomPlante+'"> <span aria-hidden="true">j</span></span>';
         h+='<span class="sp-last">dernier : '+fmtDate(sp.last)+'</span>';
-        h+='<button class="btn-luxe sp-mini'+(due?'':' sp-ok')+'" data-sp-act="water" data-pid="'+p.id+'" data-sid="'+sp.id+'"><i class="fa-solid fa-droplet"></i> '+(due?'Arroser':'OK')+'</button>';
-        h+='<button class="sp-x" data-sp-act="remove" data-pid="'+p.id+'" data-sid="'+sp.id+'" title="Supprimer"><i class="fa-solid fa-xmark"></i></button>';
+        /* « OK » et une croix sans texte se répètent à l'identique sur chaque
+           ligne : sans libellé propre, un lecteur d'écran ne peut pas dire de
+           quel exemplaire ni de quelle plante il s'agit. */
+        h+='<button class="btn-luxe sp-mini'+(due?'':' sp-ok')+'" data-sp-act="water" data-pid="'+p.id+'" data-sid="'+sp.id+'" aria-label="'+(due?'Noter un arrosage pour ':'Arrosage à jour — noter un nouvel arrosage pour ')+nomPlante+'"><i class="fa-solid fa-droplet" aria-hidden="true"></i> '+(due?'Arroser':'OK')+'</button>';
+        h+='<button class="sp-x" data-sp-act="remove" data-pid="'+p.id+'" data-sid="'+sp.id+'" title="Supprimer" aria-label="Supprimer cet exemplaire de '+nomPlante+'"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>';
         h+='</div>';
       });
       h+='</div>';

@@ -409,6 +409,56 @@ let axeSummary = null;
       byImpact.moderate.map(v => `${v.id} (${v.nodes} nœuds)`));
     check('axe', 'aucune violation WCAG mineure', byImpact.minor.length === 0,
       byImpact.minor.map(v => `${v.id} (${v.nodes} nœuds)`));
+
+    // L'écran « Rappels d'arrosage » est construit par v9 en dehors du document
+    // initial : le balayage ci-dessus ne le voyait pas. Ses champs de saisie
+    // n'avaient donc aucun nom accessible sans que rien ne le signale.
+    const rappels = await page.evaluate(async () => {
+      plants.slice(0, 3).forEach(p => { p.inGarden = true; });
+      saveData();
+      window.openReminders();
+      await new Promise(r => setTimeout(r, 400));
+      const res = await window.axe.run(document.getElementById('v7-modal'), { resultTypes: ['violations'] });
+      const champs = [...document.querySelectorAll('#v7-modal .sp-edit')].map(el => ({
+        classe: el.className,
+        nomAccessible: !!(el.getAttribute('aria-label') || el.closest('label')
+          || (el.id && document.querySelector(`label[for="${el.id}"]`))),
+      }));
+      window.closeModal();
+      return {
+        violations: res.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+        champs, sansNom: champs.filter(c => !c.nomAccessible).length,
+      };
+    });
+    check('axe', 'écran Rappels : aucune violation WCAG', rappels.violations.length === 0,
+      rappels.violations.map(v => `${v.id} (${v.nodes} nœuds, ${v.impact})`));
+    check('axe', 'écran Rappels : tous les champs ont un nom accessible',
+      rappels.champs.length > 0 && rappels.sansNom === 0,
+      { total: rappels.champs.length, sansNom: rappels.sansNom });
+
+    // Les réglages du quiz (chrono, difficulté, famille) sont eux aussi injectés
+    // après coup par v8 et échappaient donc au balayage du document initial.
+    const quiz = await page.evaluate(async () => {
+      window.toggleQuizMode();
+      await new Promise(r => setTimeout(r, 600));
+      const res = await window.axe.run(document, { resultTypes: ['violations'] });
+      const controles = [...document.querySelectorAll('.v8-quizctrls select, .v8-quizctrls button')].map(el => ({
+        id: el.id,
+        nomAccessible: !!(el.getAttribute('aria-label') || el.getAttribute('title')
+          || el.textContent.trim() || el.closest('label')),
+      }));
+      window.toggleQuizMode();
+      return {
+        violations: res.violations.map(v => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+        controles, sansNom: controles.filter(c => !c.nomAccessible).length,
+      };
+    });
+    check('axe', 'écran Quiz : aucune violation WCAG', quiz.violations.length === 0,
+      quiz.violations.map(v => `${v.id} (${v.nodes} nœuds, ${v.impact})`));
+    check('axe', 'écran Quiz : tous les réglages ont un nom accessible',
+      quiz.controles.length > 0 && quiz.sansNom === 0,
+      { total: quiz.controles.length, sansNom: quiz.sansNom });
+
     await ctx.close();
   }
 }
