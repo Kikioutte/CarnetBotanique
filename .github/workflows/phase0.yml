@@ -17,7 +17,7 @@ jobs:
           node-version: 22
 
       - name: Installer les dépendances
-        run: npm install
+        run: npm ci
 
       - name: Analyse statique (ESLint)
         run: npm run lint
@@ -59,12 +59,12 @@ jobs:
         run: |
           node scripts/serve-production.mjs 8892 &
           sleep 2
-          npx --yes lighthouse@12 http://localhost:8892/ --preset=desktop \
+          npx --yes lighthouse@12.8.2 http://localhost:8892/ --preset=desktop \
             --output=json --output=html \
             --output-path=test-results/phase0/lighthouse-desktop \
             --chrome-flags="--headless=new --no-sandbox" --quiet
           for run in 1 2 3; do
-            npx --yes lighthouse@12 http://localhost:8892/ \
+            npx --yes lighthouse@12.8.2 http://localhost:8892/ \
               --output=json \
               --output-path=test-results/phase0/lighthouse-mobile-run$run.report.json \
               --chrome-flags="--headless=new --no-sandbox" --quiet

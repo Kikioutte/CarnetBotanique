@@ -1154,6 +1154,106 @@ const browser = await chromium.launch(launchOpts);
   await ctx.close();
 }
 
+// ── 12. Sécurité : photos importées et affichage des vignettes ─────────────
+{
+  console.log('▶ sécurité & images');
+
+  // 12.1 — Une photo forgée dans une sauvegarde ne doit jamais exécuter de script.
+  //        Chemin réel : fichier importé → __hdvRestorePhotos → IndexedDB → renderPhotos
+  //        → innerHTML. La CSP autorise 'unsafe-inline', donc un onerror injecté
+  //        s'exécuterait : seuls la validation et l'échappement l'en empêchent.
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+    await page.waitForTimeout(600);
+
+    const charge = 'x" onerror="window.__XSS=(window.__XSS||0)+1" data-x="';
+    const svg = 'data:image/svg+xml;base64,PHN2Zy8+';
+    const jpeg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAP//////'
+      + '////////////////////////////////////////////////////////////2wBDAf//////'
+      + '////////////////////////////////////////////////////////////wAARCAABAAEDA'
+      + 'SIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAr/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8Q'
+      + 'AFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPw'
+      + 'CdABmX/9k=';
+
+    const stocke = await page.evaluate(async ([charge, svg, jpeg]) => {
+      const id = plants[0].id;
+      await window.__hdvRestorePhotos({ [id]: [charge, svg, jpeg] });
+      // Ce que le stockage a réellement retenu après validation
+      const lues = await new Promise(res => {
+        const rq = indexedDB.open('hdv', 1);
+        rq.onsuccess = () => {
+          const r = rq.result.transaction('photos', 'readonly').objectStore('photos').get(id);
+          r.onsuccess = () => res(r.result || []);
+          r.onerror = () => res([]);
+        };
+        rq.onerror = () => res([]);
+      });
+      return { id, lues };
+    }, [charge, svg, jpeg]);
+
+    check('photos : la chaîne forgée n’est pas persistée',
+      !stocke.lues.includes(charge), stocke.lues.length);
+    check('photos : un SVG n’est pas accepté comme image',
+      !stocke.lues.includes(svg), stocke.lues.length);
+    check('photos : une vraie photo JPEG reste acceptée',
+      stocke.lues.includes(jpeg), stocke.lues.length);
+
+    // Rendu réel : ouvrir le journal de la fiche et inspecter le DOM produit
+    await page.evaluate(id => window.openJournal(id), stocke.id);
+    await page.waitForTimeout(1200);
+    const rendu = await page.evaluate(() => {
+      const imgs = Array.from(document.querySelectorAll('.v8-photos img'));
+      return {
+        nb: imgs.length,
+        avecOnerror: imgs.filter(i => i.hasAttribute('onerror')).length,
+        xss: window.__XSS || 0,
+      };
+    });
+    check('photos : aucun gestionnaire onerror injecté dans le DOM', rendu.avecOnerror === 0, rendu);
+    check('photos : aucun script injecté n’a été exécuté', rendu.xss === 0, rendu);
+    check('photos : la photo légitime est bien rendue', rendu.nb === 1, rendu);
+
+    await ctx.close();
+  }
+
+  // 12.2 — Vignettes Wikimedia : les variantes srcset fabriquées ne doivent jamais
+  //        dépasser la largeur réellement disponible (MediaWiki n'agrandit pas, et
+  //        un candidat trop large renvoie 404 — visible surtout en DPR ≥ 2).
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 });
+    const page = await newPage(ctx);
+    await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'load' });
+    await page.waitForSelector('.scrolly-section');
+
+    const r = await page.evaluate(() => {
+      const base = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/F.jpg/';
+      const largeurs = url => {
+        const rs = wikiSrcset(url);
+        return rs ? rs.srcset.split(', ').map(c => Number(c.match(/\/(\d+)px-/)[1])) : [];
+      };
+      return {
+        grande: largeurs(base + '1200px-F.jpg'),
+        moyenne: largeurs(base + '900px-F.jpg'),
+        petite: largeurs(base + '640px-F.jpg'),
+        minuscule: largeurs(base + '300px-F.jpg'),
+        directe: largeurs('https://upload.wikimedia.org/wikipedia/commons/a/ab/F.jpg'),
+      };
+    });
+    const depasse = (arr, max) => arr.some(w => w > max);
+    check('srcset : aucune variante au-delà de l’original (1200px)', !depasse(r.grande, 1200), r.grande);
+    check('srcset : aucune variante au-delà de l’original (900px)', !depasse(r.moyenne, 900), r.moyenne);
+    check('srcset : aucune variante au-delà de l’original (640px)', !depasse(r.petite, 640), r.petite);
+    check('srcset : vignette minuscule → pas de srcset du tout', r.minuscule.length === 0, r.minuscule);
+    check('srcset : URL de fichier direct → pas de srcset', r.directe.length === 0, r.directe);
+    check('srcset : les grandes images gardent leurs 3 paliers', r.grande.length === 3, r.grande);
+
+    await ctx.close();
+  }
+}
+
 // ── Bilan ───────────────────────────────────────────────────────────────────
 const realErrors = pageErrors.filter(e => !/ERR_FAILED|Failed to fetch|NetworkError|Load failed/i.test(e));
 check('aucune erreur JavaScript', realErrors.length === 0, realErrors.slice(0, 5));

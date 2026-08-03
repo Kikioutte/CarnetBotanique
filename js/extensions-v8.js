@@ -122,27 +122,46 @@
       rq.onerror=function(){rej(rq.error);};
     });
   }
+  /* Une photo n'est légitime que si elle est une Data URL d'image matricielle produite
+     par resizeImage(). Tout le reste vient forcément d'ailleurs — en pratique du champ
+     `photos` d'une sauvegarde importée, qui n'est validé nulle part en amont — et finit
+     dans un attribut HTML au rendu. On filtre donc À LA LECTURE autant qu'à l'écriture :
+     cela couvre le stockage IndexedDB, le repli localStorage `hdv_photos` (qu'un import
+     peut écrire directement, toute clé `hdv_` étant acceptée par importHandler) et les
+     données déjà persistées avant ce correctif.
+     image/svg+xml est exclu volontairement : un SVG est un document actif. */
+  var PHOTO_MAX_LEN=8*1024*1024;   // ~8 Mo par photo : au-delà, ce n'est plus une vignette
+  var PHOTO_MAX_COUNT=60;          // borne le coût de rendu et d'écriture par fiche
+  var PHOTO_DATA_URL=/^data:image\/(?:png|jpe?g|webp|gif|avif);base64,[A-Za-z0-9+/]+=*$/;
+  function isSafePhoto(v){
+    return typeof v==='string' && v.length<=PHOTO_MAX_LEN && PHOTO_DATA_URL.test(v);
+  }
+  function sanitizePhotos(arr){
+    if(!Array.isArray(arr))return [];
+    return arr.filter(isSafePhoto).slice(0,PHOTO_MAX_COUNT);
+  }
   function getPhotos(id){
     // Clé absente d'IDB (get résout undefined, pas un rejet) : repli sur hdv_photos,
     // encore présent tant que migratePhotosToIDB n'a pas fini de copier toutes les clés.
-    function lsFallback(){var ph=L('hdv_photos',{});return ph[id]||[];}
+    function lsFallback(){var ph=L('hdv_photos',{});return sanitizePhotos(ph[id]);}
     return idbOpen().then(function(db){
       return new Promise(function(res){
         var rq=db.transaction('photos','readonly').objectStore('photos').get(id);
-        rq.onsuccess=function(){res(rq.result||lsFallback());};
+        rq.onsuccess=function(){res(rq.result?sanitizePhotos(rq.result):lsFallback());};
         rq.onerror=function(){res(lsFallback());};
       });
     }).catch(lsFallback);
   }
   function setPhotos(id,arr){
+    var safe=sanitizePhotos(arr);
     return idbOpen().then(function(db){
       return new Promise(function(res,rej){
         var t=db.transaction('photos','readwrite');
-        t.objectStore('photos').put(arr,id);
+        t.objectStore('photos').put(safe,id);
         t.oncomplete=function(){res(true);};
         t.onerror=function(){rej(t.error);};
       });
-    }).catch(function(){var ph=L('hdv_photos',{});ph[id]=arr;return S('hdv_photos',ph);});
+    }).catch(function(){var ph=L('hdv_photos',{});ph[id]=safe;return S('hdv_photos',ph);});
   }
   function migratePhotosToIDB(){
     try{
@@ -185,7 +204,10 @@
     getPhotos(id).then(function(arr){
       _photoCache[id]=arr;
       if(!document.getElementById('v8-photos-'+id))return; // modale refermée entre-temps
-      g.innerHTML=arr.map(function(src,i){return '<div class="ph" onclick="window.v8ZoomPhoto('+i+',\''+id+'\')"><img src="'+src+'" alt="photo"><button title="Supprimer" onclick="event.stopPropagation();window.v8DelPhoto(\''+id+'\','+i+')"><i class="fa-solid fa-xmark"></i></button></div>';}).join('');
+      // esc2() est indispensable ici : sans lui, un src contenant un guillemet ferme
+      // l'attribut et injecte ses propres gestionnaires (onerror), exécutés puisque la
+      // CSP autorise 'unsafe-inline'. Seconde barrière après sanitizePhotos().
+      g.innerHTML=arr.map(function(src,i){return '<div class="ph" onclick="window.v8ZoomPhoto('+i+',\''+id+'\')"><img src="'+esc2(src)+'" alt="photo"><button title="Supprimer" onclick="event.stopPropagation();window.v8DelPhoto(\''+id+'\','+i+')"><i class="fa-solid fa-xmark"></i></button></div>';}).join('');
     });
   }
   window.v8DelPhoto=function(id,i){
@@ -202,13 +224,23 @@
       });
     }).catch(function(){return L('hdv_photos',{});});
   };
+  /* Frontière de confiance : `map` vient telle quelle du fichier de sauvegarde importé.
+     setPhotos() applique sanitizePhotos(), donc une entrée forgée n'atteint jamais le
+     stockage ; on borne en plus le nombre de fiches restaurées d'un seul fichier. */
   window.__hdvRestorePhotos=function(map){
-    if(!map||typeof map!=='object')return Promise.resolve();
-    return Promise.all(Object.keys(map).map(function(k){
+    if(!map||typeof map!=='object'||Array.isArray(map))return Promise.resolve();
+    return Promise.all(Object.keys(map).slice(0,1000).map(function(k){
       return Array.isArray(map[k])?setPhotos(k,map[k]):null;
     })).catch(function(){});
   };
-  function resizeImage(file,maxDim,quality,cb){try{var reader=new FileReader();reader.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height;var scale=Math.min(1,maxDim/Math.max(w,h));var cw=Math.round(w*scale),ch=Math.round(h*scale);var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;cv.getContext('2d').drawImage(img,0,0,cw,ch);try{cb(cv.toDataURL('image/jpeg',quality));}catch(err){cb(e.target.result);}};img.onerror=function(){cb(null);};img.src=e.target.result;};reader.onerror=function(){cb(null);};reader.readAsDataURL(file);}catch(err){cb(null);}}
+  /* Bornes : un fichier trop lourd, ou une image dont la surface décodée est démesurée
+     (« image bombe » : quelques Ko compressés, plusieurs Go une fois rasterisés), fige
+     l'onglet avant même d'atteindre le canvas. On refuse au lieu de tenter le redimensionnement.
+     Le repli `cb(e.target.result)` renvoyait par ailleurs le fichier d'origine non converti :
+     il ne doit pas servir de porte d'entrée à un format actif (SVG), d'où le refus explicite. */
+  var PHOTO_MAX_FILE=25*1024*1024;   // 25 Mo : au-delà, ce n'est pas une photo de carnet
+  var PHOTO_MAX_PIXELS=50*1000*1000; // 50 Mpx décodés
+  function resizeImage(file,maxDim,quality,cb){try{if(file&&file.size>PHOTO_MAX_FILE){toast('Photo trop volumineuse (25 Mo maximum)');cb(null);return;}var reader=new FileReader();reader.onload=function(e){var img=new Image();img.onload=function(){var w=img.width,h=img.height;if(!w||!h||w*h>PHOTO_MAX_PIXELS){toast('Image trop grande pour être traitée');cb(null);return;}var scale=Math.min(1,maxDim/Math.max(w,h));var cw=Math.round(w*scale),ch=Math.round(h*scale);var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;cv.getContext('2d').drawImage(img,0,0,cw,ch);try{cb(cv.toDataURL('image/jpeg',quality));}catch(err){cb(null);}};img.onerror=function(){cb(null);};img.src=e.target.result;};reader.onerror=function(){cb(null);};reader.readAsDataURL(file);}catch(err){cb(null);}}
   // wrap openJournal pour injecter les photos
   (function(){var orig=window.openJournal;if(typeof orig==='function'){window.openJournal=function(id){orig.call(this,id);setTimeout(function(){injectPhotos(id);},0);};}})();
   // iCal + PDF jardin injectes dans la modale rappels

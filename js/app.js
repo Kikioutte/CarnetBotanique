@@ -380,9 +380,19 @@ async function loadSectionImage(sec){
 }
 // Variantes responsive pour les vignettes Wikimedia (URL en /NNNpx-) : le navigateur
 // choisit la taille adaptée à la vue (grille compacte ≈ 300px, scrolly ≈ 640px, Retina 1200px).
+// MediaWiki n'agrandit JAMAIS une image au-delà de son original : demander une vignette plus
+// large que le fichier source renvoie 404. La largeur encodée dans l'URL que l'API vient de
+// retourner (demandée en 1200, rabaissée par MediaWiki si l'original est plus petit) est donc
+// le plafond réellement disponible. Sans ce filtre, une photo d'origine plus petite que 1200px
+// produisait un candidat inexistant — retenu justement par les écrans haute densité (DPR ≥ 2 :
+// mobiles, portables récents) — d'où un 404 puis le repli sur la photo générique, alors que le
+// clic, qui utilise l'URL d'origine, affichait bien la vraie photo.
 function wikiSrcset(src){
-  if(!/\/\d+px-/.test(src)) return null;
-  var widths=[480,800,1200];
+  var m=/\/(\d+)px-/.exec(src);
+  if(!m) return null;
+  var max=Number(m[1]);
+  var widths=[480,800,1200].filter(function(w){ return w<=max; });
+  if(!widths.length) return null; // vignette plus petite que le premier palier : src seul
   return {
     srcset: widths.map(function(w){ return src.replace(/\/\d+px-/, '/'+w+'px-')+' '+w+'w'; }).join(', '),
     sizes: '(max-width: 768px) 92vw, (max-width: 1024px) 88vw, 640px'
@@ -403,6 +413,13 @@ function applySectionImg(id){
 // Si la photo choisie échoue (lien mort, hoquet réseau), on tente les autres
 // candidats déjà trouvés par Wikimedia avant de retomber sur la photo générique.
 function handleSectionImgError(imgEl){
+  // Premier échec : c'est peut-être seulement la variante srcset qui manque, alors que l'URL
+  // d'origine — celle que l'API a réellement renvoyée — existe. On la retente avant de
+  // sacrifier une photo valide (le retrait de srcset relance la sélection sur src).
+  if(imgEl.hasAttribute('srcset')){
+    imgEl.removeAttribute('srcset'); imgEl.removeAttribute('sizes');
+    return;
+  }
   var sec=imgEl.closest('.scrolly-section'); var id=sec&&sec.id.replace('section-','');
   var st=id&&sectionImgs[id];
   if(st&&st.imgs&&st.idx<st.imgs.length-1){ st.idx++; applySectionImg(id); return; }

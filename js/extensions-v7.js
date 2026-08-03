@@ -245,8 +245,13 @@ function validPlantsJSON(str){
     return true;
   }catch(e){return false;}
 }
+/* Une sauvegarde complète avec photos pèse quelques Mo ; au-delà de 100 Mo, la lecture puis
+   le JSON.parse figent l'onglet avant toute validation. On refuse avant de lire. */
+var IMPORT_MAX_BYTES=100*1024*1024;
 function importHandler(e){
-  var file=e.target.files&&e.target.files[0];if(!file)return;var rd=new FileReader();
+  var file=e.target.files&&e.target.files[0];if(!file)return;
+  if(file.size>IMPORT_MAX_BYTES){toast('Fichier trop volumineux — import refusé');e.target.value='';return;}
+  var rd=new FileReader();
   rd.onload=function(){
     try{
       var obj=JSON.parse(rd.result);
